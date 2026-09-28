@@ -266,11 +266,11 @@
     }
 
     function openAdmin() {
-      const pin = prompt('Admin PIN दर्ज करें (7073):');
+      const pin = prompt('Admin PIN दर्ज करें (1234):');
       if (pin === '7073') {
         renderAdminHome();
       } else if (pin !== null) {
-        alert('गलत पिन! PIN 7073 है।');
+        alert('गलत पिन! PIN 1234 है।');
       }
     }
 
@@ -300,9 +300,10 @@
             <button class="btn-outline" onclick="showHome()">✕ बाहर निकलें</button>
           </div>
 
+          <!-- DIRECT TARGET APPEND FILE UPLOADER -->
           <div style="background:#eff6ff; border:2px dashed #2563eb; padding:16px; border-radius:10px; margin-bottom:16px; text-align:center;">
-            <div style="font-weight:800; font-size:14px; color:#1e40af; margin-bottom:6px;">🚀 फ़ाइल से प्रश्न जोड़ें (ऑटोमैटिक जुड़ेंगे)</div>
-            <div style="font-size:12px; color:#64748b; margin-bottom:10px;">एक-एक करके फ़ाइलें चुनें, प्रश्न अपने आप आगे जुड़ते जाएँगे:</div>
+            <div style="font-weight:800; font-size:14px; color:#1e40af; margin-bottom:6px;">🚀 फ़ाइल चुनें और प्रश्न जोड़ें (ऑटोमैटिक जुड़ेंगे)</div>
+            <div style="font-size:12px; color:#64748b; margin-bottom:10px;">Part 1, Part 2... एक-एक करके चुनें, सब इसी टेस्ट में जुड़ते जाएँगे:</div>
             <input type="file" id="json-file-input" accept=".json,.txt" style="display:none;" onchange="uploadJsonFile(event)">
             <button class="btn-primary" style="padding:10px 20px; font-size:14px;" onclick="document.getElementById('json-file-input').click()">
               📁 फ़ाइल चुनें और अपलोड करें
@@ -325,48 +326,46 @@
       `;
     }
 
-    function uploadJsonFile(event) {
+    async function uploadJsonFile(event) {
       const file = event.target.files[0];
       if (!file) return;
 
-      const reader = new FileReader();
-      reader.onload = async function(e) {
-        try {
-          const imported = JSON.parse(e.target.result);
-          let listToAdd = Array.isArray(imported) ? imported : [imported];
+      try {
+        const text = await file.text();
+        const imported = JSON.parse(text);
+        const newQs = imported.questions || (Array.isArray(imported) ? imported : []);
 
-          let totalAdded = 0;
-          let finalCount = 0;
-
-          listToAdd.forEach(newT => {
-            if (!newT.section) newT.section = 'RPSC Political Science';
-            const existingIdx = allTests.findIndex(x => x.id === newT.id);
-            const incomingQs = newT.questions || [];
-
-            if (existingIdx !== -1) {
-              // सुरक्षित रूप से प्रश्न आगे जोड़ना (APPEND)
-              const existingQs = allTests[existingIdx].questions || [];
-              allTests[existingIdx].questions = existingQs.concat(incomingQs);
-              allTests[existingIdx].time = newT.time || allTests[existingIdx].time;
-              allTests[existingIdx].title = newT.title || allTests[existingIdx].title;
-              finalCount = allTests[existingIdx].questions.length;
-            } else {
-              allTests.push(newT);
-              finalCount = incomingQs.length;
-            }
-            totalAdded += incomingQs.length;
-          });
-
-          await saveToCloud();
-          renderAdminHome();
-          alert(`🎉 '${file.name}' से ${totalAdded} प्रश्न सफलतापूर्वक जुड़े!\n\nइस टेस्ट में अब कुल प्रश्न: ${finalCount}`);
-        } catch (err) {
-          alert('फ़ाइल सही JSON फॉर्मेट में नहीं है! कृपया चेक करें कि कोड पूरा कॉपी हुआ था या नहीं।');
-        } finally {
-          event.target.value = ''; // इनपुट रीसेट ताकि अगली फ़ाइल तुरंत सेलेक्ट हो सके
+        if (!newQs || newQs.length === 0) {
+          alert("इस फ़ाइल में कोई प्रश्न नहीं मिला!");
+          return;
         }
-      };
-      reader.readAsText(file);
+
+        const targetId = (imported.id && imported.id.trim()) ? imported.id : "rpsc-school-lecturer-pol-sci-2025";
+        let targetTest = allTests.find(t => t.id === targetId);
+
+        if (targetTest) {
+          targetTest.questions = (targetTest.questions || []).concat(newQs);
+          targetTest.time = imported.time || targetTest.time || 190;
+        } else {
+          allTests.push({
+            id: targetId,
+            title: imported.title || "RPSC School Lecturer (Political Science) Paper - II",
+            section: imported.section || "RPSC Political Science",
+            time: imported.time || 190,
+            desc: imported.desc || "RPSC School Lecturer Paper - II (Political Science) - 190 Minute | Total: 150 Questions",
+            questions: newQs
+          });
+          targetTest = allTests[allTests.length - 1];
+        }
+
+        await saveToCloud();
+        renderAdminHome();
+        alert(`🎉 '${file.name}' से ${newQs.length} प्रश्न जुड़ गए!\n\nअब कुल प्रश्न हो गए: ${targetTest.questions.length}`);
+      } catch (err) {
+        alert("फ़ाइल सही JSON फॉर्मेट में नहीं है!");
+      } finally {
+        event.target.value = '';
+      }
     }
 
     async function changeSectionPrompt(id) {
@@ -392,8 +391,7 @@
           const existingIdx = allTests.findIndex(x => x.id === newT.id);
           const incomingQs = newT.questions || [];
           if(existingIdx !== -1) {
-            const existingQs = allTests[existingIdx].questions || [];
-            allTests[existingIdx].questions = existingQs.concat(incomingQs);
+            allTests[existingIdx].questions = (allTests[existingIdx].questions || []).concat(incomingQs);
           } else {
             allTests.push(newT);
           }
