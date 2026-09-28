@@ -15,20 +15,24 @@
     main { max-width: 720px; width: 100%; margin: 0 auto; padding: 16px; flex: 1; }
     .banner { background: linear-gradient(135deg, #1e40af, #3730a3); color: #fff; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
     .banner span { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #93c5fd; font-weight: 700; }
-    .banner h2 { font-size: 18px; margin: 8px 0; line-height: 1.4; }
+    .banner h2 { font-size: 17px; margin: 8px 0; line-height: 1.4; }
     .banner p { font-size: 13px; color: #bfdbfe; }
     .card { background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 18px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
     .tag { display: inline-block; background: #dbeafe; color: #1e40af; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 20px; margin-bottom: 8px; }
     .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-top: 12px; }
     .btn-primary { background: #2563eb; color: #fff; border: none; padding: 9px 18px; font-size: 13px; font-weight: 700; border-radius: 8px; cursor: pointer; }
-    .btn-success { background: #059669; color: #fff; border: none; padding: 9px 18px; font-size: 13px; font-weight: 700; border-radius: 8px; cursor: pointer; }
+    .btn-success { background: #059669; color: #fff; border: none; padding: 10px 18px; font-size: 14px; font-weight: 700; border-radius: 8px; cursor: pointer; }
     .btn-outline { background: #ffffff; color: #475569; border: 1px solid #cbd5e1; padding: 8px 16px; font-size: 13px; font-weight: 700; border-radius: 8px; cursor: pointer; }
+    .btn-danger { background: #ef4444; color: #fff; border: none; padding: 4px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; cursor: pointer; }
     .opt-btn { width: 100%; text-align: left; padding: 12px 14px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; margin-bottom: 10px; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
     .opt-btn.selected { border-color: #2563eb; background: #eff6ff; color: #1e40af; font-weight: 600; }
     .opt-badge { width: 26px; height: 26px; border-radius: 6px; background: #f1f5f9; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; margin-right: 8px; flex-shrink: 0; }
     .opt-btn.selected .opt-badge { background: #2563eb; color: #fff; }
     .prog-bg { width: 100%; height: 6px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin: 8px 0 16px 0; }
     .prog-bar { height: 100%; background: #2563eb; transition: width 0.3s; }
+    .form-group { margin-bottom: 12px; text-align: left; }
+    .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; color: #334155; }
+    .form-control { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; }
   </style>
 </head>
 <body>
@@ -42,118 +46,100 @@
           <div style="font-size: 11px; color: #64748b;">Competitive Exam Portal</div>
         </div>
       </div>
-      <button class="btn-admin" onclick="alert('Admin Login: 1234')">⚙️ Admin</button>
+      <button class="btn-admin" onclick="openAdmin()">⚙️ Admin</button>
     </div>
   </header>
 
   <main id="app"></main>
 
   <script>
-    const quiz = {
-      title: "कौटिल्य (Kautilya) : टेस्ट - 02",
-      desc: "अर्थशास्त्र का स्वरूप, दण्डनीति, राजा-राज्य संबंध, मैक्स वेबर एवं अरस्तू से तुलनात्मक अध्ययन।",
-      category: "भारतीय राजनीतिक विचारक",
-      time: 15,
-      questions: [
-        {
-          q: "अर्थशास्त्र के स्वरूप के संबंध में निम्नलिखित कथनों पर विचार करें:<br>I. धर्म को आर्थिक प्राप्ति का एक साधन माना गया है।<br>II. राज्य का प्राथमिक उद्देश्य नैतिक व्यवस्था की स्थापना करना है।<br>III. यह ग्रंथ शासन कला और यथार्थवाद पर आधारित है।",
-          opt: ["केवल I और II", "केवल II और III", "केवल I और III", "I, II और III"],
-          ans: 2,
-          exp: "अर्थशास्त्र शासन कला और यथार्थवादी दृष्टिकोण पर आधारित है जिसमें धर्म को राज्य/आर्थिक प्राप्ति का साधन माना गया है।"
-        },
-        {
-          q: "मैक्स वेबर ने अर्थशास्त्र की तुलना मैकियावेली के 'प्रिंस' से करते हुए क्या निष्कर्ष निकाला?",
-          opt: ["अर्थशास्त्र एक सरल और कम प्रभावशाली ग्रंथ है।", "अर्थशास्त्र में अधिक उग्र मैकियावेलीवाद विद्यमान है।", "दोनों ग्रंथ समान रूप से नैतिक दर्शन पर आधारित हैं।", "अर्थशास्त्र केवल प्रशासनिक नियमावली है, प्रिंस दर्शन है।"],
-          ans: 1,
-          exp: "मैक्स वेबर के अनुसार, कौटिल्य के अर्थशास्त्र में मैकियावेली के प्रिंस की तुलना में कहीं अधिक उग्र और यथार्थवादी विचार मिलते हैं।"
-        },
-        {
-          q: "सूची-I (विचारक) को सूची-II (विचार) से सुमेलित करें:<br>1. सुनील खिलनानी<br>2. कांग्ले<br>3. रोजर बोस<br>4. शिव शंकर मेनन",
-          opt: ["1-B, 2-D, 3-A, 4-C", "1-A, 2-B, 3-C, 4-D", "1-C, 2-A, 3-D, 4-B", "1-D, 2-C, 3-B, 4-A"],
-          ans: 0,
-          exp: "विचारकों और उनके दृष्टिकोण का सही मेल विकल्प A है।"
-        },
-        {
-          q: "अर्थशास्त्र में वर्णित कानूनों की प्रकृति के संबंध में कौन सा कथन सत्य है?",
-          opt: ["ये कानून धार्मिक रीति-रिवाजों पर आधारित हैं।", "ये कानून सकारात्मक कानूनों की श्रेणी में आते हैं।", "ये कानून राजा के व्यक्तिगत निर्णयों पर निर्भर हैं।", "ये कानून प्राकृतिक और धर्मशास्त्र से प्रेरित हैं।"],
-          ans: 1,
-          exp: "कौटिल्य द्वारा वर्णित विधि सकारात्मक और व्यावहारिक राज्य-कानूनों की श्रेणी में आते हैं।"
-        },
-        {
-          q: "कौटिल्य के अर्थशास्त्र और अरस्तू की 'पॉलिटिक्स' के बीच मुख्य अंतर क्या है?",
-          opt: ["अरस्तू का ग्रंथ शासन पर, अर्थशास्त्र दर्शन पर है।", "अर्थशास्त्र में परिणामवाद का अभाव, पॉलिटिक्स में है।", "अर्थशास्त्र साम्राज्य विस्तार पर, पॉलिटिक्स सुदृढ़ नगर-राज्य पर केंद्रित है।", "पॉलिटिक्स में संरचनात्मक कानून, अर्थशास्त्र में नहीं।"],
-          ans: 2,
-          exp: "कौटिल्य साम्राज्य विस्तार और विजिगीषु राजा पर बल देते हैं, अरस्तू सीमित नगर-राज्य पर।"
-        },
-        {
-          q: "कौटिल्य के अर्थशास्त्र के बारे में किस विचारक ने टिप्पणी की कि यह 'यूनानी दर्शन' के सामने कहीं अधिक श्रेष्ठ है?",
-          opt: ["डी. डी. कोसाम्बी", "मैक्स वेबर", "हेनरी किसिंजर", "जवाहरलाल नेहरू"],
-          ans: 0,
-          exp: "डी. डी. कोसाम्बी ने भारतीय यथार्थवाद और अर्थशास्त्र की महत्ता पर यह टिप्पणी की थी।"
-        },
-        {
-          q: "कौटिल्य के राज्य की उत्पत्ति के सामाजिक समझौता सिद्धांत के संदर्भ में निम्नलिखित कथनों पर विचार करें:<br>I. कौटिल्य ने राज्य की उत्पत्ति के लिए दैवी सिद्धांत को पूर्णतः स्वीकार किया है।<br>II. कौटिल्य का सिद्धांत हॉब्स के समान निरंकुश राजतंत्र स्थापित करता है।<br>III. कौटिल्य के अनुसार, राजा समझौते का एक भाग है और वह धर्म व परंपराओं से बंधा है।",
-          opt: ["केवल I और II", "केवल II और III", "केवल III", "I, II और III"],
-          ans: 2,
-          exp: "कौटिल्य के अनुसार राजा समझौते से बंधा है और प्रजा के कल्याण हेतु धर्म-सम्मत मर्यादाओं के अधीन कार्य करता है।"
-        },
-        {
-          q: "निम्नलिखित ग्रंथों और उनके लेखकों का सही मिलान करें:<br>सूची-I: 1. नीतिवाक्यामृतम्, 2. नीतिसार, 3. किरातार्जुनीयम्<br>सूची-II: क. कामन्दक, ख. भारवि, ग. सोमदेव सूरी",
-          opt: ["1-ग, 2-क, 3-ख", "1-ग, 2-ख, 3-क", "1-क, 2-ग, 3-ख", "1-ख, 2-क, 3-ग"],
-          ans: 0,
-          exp: "नीतिवाक्यामृतम् - सोमदेव सूरी, नीतिसार - कामन्दक, किरातार्जुनीयम् - भारवि।"
-        },
-        {
-          q: "कौटिल्य के अनुसार दंडनीति के कार्यों का सही क्रम क्या है?",
-          opt: ["रक्षा, प्राप्ति, वृद्धि, वितरण", "प्राप्ति, रक्षा, वृद्धि, वितरण", "वृद्धि, प्राप्ति, रक्षा, वितरण", "वितरण, प्राप्ति, रक्षा, वृद्धि"],
-          ans: 1,
-          exp: "दंडनीति का कार्य: अप्राप्त की प्राप्ति, प्राप्त की रक्षा, रक्षित की वृद्धि और संवर्धित का वितरण।"
-        },
-        {
-          q: "कौटिल्य के दर्शन में राजा और राज्य के संबंधों के बारे में कौन से विद्वान मानते हैं कि राजा और राज्य एक ही हैं?",
-          opt: ["पॉल सेनन, भंडारकर और पी. वी. काणे", "मैनुअल कैस्टेल्स और हेनरी किसिंजर", "के. पी. जायसवाल और ए. एस. अल्तेकर", "रोजर बोस और आर. पी. कांग्ले"],
-          ans: 0,
-          exp: "पॉल सेनन, भंडारकर और पी. वी. काणे का मत है कि कौटिल्य के अनुसार राजा ही राज्य का प्रमुख स्वरूप है।"
-        },
-        {
-          q: "कौटिल्य के अनुसार राज्य के लिए गरीबी निवारण क्यों आवश्यक है?",
-          opt: ["राजा की व्यक्तिगत प्रतिष्ठा बढ़ाने हेतु", "साम्राज्य की सुरक्षा और स्थिरता हेतु", "कर संग्रह की प्रक्रिया सरल बनाने हेतु", "धार्मिक अनुष्ठानों के लिए धन जुटाने हेतु"],
-          ans: 1,
-          exp: "दरिद्रता आंतरिक विद्रोह और अशांति का मूल कारण बनती है, अतः सुरक्षा हेतु गरीबी निवारण आवश्यक है।"
-        }
-      ]
-    };
+    const INITIAL_TESTS = [
+      {
+        id: "kautilya-02",
+        title: "कौटिल्य (Kautilya) : टेस्ट - 02",
+        desc: "अर्थशास्त्र का स्वरूप, दण्डनीति, राजा-राज्य संबंध, मैक्स वेबर एवं अरस्तू से तुलनात्मक अध्ययन।",
+        category: "भारतीय विचारक",
+        time: 15,
+        questions: [
+          {
+            q: "अर्थशास्त्र के स्वरूप के संबंध में निम्नलिखित कथनों पर विचार करें:<br>I. धर्म को आर्थिक प्राप्ति का एक साधन माना गया है।<br>II. राज्य का प्राथमिक उद्देश्य नैतिक व्यवस्था की स्थापना करना है।<br>III. यह ग्रंथ शासन कला और यथार्थवाद पर आधारित है।",
+            opt: ["केवल I और II", "केवल II और III", "केवल I और III", "I, II और III"],
+            ans: 2,
+            exp: "अर्थशास्त्र शासन कला और यथार्थवादी दृष्टिकोण पर आधारित है।"
+          },
+          {
+            q: "मैक्स वेबर ने अर्थशास्त्र की तुलना मैकियावेली के 'प्रिंस' से करते हुए क्या निष्कर्ष निकाला?",
+            opt: ["अर्थशास्त्र एक सरल ग्रंथ है।", "अर्थशास्त्र में अधिक उग्र मैकियावेलीवाद विद्यमान है।", "दोनों ग्रंथ नैतिक दर्शन पर आधारित हैं।", "अर्थशास्त्र केवल नियमावली है।"],
+            ans: 1,
+            exp: "वेबर के अनुसार कौटिल्य में अधिक उग्र यथार्थवाद है।"
+          },
+          {
+            q: "कौटिल्य के अनुसार दंडनीति के कार्यों का सही क्रम क्या है?",
+            opt: ["रक्षा, प्राप्ति, वृद्धि, वितरण", "प्राप्ति, रक्षा, वृद्धि, वितरण", "वृद्धि, प्राप्ति, रक्षा, वितरण", "वितरण, प्राप्ति, रक्षा, वृद्धि"],
+            ans: 1,
+            exp: "दंडनीति कार्य: प्राप्ति, रक्षा, वृद्धि और वितरण।"
+          },
+          {
+            q: "कौटिल्य के अनुसार राज्य के लिए गरीबी निवारण क्यों आवश्यक है?",
+            opt: ["राजा की व्यक्तिगत प्रतिष्ठा हेतु", "साम्राज्य की सुरक्षा और स्थिरता हेतु", "कर संग्रह सरल बनाने हेतु", "धार्मिक अनुष्ठानों हेतु"],
+            ans: 1,
+            exp: "दरिद्रता विद्रोह का कारण बनती है, अतः सुरक्षा हेतु आवश्यक है।"
+          }
+        ]
+      }
+    ];
 
+    function getTests() {
+      const stored = localStorage.getItem('ps_tests_list');
+      return stored ? JSON.parse(stored) : INITIAL_TESTS;
+    }
+
+    function saveTests(list) {
+      localStorage.setItem('ps_tests_list', JSON.stringify(list));
+    }
+
+    let allTests = getTests();
+    let currentQuiz = null;
     let cur = 0;
     let answers = {};
     let timer = null;
     let sec = 0;
+    let draftQuestions = [];
 
     function showHome() {
       if(timer) clearInterval(timer);
+      allTests = getTests();
+      let testCards = '';
+      allTests.forEach((t, idx) => {
+        testCards += `
+          <div class="card">
+            <span class="tag">${t.category}</span>
+            <h3 style="font-size: 16px; margin-bottom: 6px;">${t.title}</h3>
+            <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">${t.desc}</p>
+            <div class="card-footer">
+              <span style="font-size: 12px; color: #475569; font-weight: 600;">⏱️ ${t.time} मिनट &nbsp;|&nbsp; 📝 ${t.questions.length} प्रश्न</span>
+              <button class="btn-primary" onclick="startTest(${idx})">टेस्ट शुरू करें →</button>
+            </div>
+          </div>
+        `;
+      });
+
       document.getElementById('app').innerHTML = `
         <div class="banner">
           <span>Exam Prep Series</span>
           <h2>Political science for RPSC school lecturer, assistant Professor, UP assistant Professor, DSSSB school lecturer etc.</h2>
           <p>Best questions for each topic and try to boost your preparation.</p>
         </div>
-        <div style="font-weight: 700; margin-bottom: 12px; font-size: 15px;">उपलब्ध टेस्ट श्रृंखला</div>
-        <div class="card">
-          <span class="tag">${quiz.category}</span>
-          <h3 style="font-size: 16px; margin-bottom: 6px;">${quiz.title}</h3>
-          <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">${quiz.desc}</p>
-          <div class="card-footer">
-            <span style="font-size: 12px; color: #475569; font-weight: 600;">⏱️ ${quiz.time} मिनट &nbsp;|&nbsp; 📝 11 प्रश्न</span>
-            <button class="btn-primary" onclick="startTest()">टेस्ट शुरू करें →</button>
-          </div>
-        </div>
+        <div style="font-weight: 700; margin-bottom: 12px; font-size: 15px;">उपलब्ध टेस्ट श्रृंखला (${allTests.length})</div>
+        ${testCards}
       `;
     }
 
-    function startTest() {
+    function startTest(idx) {
+      currentQuiz = allTests[idx];
       cur = 0;
       answers = {};
-      sec = quiz.time * 60;
+      sec = currentQuiz.time * 60;
       if(timer) clearInterval(timer);
       timer = setInterval(() => {
         sec--;
@@ -172,7 +158,7 @@
     }
 
     function renderQ() {
-      const q = quiz.questions[cur];
+      const q = currentQuiz.questions[cur];
       const m = Math.floor(sec / 60);
       const s = sec % 60;
       let optH = '';
@@ -192,19 +178,19 @@
       document.getElementById('app').innerHTML = `
         <div class="card">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <span style="font-size:12px; font-weight:700; color:#2563eb;">${quiz.category}</span>
+            <span style="font-size:12px; font-weight:700; color:#2563eb;">${currentQuiz.category}</span>
             <div style="display:flex; gap:10px; align-items:center;">
               <span id="tm" style="font-weight:700; font-size:13px; background:#eff6ff; color:#1e40af; padding:4px 8px; border-radius:6px;">⏳ ${m}:${s < 10 ? '0' : ''}${s}</span>
               <button onclick="if(confirm('टेस्ट छोड़ना चाहते हैं?')) showHome()" style="background:none; border:none; color:#ef4444; font-size:12px; font-weight:700; cursor:pointer;">छोड़ें</button>
             </div>
           </div>
-          <div class="prog-bg"><div class="prog-bar" style="width: ${((cur + 1)/quiz.questions.length)*100}%"></div></div>
-          <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:6px;">प्रश्न ${cur + 1} / ${quiz.questions.length}</div>
+          <div class="prog-bg"><div class="prog-bar" style="width: ${((cur + 1)/currentQuiz.questions.length)*100}%"></div></div>
+          <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:6px;">प्रश्न ${cur + 1} / ${currentQuiz.questions.length}</div>
           <h3 style="font-size:15px; line-height:1.5; margin-bottom:14px;">${q.q}</h3>
           <div>${optH}</div>
           <div class="card-footer">
             <button class="btn-outline" ${cur === 0 ? 'disabled style="opacity:0.3"' : ''} onclick="prevQ()">← पिछला</button>
-            ${cur < quiz.questions.length - 1 ? 
+            ${cur < currentQuiz.questions.length - 1 ? 
               `<button class="btn-primary" onclick="nextQ()">अगला प्रश्न →</button>` : 
               `<button class="btn-success" onclick="finishTest()">सबमिट करें ✓</button>`}
           </div>
@@ -213,16 +199,16 @@
     }
 
     function pick(i) { answers[cur] = i; renderQ(); }
-    function nextQ() { if(cur < quiz.questions.length - 1) { cur++; renderQ(); } }
+    function nextQ() { if(cur < currentQuiz.questions.length - 1) { cur++; renderQ(); } }
     function prevQ() { if(cur > 0) { cur--; renderQ(); } }
 
     function finishTest() {
       if(timer) clearInterval(timer);
       let cor = 0;
-      quiz.questions.forEach((q, i) => { if(answers[i] === q.ans) cor++; });
+      currentQuiz.questions.forEach((q, i) => { if(answers[i] === q.ans) cor++; });
 
       let listH = '';
-      quiz.questions.forEach((q, i) => {
+      currentQuiz.questions.forEach((q, i) => {
         const u = answers[i];
         const isCor = u === q.ans;
         listH += `
@@ -230,7 +216,7 @@
             <div style="font-weight:700; margin-bottom:4px;">${i + 1}. ${q.q}</div>
             <div style="color:${isCor ? '#059669':'#dc2626'}; font-weight:700;">आपका उत्तर: ${u !== undefined ? q.opt[u] : 'नहीं दिया'} ${isCor ? '✓' : '✗'}</div>
             ${!isCor ? `<div style="color:#0f172a; font-weight:600;">सही उत्तर: ${q.opt[q.ans]}</div>` : ''}
-            <div style="color:#64748b; font-style:italic; margin-top:2px;">व्याख्या: ${q.exp}</div>
+            <div style="color:#64748b; font-style:italic; margin-top:2px;">व्याख्या: ${q.exp || 'उपलब्ध नहीं'}</div>
           </div>
         `;
       });
@@ -240,7 +226,7 @@
           <h2 style="font-size:20px; margin-bottom:12px;">परीक्षण परिणाम</h2>
           <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:16px; margin-bottom:16px;">
             <div style="font-size:11px; text-transform:uppercase; color:#64748b; font-weight:700;">अंक (Score)</div>
-            <div style="font-size:32px; font-weight:900; color:#1d4ed8;">${cor} <span style="font-size:16px; color:#94a3b8; font-weight:400;">/ 11</span></div>
+            <div style="font-size:32px; font-weight:900; color:#1d4ed8;">${cor} <span style="font-size:16px; color:#94a3b8; font-weight:400;">/ ${currentQuiz.questions.length}</span></div>
           </div>
           <div style="text-align:left; margin-bottom:16px;">
             <h4 style="font-size:13px; margin-bottom:8px;">प्रश्नों का विवरण एवं व्याख्या:</h4>
@@ -249,6 +235,145 @@
           <button class="btn-primary" onclick="showHome()">होम पेज पर जाएं</button>
         </div>
       `;
+    }
+
+    // --- ADMIN PANEL ---
+    function openAdmin() {
+      const pin = prompt('Admin PIN दर्ज करें (PIN: 1234):');
+      if (pin === '1234') {
+        draftQuestions = [];
+        renderAdminUI();
+      } else if (pin !== null) {
+        alert('गलत पिन!');
+      }
+    }
+
+    function renderAdminUI() {
+      let qListHtml = '';
+      draftQuestions.forEach((dq, i) => {
+        qListHtml += `
+          <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:8px; margin-bottom:6px; font-size:12px; display:flex; justify-content:space-between; align-items:center;">
+            <span><b>Q${i+1}:</b> ${dq.q.substring(0, 30)}... (उत्तर: Option ${String.fromCharCode(65 + dq.ans)})</span>
+            <button class="btn-danger" onclick="draftQuestions.splice(${i}, 1); renderAdminUI();">हटाएं</button>
+          </div>
+        `;
+      });
+
+      document.getElementById('app').innerHTML = `
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid #e2e8f0; padding-bottom:8px;">
+            <h2 style="font-size:17px; font-weight:800;">⚙️ नया टेस्ट जोड़ें (Admin)</h2>
+            <button class="btn-outline" onclick="showHome()">✕ बंद करें</button>
+          </div>
+
+          <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:14px;">
+            <div class="form-group">
+              <label>टेस्ट का नाम (Title)</label>
+              <input type="text" id="t-title" class="form-control" placeholder="उदा. प्लेटो (Plato) : टेस्ट - 01">
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <div class="form-group">
+                <label>Category</label>
+                <input type="text" id="t-cat" class="form-control" value="Political Science">
+              </div>
+              <div class="form-group">
+                <label>समय (मिनट)</label>
+                <input type="number" id="t-time" class="form-control" value="15">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>विवरण (Description)</label>
+              <input type="text" id="t-desc" class="form-control" placeholder="उदा. महत्वपूर्ण बहुविकल्पीय प्रश्न...">
+            </div>
+          </div>
+
+          <div style="border:1px dashed #2563eb; background:#eff6ff; padding:12px; border-radius:8px; margin-bottom:14px;">
+            <div style="font-weight:700; font-size:13px; margin-bottom:8px; color:#1e40af;">+ प्रश्न जोड़ें:</div>
+            <div class="form-group">
+              <label>प्रश्न लिखें</label>
+              <textarea id="q-txt" class="form-control" style="min-height:60px;" placeholder="यहाँ प्रश्न टाइप करें..."></textarea>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <div class="form-group"><label>विकल्प A</label><input type="text" id="op-a" class="form-control"></div>
+              <div class="form-group"><label>विकल्प B</label><input type="text" id="op-b" class="form-control"></div>
+              <div class="form-group"><label>विकल्प C</label><input type="text" id="op-c" class="form-control"></div>
+              <div class="form-group"><label>विकल्प D</label><input type="text" id="op-d" class="form-control"></div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <div class="form-group">
+                <label>सही विकल्प</label>
+                <select id="op-ans" class="form-control">
+                  <option value="0">विकल्प A</option>
+                  <option value="1">विकल्प B</option>
+                  <option value="2">विकल्प C</option>
+                  <option value="3">विकल्प D</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>व्याख्या (Optional)</label>
+                <input type="text" id="q-exp" class="form-control" placeholder="उत्तर की व्याख्या...">
+              </div>
+            </div>
+            <button class="btn-primary" style="width:100%;" onclick="addQuestionBtn()">+ यह प्रश्न जोड़ें</button>
+          </div>
+
+          <div style="margin-bottom:14px;">
+            <div style="font-size:12px; font-weight:700; color:#475569; margin-bottom:6px;">कुल जोड़े गए प्रश्न: ${draftQuestions.length}</div>
+            ${qListHtml || '<div style="font-size:12px; color:#94a3b8;">अभी कोई प्रश्न नहीं जुड़ा है।</div>'}
+          </div>
+
+          <button class="btn-success" style="width:100%;" onclick="saveNewTestBtn()">💾 पूरा टेस्ट सेव करें</button>
+        </div>
+      `;
+    }
+
+    function addQuestionBtn() {
+      const q = document.getElementById('q-txt').value.trim();
+      const a = document.getElementById('op-a').value.trim();
+      const b = document.getElementById('op-b').value.trim();
+      const c = document.getElementById('op-c').value.trim();
+      const d = document.getElementById('op-d').value.trim();
+      const ans = parseInt(document.getElementById('op-ans').value);
+      const exp = document.getElementById('q-exp').value.trim();
+
+      if (!q || !a || !b || !c || !d) {
+        return alert('प्रश्न और चारों विकल्प भरना ज़रूरी है!');
+      }
+
+      draftQuestions.push({ q, opt: [a, b, c, d], ans, exp });
+
+      document.getElementById('q-txt').value = '';
+      document.getElementById('op-a').value = '';
+      document.getElementById('op-b').value = '';
+      document.getElementById('op-c').value = '';
+      document.getElementById('op-d').value = '';
+      document.getElementById('q-exp').value = '';
+
+      renderAdminUI();
+    }
+
+    function saveNewTestBtn() {
+      const title = document.getElementById('t-title').value.trim();
+      const cat = document.getElementById('t-cat').value.trim() || 'Political Science';
+      const time = parseInt(document.getElementById('t-time').value) || 15;
+      const desc = document.getElementById('t-desc').value.trim() || 'Political Science Mock Test';
+
+      if (!title) return alert('टेस्ट का नाम (Title) लिखें!');
+      if (draftQuestions.length === 0) return alert('कम से कम 1 प्रश्न जोड़ना ज़रूरी है!');
+
+      const newT = {
+        id: 'test-' + Date.now(),
+        title,
+        desc,
+        category: cat,
+        time,
+        questions: draftQuestions
+      };
+
+      allTests.push(newT);
+      saveTests(allTests);
+      alert('नया टेस्ट सफलता से जुड़ गया!');
+      showHome();
     }
 
     showHome();
