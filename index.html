@@ -5,30 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Political Science Quiz Portal</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: #f1f5f9; color: #0f172a; min-height: 100vh; display: flex; flex-direction: column; }
-    header { background: #fff; border-bottom: 1px solid #cbd5e1; padding: 12px 16px; position: sticky; top: 0; z-index: 50; }
+    header { background: #ffffff; border-bottom: 1px solid #cbd5e1; padding: 12px 16px; position: sticky; top: 0; z-index: 50; }
     .header-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
     .logo-box { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-    .logo-icon { width: 38px; height: 38px; background: #2563eb; color: #fff; font-weight: 800; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
-    .btn-admin { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+    .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #1d4ed8, #4338ca); color: #fff; font-weight: 800; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+    .btn-admin { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 12px; font-weight: 700; padding: 7px 14px; border-radius: 6px; cursor: pointer; }
     main { max-width: 800px; width: 100%; margin: 0 auto; padding: 16px; flex: 1; }
-    .banner { background: linear-gradient(135deg, #1e40af, #3730a3); color: #fff; padding: 18px; border-radius: 12px; margin-bottom: 16px; }
-    .tabs-wrapper { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 14px; }
-    .tab-btn { background: #fff; border: 1px solid #cbd5e1; color: #475569; font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 20px; cursor: pointer; white-space: nowrap; }
-    .tab-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; }
-    .card { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 16px; margin-bottom: 14px; }
-    .tag { display: inline-block; background: #dbeafe; color: #1e40af; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin-bottom: 6px; }
-    .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 10px; margin-top: 10px; }
-    .btn-primary { background: #2563eb; color: #fff; border: none; padding: 8px 16px; font-size: 13px; font-weight: 700; border-radius: 6px; cursor: pointer; }
-    .btn-success { background: #059669; color: #fff; border: none; padding: 9px 16px; font-size: 13px; font-weight: 700; border-radius: 6px; cursor: pointer; }
-    .btn-outline { background: #fff; color: #475569; border: 1px solid #cbd5e1; padding: 6px 10px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; }
+    .banner { background: linear-gradient(135deg, #1e40af, #3730a3); color: #fff; padding: 20px; border-radius: 12px; margin-bottom: 18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    .banner span { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #93c5fd; font-weight: 700; }
+    .banner h2 { font-size: 17px; margin: 8px 0; line-height: 1.4; }
+    .banner p { font-size: 13px; color: #bfdbfe; }
+    .tabs-wrapper { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 14px; -webkit-overflow-scrolling: touch; }
+    .tab-btn { background: #ffffff; border: 1px solid #cbd5e1; color: #475569; font-size: 13px; font-weight: 700; padding: 8px 16px; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: 0.2s; }
+    .tab-btn.active { background: #2563eb; color: #ffffff; border-color: #2563eb; }
+    .card { background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 18px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .tag { display: inline-block; background: #dbeafe; color: #1e40af; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 20px; margin-bottom: 8px; }
+    .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-top: 12px; }
+    .btn-primary { background: #2563eb; color: #fff; border: none; padding: 9px 18px; font-size: 13px; font-weight: 700; border-radius: 8px; cursor: pointer; }
+    .btn-success { background: #059669; color: #fff; border: none; padding: 10px 18px; font-size: 14px; font-weight: 700; border-radius: 8px; cursor: pointer; }
+    .btn-outline { background: #ffffff; color: #475569; border: 1px solid #cbd5e1; padding: 7px 12px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; }
     .btn-danger { background: #ef4444; color: #fff; border: none; padding: 6px 10px; font-size: 11px; font-weight: 700; border-radius: 6px; cursor: pointer; }
-    .opt-btn { width: 100%; text-align: left; padding: 10px 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; margin-bottom: 8px; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; }
+    .opt-btn { width: 100%; text-align: left; padding: 12px 14px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; margin-bottom: 10px; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
     .opt-btn.selected { border-color: #2563eb; background: #eff6ff; color: #1e40af; font-weight: 600; }
-    .form-group { margin-bottom: 10px; text-align: left; }
-    .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 3px; }
-    .form-control { width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; }
+    .opt-badge { width: 26px; height: 26px; border-radius: 6px; background: #f1f5f9; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; margin-right: 8px; flex-shrink: 0; }
+    .opt-btn.selected .opt-badge { background: #2563eb; color: #fff; }
+    .prog-bg { width: 100%; height: 6px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin: 8px 0 16px 0; }
+    .prog-bar { height: 100%; background: #2563eb; transition: width 0.3s; }
+    .form-group { margin-bottom: 12px; text-align: left; }
+    .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; color: #334155; }
+    .form-control { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; }
+    textarea.form-control { resize: vertical; min-height: 60px; }
   </style>
 </head>
 <body>
@@ -39,7 +47,7 @@
         <div class="logo-icon">PS</div>
         <div>
           <div style="font-weight: 800; font-size: 15px;">Political Science Quiz</div>
-          <div style="font-size: 11px; color: #64748b;">Exam Portal</div>
+          <div style="font-size: 11px; color: #64748b;">Competitive Exam Portal</div>
         </div>
       </div>
       <button class="btn-admin" onclick="openAdmin()">⚙️ Admin</button>
@@ -47,22 +55,35 @@
   </header>
 
   <main id="app">
-    <div style="text-align:center; padding:40px; color:#64748b;">डेटा लोड हो रहा है...</div>
+    <div style="text-align:center; padding:50px; color:#64748b; font-weight:700;">डेटा लोड हो रहा है... कृपया प्रतीक्षा करें...</div>
   </main>
 
   <script>
     const FIREBASE_DB_URL = "https://political-science-quiz-6bfb1-default-rtdb.firebaseio.com";
+
     let allTests = [];
     let selectedSection = 'All';
-    let currentQuiz = null, cur = 0, answers = {}, timer = null, sec = 0;
-    let editingTestId = null, draftQuestions = [];
+    let currentQuiz = null;
+    let cur = 0;
+    let answers = {};
+    let timer = null;
+    let sec = 0;
+
+    let editingTestId = null;
+    let draftQuestions = [];
 
     async function loadCloudData() {
       try {
         const res = await fetch(`${FIREBASE_DB_URL}/tests.json`);
         const data = await res.json();
-        allTests = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
-      } catch (err) { allTests = []; }
+        if(data) {
+          allTests = Array.isArray(data) ? data : Object.values(data);
+        } else {
+          allTests = [];
+        }
+      } catch (err) {
+        console.error(err);
+      }
       showHome();
     }
 
@@ -73,8 +94,10 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(allTests)
         });
-        alert('🎉 क्लाउड पर सेव हो गया! सभी दोस्तों के फोन पर लाइव है।');
-      } catch (e) { alert('सेव करने में समस्या हुई। इंटरनेट चेक करें!'); }
+        alert('🎉 टेस्ट तुरंत क्लाउड पर सेव हो गया है! सभी दोस्तों के मोबाइल पर लाइव दिख रहा है।');
+      } catch (e) {
+        alert('डेटा सेव करने में समस्या हुई। इंटरनेट चेक करें!');
+      }
     }
 
     function showHome() {
@@ -87,131 +110,396 @@
 
       let tabsHtml = '';
       sections.forEach(s => {
-        tabsHtml += `<button class="tab-btn ${selectedSection === s ? 'active' : ''}" onclick="selectedSection='${s}'; showHome();">${s === 'All' ? 'सभी' : s}</button>`;
+        const activeCls = (selectedSection === s) ? 'active' : '';
+        const label = (s === 'All') ? 'सभी टेस्ट' : s;
+        tabsHtml += `<button class="tab-btn ${activeCls}" onclick="filterSection('${s}')">${label}</button>`;
       });
 
-      const filtered = (selectedSection === 'All') ? allTests : allTests.filter(t => (t.section || 'सामान्य').trim() === selectedSection);
+      const filtered = (selectedSection === 'All') 
+        ? allTests 
+        : allTests.filter(t => (t.section || 'सामान्य').trim() === selectedSection);
 
       let cardsHtml = '';
       if(filtered.length === 0) {
-        cardsHtml = '<div style="text-align:center; padding:30px; color:#64748b; font-size:13px;">अभी कोई टेस्ट उपलब्ध नहीं है। Admin से नया टेस्ट जोड़ें।</div>';
+        cardsHtml = '<div style="text-align:center; padding:30px; color:#64748b; font-size:13px;">इस सेक्शन में अभी कोई टेस्ट नहीं है। Admin से नया टेस्ट जोड़ें।</div>';
       } else {
         filtered.forEach(t => {
-          const idx = allTests.findIndex(item => item.id === t.id);
+          const originalIndex = allTests.findIndex(item => item.id === t.id);
           cardsHtml += `
             <div class="card">
-              <span class="tag">${t.section}</span>
-              <h3 style="font-size: 15px; margin-bottom: 4px;">${t.title}</h3>
-              <p style="font-size: 12px; color: #64748b; margin-bottom: 10px;">${t.desc || ''}</p>
+              <span class="tag">${t.section || 'सामान्य'}</span>
+              <h3 style="font-size: 16px; margin-bottom: 6px;">${t.title}</h3>
+              <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">${t.desc || ''}</p>
               <div class="card-footer">
-                <span style="font-size: 11px; color: #475569;">⏱️ ${t.time} मिनट | 📝 ${t.questions.length} प्रश्न</span>
-                <button class="btn-primary" onclick="startTest(${idx})">शुरू करें →</button>
+                <span style="font-size: 12px; color: #475569; font-weight: 600;">⏱️ ${t.time} मिनट &nbsp;|&nbsp; 📝 ${t.questions.length} प्रश्न</span>
+                <button class="btn-primary" onclick="startTest(${originalIndex})">टेस्ट शुरू करें →</button>
               </div>
-            </div>`;
+            </div>
+          `;
         });
       }
 
       document.getElementById('app').innerHTML = `
         <div class="banner">
-          <h2 style="font-size: 16px; margin-bottom:4px;">Political Science Exam Portal</h2>
-          <p style="font-size: 12px; opacity:0.9;">RPSC, Assistant Professor, UP, DSSSB Quiz Series</p>
+          <span>Exam Prep Series</span>
+          <h2>Political science for RPSC school lecturer, assistant Professor, UP assistant Professor, DSSSB school lecturer etc.</h2>
+          <p>Best questions for each topic and try to boost your preparation.</p>
         </div>
         <div class="tabs-wrapper">${tabsHtml}</div>
+        <div style="font-weight: 700; margin-bottom: 12px; font-size: 15px; color:#1e293b;">
+          ${selectedSection === 'All' ? 'सभी उपलब्ध टेस्ट' : selectedSection + ' - टेस्ट श्रृंखला'} (${filtered.length})
+        </div>
         ${cardsHtml}
       `;
     }
 
+    function filterSection(secName) {
+      selectedSection = secName;
+      showHome();
+    }
+
     function startTest(index) {
       currentQuiz = allTests[index];
-      cur = 0; answers = {}; sec = currentQuiz.time * 60;
+      cur = 0;
+      answers = {};
+      sec = currentQuiz.time * 60;
       if(timer) clearInterval(timer);
       timer = setInterval(() => {
         sec--;
         const el = document.getElementById('tm');
-        if(el) el.innerText = `⏳ ${Math.floor(sec/60)}:${sec%60 < 10 ? '0':''}${sec%60}`;
-        if(sec <= 0) { clearInterval(timer); finishTest(); }
+        if(el) {
+          const m = Math.floor(sec / 60);
+          const s = sec % 60;
+          el.innerText = `⏳ ${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+        if(sec <= 0) {
+          clearInterval(timer);
+          finishTest();
+        }
       }, 1000);
       renderQ();
     }
 
     function renderQ() {
       const q = currentQuiz.questions[cur];
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
       let optH = '';
       q.opt.forEach((o, i) => {
-        optH += `<button class="opt-btn ${answers[cur] === i ? 'selected':''}" onclick="answers[${cur}]=${i}; renderQ();"><span>${String.fromCharCode(65+i)}. ${o}</span> ${answers[cur] === i ? '✓':''}</button>`;
+        const sel = answers[cur] === i ? 'selected' : '';
+        optH += `
+          <button class="opt-btn ${sel}" onclick="pick(${i})">
+            <div style="display:flex; align-items:center;">
+              <span class="opt-badge">${String.fromCharCode(65 + i)}</span>
+              <span>${o}</span>
+            </div>
+            ${sel ? '<span style="font-weight:bold; color:#2563eb;">✓</span>' : ''}
+          </button>
+        `;
       });
 
       document.getElementById('app').innerHTML = `
         <div class="card">
-          <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:12px;">
-            <span style="font-weight:700; color:#2563eb;">${currentQuiz.section}</span>
-            <span id="tm" style="font-weight:700;">⏳ ${Math.floor(sec/60)}:${sec%60 < 10 ? '0':''}${sec%60}</span>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:12px; font-weight:700; color:#2563eb;">${currentQuiz.section || 'सामान्य'}</span>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <span id="tm" style="font-weight:700; font-size:13px; background:#eff6ff; color:#1e40af; padding:4px 8px; border-radius:6px;">⏳ ${m}:${s < 10 ? '0' : ''}${s}</span>
+              <button onclick="if(confirm('टेस्ट छोड़ना चाहते हैं?')) showHome()" style="background:none; border:none; color:#ef4444; font-size:12px; font-weight:700; cursor:pointer;">छोड़ें</button>
+            </div>
           </div>
-          <div style="font-size:12px; color:#64748b; margin-bottom:6px;">प्रश्न ${cur+1} / ${currentQuiz.questions.length}</div>
-          <h3 style="font-size:15px; margin-bottom:12px;">${q.q}</h3>
+          <div class="prog-bg"><div class="prog-bar" style="width: ${((cur + 1)/currentQuiz.questions.length)*100}%"></div></div>
+          <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:6px;">प्रश्न ${cur + 1} / ${currentQuiz.questions.length}</div>
+          <h3 style="font-size:15px; line-height:1.5; margin-bottom:14px;">${q.q}</h3>
           <div>${optH}</div>
           <div class="card-footer">
-            <button class="btn-outline" ${cur===0?'disabled style="opacity:0.3"':''} onclick="cur--; renderQ();">← पिछला</button>
-            ${cur < currentQuiz.questions.length-1 ? `<button class="btn-primary" onclick="cur++; renderQ();">अगला →</button>` : `<button class="btn-success" onclick="finishTest()">सबमिट ✓</button>`}
+            <button class="btn-outline" ${cur === 0 ? 'disabled style="opacity:0.3"' : ''} onclick="prevQ()">← पिछला</button>
+            ${cur < currentQuiz.questions.length - 1 ? 
+              `<button class="btn-primary" onclick="nextQ()">अगला प्रश्न →</button>` : 
+              `<button class="btn-success" onclick="finishTest()">सबमिट करें ✓</button>`}
           </div>
-        </div>`;
+        </div>
+      `;
     }
+
+    function pick(i) { answers[cur] = i; renderQ(); }
+    function nextQ() { if(cur < currentQuiz.questions.length - 1) { cur++; renderQ(); } }
+    function prevQ() { if(cur > 0) { cur--; renderQ(); } }
 
     function finishTest() {
       if(timer) clearInterval(timer);
       let cor = 0;
       currentQuiz.questions.forEach((q, i) => { if(answers[i] === q.ans) cor++; });
+
+      let listH = '';
+      currentQuiz.questions.forEach((q, i) => {
+        const u = answers[i];
+        const isCor = u === q.ans;
+        listH += `
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px; margin-bottom:8px; font-size:12px;">
+            <div style="font-weight:700; margin-bottom:4px;">${i + 1}. ${q.q}</div>
+            <div style="color:${isCor ? '#059669':'#dc2626'}; font-weight:700;">आपका उत्तर: ${u !== undefined ? q.opt[u] : 'नहीं दिया'} ${isCor ? '✓' : '✗'}</div>
+            ${!isCor ? `<div style="color:#0f172a; font-weight:600;">सही उत्तर: ${q.opt[q.ans]}</div>` : ''}
+            <div style="color:#64748b; font-style:italic; margin-top:2px;">व्याख्या: ${q.exp || 'उपलब्ध नहीं'}</div>
+          </div>
+        `;
+      });
+
       document.getElementById('app').innerHTML = `
         <div class="card" style="text-align:center;">
-          <h3>परीक्षण परिणाम</h3>
-          <div style="font-size:28px; font-weight:800; color:#2563eb; margin:14px 0;">${cor} / ${currentQuiz.questions.length}</div>
-          <button class="btn-primary" onclick="showHome()">होम पेज</button>
-        </div>`;
+          <h2 style="font-size:20px; margin-bottom:12px;">परीक्षण परिणाम</h2>
+          <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:16px; margin-bottom:16px;">
+            <div style="font-size:11px; text-transform:uppercase; color:#64748b; font-weight:700;">अंक (Score)</div>
+            <div style="font-size:32px; font-weight:900; color:#1d4ed8;">${cor} <span style="font-size:16px; color:#94a3b8; font-weight:400;">/ ${currentQuiz.questions.length}</span></div>
+          </div>
+          <div style="text-align:left; margin-bottom:16px;">
+            <h4 style="font-size:13px; margin-bottom:8px;">प्रश्नों का विवरण एवं व्याख्या:</h4>
+            ${listH}
+          </div>
+          <button class="btn-primary" onclick="showHome()">होम पेज पर जाएं</button>
+        </div>
+      `;
     }
 
+    // ADMIN PANEL FUNCTIONS
     function openAdmin() {
-      if (prompt('Admin PIN (1234):') === '1234') renderAdminHome();
+      const pin = prompt('Admin PIN दर्ज करें (PIN: 1234):');
+      if (pin === '1234') {
+        renderAdminHome();
+      } else if (pin !== null) {
+        alert('गलत पिन!');
+      }
     }
 
     function renderAdminHome() {
       let testListHtml = '';
       allTests.forEach((t) => {
         testListHtml += `
-          <div style="background:#fff; border:1px solid #cbd5e1; border-radius:6px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
-            <div><b>${t.title}</b><div style="font-size:11px; color:#64748b;">${t.section} · ${t.questions.length} प्रश्न</div></div>
-            <button class="btn-danger" onclick="if(confirm('हटाएं?')){ allTests=allTests.filter(x=>x.id!=='${t.id}'); saveToCloud(); renderAdminHome(); }">Delete</button>
-          </div>`;
+          <div style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <div>
+              <span class="tag" style="margin-bottom:2px;">${t.section || 'सामान्य'}</span>
+              <div style="font-weight:700; font-size:14px; color:#1e293b;">${t.title}</div>
+              <div style="font-size:11px; color:#64748b;">${t.questions.length} प्रश्न &nbsp;·&nbsp; ${t.time} मिनट</div>
+            </div>
+            <div style="display:flex; gap:6px;">
+              <button class="btn-outline" style="border-color:#2563eb; color:#2563eb;" onclick="changeSectionPrompt('${t.id}')">📁 Section बदलें</button>
+              <button class="btn-outline" style="border-color:#059669; color:#059669;" onclick="loadTestForEdit('${t.id}')">✏️ Edit</button>
+              <button class="btn-danger" onclick="deleteTest('${t.id}')">🗑️ Delete</button>
+            </div>
+          </div>
+        `;
       });
 
       document.getElementById('app').innerHTML = `
         <div class="card">
-          <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
-            <h3>⚙️ Admin Panel</h3>
-            <button class="btn-outline" onclick="showHome()">✕ बंद करें</button>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid #e2e8f0; padding-bottom:8px;">
+            <h2 style="font-size:18px; font-weight:800;">⚙️ Cloud Admin Control</h2>
+            <button class="btn-outline" onclick="showHome()">✕ बाहर निकलें</button>
           </div>
-          <div style="background:#f8fafc; border:1px dashed #2563eb; padding:10px; border-radius:8px; margin-bottom:12px;">
-            <div style="font-size:12px; font-weight:700; color:#1e40af; margin-bottom:4px;">📋 JSON Paste करके सभी के लिए जोड़ें:</div>
-            <textarea id="raw-json-paste" class="form-control" style="min-height:70px; font-family:monospace;" placeholder="यहाँ JSON कोड पेस्ट करें..."></textarea>
-            <button class="btn-primary" style="margin-top:6px; width:100%;" onclick="importFromPasteBox()">☁️ क्लाउड पर लाइव करें</button>
+
+          <button class="btn-success" style="width:100%; padding:12px; font-size:14px; margin-bottom:14px;" onclick="startNewTestForm()">
+            + बिल्कुल नया टेस्ट बनाएं (Form)
+          </button>
+
+          <!-- DIRECT PASTE BOX -->
+          <div style="background:#f8fafc; border:1px dashed #2563eb; padding:12px; border-radius:8px; margin-bottom:16px;">
+            <div style="font-weight:700; font-size:13px; color:#1e40af; margin-bottom:6px;">📋 JSON Text Paste करके सभी के लिए जोड़ें:</div>
+            <textarea id="raw-json-paste" class="form-control" style="min-height:80px; font-family:monospace; font-size:12px;" placeholder="यहाँ चैट से कॉपी किया गया डेटा पेस्ट करें..."></textarea>
+            <button class="btn-primary" style="margin-top:8px; width:100%;" onclick="importFromPasteBox()">☁️ क्लाउड पर सेव करें (सभी के लिए लाइव)</button>
           </div>
-          <h4 style="margin-bottom:8px; font-size:13px;">उपलब्ध टेस्ट्स (${allTests.length}):</h4>
-          ${testListHtml}
-        </div>`;
+
+          <h3 style="font-size:14px; font-weight:700; margin-bottom:10px; color:#334155;">सभी उपलब्ध टेस्ट्स (${allTests.length}):</h3>
+          ${testListHtml || '<div style="color:#64748b; font-size:13px;">कोई टेस्ट नहीं है।</div>'}
+        </div>
+      `;
+    }
+
+    async function changeSectionPrompt(id) {
+      const target = allTests.find(t => t.id === id);
+      if(!target) return;
+      const newSec = prompt(`'${target.title}' के लिए नया Section नाम लिखें:`, target.section || 'कौटिल्य');
+      if(newSec && newSec.trim()) {
+        target.section = newSec.trim();
+        await saveToCloud();
+        renderAdminHome();
+      }
     }
 
     async function importFromPasteBox() {
       const txt = document.getElementById('raw-json-paste').value.trim();
-      if(!txt) return alert('डेटा पेस्ट करें!');
+      if(!txt) return alert('कृपया पहले बॉक्स में डेटा पेस्ट करें!');
       try {
-        const item = JSON.parse(txt);
-        let list = Array.isArray(item) ? item : [item];
-        list.forEach(n => {
-          const idx = allTests.findIndex(x => x.id === n.id || x.title === n.title);
-          if(idx !== -1) allTests[idx] = n; else allTests.push(n);
+        const imported = JSON.parse(txt);
+        let listToAdd = Array.isArray(imported) ? imported : [imported];
+        
+        listToAdd.forEach(newT => {
+          if(!newT.section) newT.section = 'सामान्य';
+          const existingIdx = allTests.findIndex(x => x.id === newT.id || x.title === newT.title);
+          if(existingIdx !== -1) {
+            allTests[existingIdx] = newT;
+          } else {
+            allTests.push(newT);
+          }
         });
+
         await saveToCloud();
         renderAdminHome();
-      } catch(e) { alert('गलत JSON फॉर्मेट!'); }
+      } catch(e) {
+        alert('डेटा सही नहीं है! पूरा कोड कॉपी करें।');
+      }
+    }
+
+    async function deleteTest(id) {
+      if(!confirm('क्या आप सच में यह टेस्ट हटाना चाहते हैं?')) return;
+      allTests = allTests.filter(t => t.id !== id);
+      await saveToCloud();
+      renderAdminHome();
+    }
+
+    function startNewTestForm() {
+      editingTestId = null;
+      draftQuestions = [];
+      renderTestFormUI('नया टेस्ट बनाएं', '', 'कौटिल्य', 15, '');
+    }
+
+    function loadTestForEdit(id) {
+      editingTestId = id;
+      const target = allTests.find(t => t.id === id);
+      draftQuestions = JSON.parse(JSON.stringify(target.questions));
+      renderTestFormUI('टेस्ट Edit करें', target.title, target.section || 'कौटिल्य', target.time, target.desc);
+    }
+
+    function renderTestFormUI(heading, titleVal, secVal, timeVal, descVal) {
+      let qListHtml = '';
+      draftQuestions.forEach((dq, i) => {
+        qListHtml += `
+          <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:8px; margin-bottom:6px; font-size:12px; display:flex; justify-content:space-between; align-items:center;">
+            <span><b>Q${i+1}:</b> ${dq.q.substring(0, 32)}... (उत्तर: Opt ${String.fromCharCode(65 + dq.ans)})</span>
+            <div style="display:flex; gap:4px;">
+              <button class="btn-danger" style="padding:2px 6px; font-size:10px;" onclick="draftQuestions.splice(${i}, 1); reRenderForm();">हटाएं</button>
+            </div>
+          </div>
+        `;
+      });
+
+      document.getElementById('app').innerHTML = `
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid #e2e8f0; padding-bottom:8px;">
+            <h2 style="font-size:16px; font-weight:800;">${heading}</h2>
+            <button class="btn-outline" onclick="renderAdminHome()">← वापस</button>
+          </div>
+
+          <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:14px;">
+            <div class="form-group">
+              <label>1. टेस्ट का नाम (Title)</label>
+              <input type="text" id="t-title" class="form-control" value="${titleVal}" placeholder="उदा. कौटिल्य : टेस्ट - 04">
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <div class="form-group">
+                <label>2. सेक्शन / विचारक (Section Name)</label>
+                <input type="text" id="t-sec" class="form-control" value="${secVal}" placeholder="उदा. प्लेटो / कौटिल्य">
+              </div>
+              <div class="form-group">
+                <label>समय (मिनट)</label>
+                <input type="number" id="t-time" class="form-control" value="${timeVal}">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>विवरण (Description)</label>
+              <input type="text" id="t-desc" class="form-control" value="${descVal}">
+            </div>
+          </div>
+
+          <div style="border:1px dashed #2563eb; background:#eff6ff; padding:12px; border-radius:8px; margin-bottom:14px;">
+            <div style="font-weight:700; font-size:13px; margin-bottom:8px; color:#1e40af;">+ प्रश्न जोड़ें:</div>
+            <div class="form-group">
+              <label>प्रश्न लिखें</label>
+              <textarea id="q-txt" class="form-control"></textarea>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <div class="form-group"><label>विकल्प A</label><input type="text" id="op-a" class="form-control"></div>
+              <div class="form-group"><label>विकल्प B</label><input type="text" id="op-b" class="form-control"></div>
+              <div class="form-group"><label>विकल्प C</label><input type="text" id="op-c" class="form-control"></div>
+              <div class="form-group"><label>विकल्प D</label><input type="text" id="op-d" class="form-control"></div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <div class="form-group">
+                <label>सही उत्तर</label>
+                <select id="op-ans" class="form-control">
+                  <option value="0">विकल्प A</option>
+                  <option value="1">विकल्प B</option>
+                  <option value="2">विकल्प C</option>
+                  <option value="3">विकल्प D</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>व्याख्या (Optional)</label>
+                <input type="text" id="q-exp" class="form-control">
+              </div>
+            </div>
+            <button class="btn-primary" style="width:100%;" onclick="addQuestionBtn()">+ इस प्रश्न को जोड़ें</button>
+          </div>
+
+          <div style="margin-bottom:14px;">
+            <div style="font-size:12px; font-weight:700; color:#475569; margin-bottom:6px;">जोड़े गए प्रश्न (${draftQuestions.length}):</div>
+            ${qListHtml || '<div style="font-size:12px; color:#94a3b8;">कोई प्रश्न नहीं है।</div>'}
+          </div>
+
+          <button class="btn-success" style="width:100%; font-size:15px; padding:12px;" onclick="saveTestFinal()">
+            ☁️ क्लाउड पर सेव करें (सभी के लिए लाइव)
+          </button>
+        </div>
+      `;
+    }
+
+    function reRenderForm() {
+      const title = document.getElementById('t-title').value;
+      const sec = document.getElementById('t-sec').value;
+      const time = document.getElementById('t-time').value;
+      const desc = document.getElementById('t-desc').value;
+      renderTestFormUI(editingTestId ? 'टेस्ट Edit करें' : 'नया टेस्ट बनाएं', title, sec, time, desc);
+    }
+
+    function addQuestionBtn() {
+      const q = document.getElementById('q-txt').value.trim();
+      const a = document.getElementById('op-a').value.trim();
+      const b = document.getElementById('op-b').value.trim();
+      const c = document.getElementById('op-c').value.trim();
+      const d = document.getElementById('op-d').value.trim();
+      const ans = parseInt(document.getElementById('op-ans').value);
+      const exp = document.getElementById('q-exp').value.trim();
+
+      if (!q || !a || !b || !c || !d) return alert('कृपया प्रश्न और चारों विकल्प भरें!');
+      draftQuestions.push({ q, opt: [a, b, c, d], ans, exp });
+      reRenderForm();
+    }
+
+    async function saveTestFinal() {
+      const title = document.getElementById('t-title').value.trim();
+      const secVal = document.getElementById('t-sec').value.trim() || 'सामान्य';
+      const time = parseInt(document.getElementById('t-time').value) || 15;
+      const desc = document.getElementById('t-desc').value.trim() || 'Mock Test';
+
+      if (!title) return alert('टेस्ट का नाम लिखना ज़रूरी है!');
+      if (draftQuestions.length === 0) return alert('कम से कम 1 प्रश्न जोड़ना ज़रूरी है!');
+
+      const newTestObj = {
+        id: editingTestId || ('test-' + Date.now()),
+        title,
+        section: secVal,
+        time,
+        desc,
+        questions: draftQuestions
+      };
+
+      if (editingTestId) {
+        const idx = allTests.findIndex(t => t.id === editingTestId);
+        if(idx !== -1) allTests[idx] = newTestObj;
+      } else {
+        allTests.push(newTestObj);
+      }
+
+      await saveToCloud();
+      showHome();
     }
 
     loadCloudData();
