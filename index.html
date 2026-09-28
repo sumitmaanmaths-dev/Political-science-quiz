@@ -6,13 +6,13 @@
   <title>Political Science Quiz Portal</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: #f1f5f9; color: #0f172a; min-height: 100vh; display: flex; flex-direction: column; }
+    body { background-color: #f8fafc; color: #0f172a; min-height: 100vh; display: flex; flex-direction: column; }
     header { background: #ffffff; border-bottom: 1px solid #cbd5e1; padding: 12px 16px; position: sticky; top: 0; z-index: 50; }
-    .header-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .header-inner { max-width: 900px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
     .logo-box { display: flex; align-items: center; gap: 10px; cursor: pointer; }
     .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #1d4ed8, #4338ca); color: #fff; font-weight: 800; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
     .btn-admin { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 12px; font-weight: 700; padding: 7px 14px; border-radius: 6px; cursor: pointer; }
-    main { max-width: 800px; width: 100%; margin: 0 auto; padding: 16px; flex: 1; }
+    main { max-width: 900px; width: 100%; margin: 0 auto; padding: 16px; flex: 1; }
     .banner { background: linear-gradient(135deg, #1e40af, #3730a3); color: #fff; padding: 20px; border-radius: 12px; margin-bottom: 18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
     .banner span { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #93c5fd; font-weight: 700; }
     .banner h2 { font-size: 17px; margin: 8px 0; line-height: 1.4; }
@@ -22,21 +22,33 @@
     .tab-btn.active { background: #2563eb; color: #ffffff; border-color: #2563eb; }
     .card { background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 18px; margin-bottom: 14px; }
     .tag { display: inline-block; background: #dbeafe; color: #1e40af; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 20px; margin-bottom: 8px; }
-    .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-top: 12px; }
+    .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-top: 12px; flex-wrap: wrap; gap: 8px; }
     .btn-primary { background: #2563eb; color: #fff; border: none; padding: 9px 18px; font-size: 13px; font-weight: 700; border-radius: 8px; cursor: pointer; }
     .btn-success { background: #059669; color: #fff; border: none; padding: 10px 18px; font-size: 14px; font-weight: 700; border-radius: 8px; cursor: pointer; }
     .btn-outline { background: #ffffff; color: #475569; border: 1px solid #cbd5e1; padding: 7px 12px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; }
+    .btn-warning { background: #fef3c7; color: #b45309; border: 1px solid #fcd34d; padding: 8px 14px; font-size: 12px; font-weight: 700; border-radius: 8px; cursor: pointer; }
     .btn-danger { background: #ef4444; color: #fff; border: none; padding: 6px 10px; font-size: 11px; font-weight: 700; border-radius: 6px; cursor: pointer; }
     .opt-btn { width: 100%; text-align: left; padding: 12px 14px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; margin-bottom: 10px; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
     .opt-btn.selected { border-color: #2563eb; background: #eff6ff; color: #1e40af; font-weight: 600; }
     .opt-badge { width: 26px; height: 26px; border-radius: 6px; background: #f1f5f9; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; margin-right: 8px; }
     .opt-btn.selected .opt-badge { background: #2563eb; color: #fff; }
-    .prog-bg { width: 100%; height: 6px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin: 8px 0 16px 0; }
-    .prog-bar { height: 100%; background: #2563eb; }
     .form-group { margin-bottom: 12px; text-align: left; }
     .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; color: #334155; }
     .form-control { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; }
     textarea.form-control { resize: vertical; min-height: 60px; }
+
+    /* Testbook Style Palette Modal / Drawer */
+    .palette-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 99; display: none; }
+    .palette-drawer { position: fixed; top: 0; right: -320px; width: 320px; height: 100vh; background: #ffffff; z-index: 100; transition: right 0.3s ease; display: flex; flex-direction: column; box-shadow: -4px 0 12px rgba(0,0,0,0.15); }
+    .palette-drawer.open { right: 0; }
+    .palette-header { padding: 14px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 15px; }
+    .palette-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-size: 11px; font-weight: 700; }
+    .palette-grid { padding: 14px; overflow-y: auto; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; flex: 1; }
+    .palette-item { height: 38px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; cursor: pointer; border: 1px solid #cbd5e1; background: #f1f5f9; color: #475569; }
+    .palette-item.ans { background: #10b981; color: #fff; border-color: #059669; }
+    .palette-item.review { background: #8b5cf6; color: #fff; border-color: #7c3aed; }
+    .palette-item.unans { background: #ef4444; color: #fff; border-color: #dc2626; }
+    .palette-item.current { outline: 3px solid #2563eb; }
   </style>
 </head>
 <body>
@@ -58,6 +70,17 @@
     <div style="text-align:center; padding:50px; color:#64748b; font-weight:700;">डेटा लोड हो रहा है...</div>
   </main>
 
+  <!-- Side Slide Question Palette Drawer -->
+  <div class="palette-overlay" id="palette-overlay" onclick="togglePalette()"></div>
+  <div class="palette-drawer" id="palette-drawer">
+    <div class="palette-header">
+      <span>Question Palette (150)</span>
+      <button onclick="togglePalette()" style="background:none; border:none; font-size:18px; cursor:pointer;">✕</button>
+    </div>
+    <div class="palette-summary" id="palette-summary"></div>
+    <div class="palette-grid" id="palette-grid"></div>
+  </div>
+
   <script>
     const FIREBASE_DB_URL = "https://political-science-quiz-6bfb1-default-rtdb.firebaseio.com";
 
@@ -66,6 +89,8 @@
     let currentQuiz = null;
     let cur = 0;
     let answers = {};
+    let visited = {};
+    let markedReview = {};
     let timer = null;
     let sec = 0;
 
@@ -123,7 +148,7 @@
 
       let cardsHtml = '';
       if(filtered.length === 0) {
-        cardsHtml = '<div style="text-align:center; padding:30px; color:#64748b; font-size:13px; background:#fff; border-radius:10px; border:1px dashed #cbd5e1;">इस सेक्शन में अभी कोई टेस्ट नहीं है। ऊपर <b>⚙️ Admin</b> बटन दबाकर नया टेस्ट जोड़ें।</div>';
+        cardsHtml = '<div style="text-align:center; padding:30px; color:#64748b; font-size:13px; background:#fff; border-radius:10px; border:1px dashed #cbd5e1;">इस सेक्शन में अभी कोई टेस्ट नहीं है।</div>';
       } else {
         filtered.forEach(t => {
           const originalIndex = allTests.findIndex(item => item.id === t.id);
@@ -167,6 +192,8 @@
       }
       cur = 0;
       answers = {};
+      visited = { 0: true };
+      markedReview = {};
       sec = (currentQuiz.time || 15) * 60;
       if(timer) clearInterval(timer);
       timer = setInterval(() => {
@@ -186,9 +213,14 @@
     }
 
     function renderQ() {
+      visited[cur] = true;
       const q = currentQuiz.questions[cur];
       const m = Math.floor(sec / 60);
       const s = sec % 60;
+
+      let answeredCount = Object.keys(answers).length;
+      let reviewCount = Object.keys(markedReview).filter(k => markedReview[k]).length;
+
       let optH = '';
       (q.opt || []).forEach((o, i) => {
         const sel = answers[cur] === i ? 'selected' : '';
@@ -205,30 +237,128 @@
 
       document.getElementById('app').innerHTML = `
         <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <span style="font-size:12px; font-weight:700; color:#2563eb;">${currentQuiz.section || 'सामान्य'}</span>
-            <div style="display:flex; gap:10px; align-items:center;">
-              <span id="tm" style="font-weight:700; font-size:13px; background:#eff6ff; color:#1e40af; padding:4px 8px; border-radius:6px;">⏳ ${m}:${s < 10 ? '0' : ''}${s}</span>
-              <button onclick="if(confirm('टेस्ट छोड़ना चाहते हैं?')) showHome()" style="background:none; border:none; color:#ef4444; font-size:12px; font-weight:700; cursor:pointer;">छोड़ें</button>
+          <!-- Top Bar: Timer, Info & Side Drawer Button -->
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <button class="btn-outline" style="border-color:#2563eb; color:#2563eb; font-weight:800;" onclick="togglePalette()">
+                📑 प्रश्न सूची (${cur + 1}/${currentQuiz.questions.length})
+              </button>
+              <span id="tm" style="font-weight:800; font-size:13px; background:#eff6ff; color:#1e40af; padding:5px 10px; border-radius:6px;">⏳ ${m}:${s < 10 ? '0' : ''}${s}</span>
             </div>
+            <button onclick="if(confirm('टेस्ट छोड़ना चाहते हैं?')) showHome()" style="background:none; border:none; color:#ef4444; font-size:12px; font-weight:700; cursor:pointer;">✕ टेस्ट छोड़ें</button>
           </div>
-          <div class="prog-bg"><div class="prog-bar" style="width: ${((cur + 1)/currentQuiz.questions.length)*100}%"></div></div>
-          <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:6px;">प्रश्न ${cur + 1} / ${currentQuiz.questions.length}</div>
-          <h3 style="font-size:15px; line-height:1.5; margin-bottom:14px;">${q.q}</h3>
+
+          <!-- Quick Testbook Status Pill Counters -->
+          <div style="display:flex; gap:6px; margin-bottom:14px; font-size:11px; font-weight:700; flex-wrap:wrap;">
+            <span style="background:#d1fae5; color:#065f46; padding:4px 8px; border-radius:12px;">🟢 हल किए: ${answeredCount}</span>
+            <span style="background:#ede9fe; color:#5b21b6; padding:4px 8px; border-radius:12px;">🟣 Review: ${reviewCount}</span>
+            <span style="background:#fee2e2; color:#991b1b; padding:4px 8px; border-radius:12px;">🔴 शेष: ${currentQuiz.questions.length - answeredCount}</span>
+          </div>
+
+          <div style="font-size:13px; color:#64748b; font-weight:800; margin-bottom:6px;">प्रश्न ${cur + 1} / ${currentQuiz.questions.length}</div>
+          <h3 style="font-size:15px; line-height:1.6; margin-bottom:14px;">${q.q}</h3>
           <div>${optH}</div>
+
+          <!-- Footer Action Buttons -->
           <div class="card-footer">
-            <button class="btn-outline" ${cur === 0 ? 'disabled style="opacity:0.3"' : ''} onclick="prevQ()">← पिछला</button>
-            ${cur < currentQuiz.questions.length - 1 ? 
-              `<button class="btn-primary" onclick="nextQ()">अगला प्रश्न →</button>` : 
-              `<button class="btn-success" onclick="finishTest()">सबमिट करें ✓</button>`}
+            <div style="display:flex; gap:6px;">
+              <button class="btn-outline" ${cur === 0 ? 'disabled style="opacity:0.3"' : ''} onclick="prevQ()">← पिछला</button>
+              <button class="btn-warning" onclick="toggleReviewCurrent()">
+                ${markedReview[cur] ? '★ Marked for Review' : '☆ Mark for Review'}
+              </button>
+            </div>
+            <div style="display:flex; gap:6px;">
+              ${cur < currentQuiz.questions.length - 1 ? 
+                `<button class="btn-primary" onclick="nextQ()">अगला प्रश्न →</button>` : 
+                `<button class="btn-success" onclick="finishTest()">सबमिट करें ✓</button>`}
+            </div>
           </div>
         </div>
       `;
+
+      updatePaletteUI();
     }
 
-    function pick(i) { answers[cur] = i; renderQ(); }
-    function nextQ() { if(cur < currentQuiz.questions.length - 1) { cur++; renderQ(); } }
-    function prevQ() { if(cur > 0) { cur--; renderQ(); } }
+    function pick(i) {
+      if(answers[cur] === i) {
+        delete answers[cur]; // Unselect if tapped again
+      } else {
+        answers[cur] = i;
+      }
+      renderQ();
+    }
+
+    function toggleReviewCurrent() {
+      markedReview[cur] = !markedReview[cur];
+      renderQ();
+    }
+
+    function nextQ() {
+      if(cur < currentQuiz.questions.length - 1) {
+        cur++;
+        renderQ();
+      }
+    }
+
+    function prevQ() {
+      if(cur > 0) {
+        cur--;
+        renderQ();
+      }
+    }
+
+    function jumpToQ(index) {
+      cur = index;
+      togglePalette();
+      renderQ();
+    }
+
+    function togglePalette() {
+      const drawer = document.getElementById('palette-drawer');
+      const overlay = document.getElementById('palette-overlay');
+      if (drawer.classList.contains('open')) {
+        drawer.classList.remove('open');
+        overlay.style.display = 'none';
+      } else {
+        updatePaletteUI();
+        drawer.classList.add('open');
+        overlay.style.display = 'block';
+      }
+    }
+
+    function updatePaletteUI() {
+      if(!currentQuiz) return;
+      const total = currentQuiz.questions.length;
+      let ansC = 0, revC = 0, unansC = 0, notVisC = 0;
+
+      let gridHtml = '';
+      for(let i = 0; i < total; i++) {
+        let cls = '';
+        if(markedReview[i]) {
+          cls = 'review';
+          revC++;
+        } else if(answers[i] !== undefined) {
+          cls = 'ans';
+          ansC++;
+        } else if(visited[i]) {
+          cls = 'unans';
+          unansC++;
+        } else {
+          notVisC++;
+        }
+
+        if(i === cur) cls += ' current';
+        gridHtml += `<div class="palette-item ${cls}" onclick="jumpToQ(${i})">${i + 1}</div>`;
+      }
+
+      document.getElementById('palette-summary').innerHTML = `
+        <span style="color:#059669;">🟢 हल किए: ${ansC}</span>
+        <span style="color:#7c3aed;">🟣 Review: ${revC}</span>
+        <span style="color:#dc2626;">🔴 अनुत्तरित: ${unansC}</span>
+        <span style="color:#64748b;">⚪ नहीं देखे: ${notVisC}</span>
+      `;
+      document.getElementById('palette-grid').innerHTML = gridHtml;
+    }
 
     function finishTest() {
       if(timer) clearInterval(timer);
@@ -266,11 +396,11 @@
     }
 
     function openAdmin() {
-      const pin = prompt('Admin PIN दर्ज करें (1234):');
+      const pin = prompt('Admin PIN दर्ज करें:');
       if (pin === '7073') {
         renderAdminHome();
-      } else if (pin !== null) {
-        alert('गलत पिन! PIN 1234 है।');
+      } else if (pin !== galat pin) {
+        alert('गलत पिन! PIN 7073 है।');
       }
     }
 
@@ -283,7 +413,7 @@
               <span class="tag" style="margin-bottom:2px;">📁 ${t.section || 'सामान्य'}</span>
               <div style="font-weight:700; font-size:14px; color:#1e293b;">${t.title}</div>
               <div style="font-size:11px; color:#64748b;">${(t.questions || []).length} प्रश्न &nbsp;·&nbsp; ${t.time} मिनट</div>
-            </div>
+              </div>
             <div style="display:flex; gap:6px; flex-wrap:wrap;">
               <button class="btn-outline" style="border-color:#2563eb; color:#2563eb;" onclick="changeSectionPrompt('${t.id}')">📁 Section बदलें</button>
               <button class="btn-outline" style="border-color:#059669; color:#059669;" onclick="loadTestForEdit('${t.id}')">✏️ Edit</button>
@@ -300,7 +430,6 @@
             <button class="btn-outline" onclick="showHome()">✕ बाहर निकलें</button>
           </div>
 
-          <!-- DIRECT TARGET APPEND FILE UPLOADER -->
           <div style="background:#eff6ff; border:2px dashed #2563eb; padding:16px; border-radius:10px; margin-bottom:16px; text-align:center;">
             <div style="font-weight:800; font-size:14px; color:#1e40af; margin-bottom:6px;">🚀 फ़ाइल चुनें और प्रश्न जोड़ें (ऑटोमैटिक जुड़ेंगे)</div>
             <div style="font-size:12px; color:#64748b; margin-bottom:10px;">Part 1, Part 2... एक-एक करके चुनें, सब इसी टेस्ट में जुड़ते जाएँगे:</div>
@@ -561,3 +690,4 @@
   </script>
 </body>
 </html>
+   
