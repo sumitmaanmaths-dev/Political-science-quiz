@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Political Science Quiz Portal - RPSC, NET, Assistant Professor</title>
+  <title>Political Science Quiz Portal</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: #f1f5f9; color: #0f172a; min-height: 100vh; display: flex; flex-direction: column; }
@@ -19,8 +19,8 @@
     .banner p { font-size: 13px; color: #bfdbfe; }
     
     /* Category Filter Tabs */
-    .tabs-wrapper { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 14px; }
-    .tab-btn { background: #ffffff; border: 1px solid #cbd5e1; color: #475569; font-size: 13px; font-weight: 700; padding: 8px 14px; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: 0.2s; }
+    .tabs-wrapper { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 14px; -webkit-overflow-scrolling: touch; }
+    .tab-btn { background: #ffffff; border: 1px solid #cbd5e1; color: #475569; font-size: 13px; font-weight: 700; padding: 8px 16px; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: 0.2s; }
     .tab-btn.active { background: #2563eb; color: #ffffff; border-color: #2563eb; }
     
     .card { background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 18px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
@@ -28,7 +28,7 @@
     .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-top: 12px; }
     .btn-primary { background: #2563eb; color: #fff; border: none; padding: 9px 18px; font-size: 13px; font-weight: 700; border-radius: 8px; cursor: pointer; }
     .btn-success { background: #059669; color: #fff; border: none; padding: 10px 18px; font-size: 14px; font-weight: 700; border-radius: 8px; cursor: pointer; }
-    .btn-outline { background: #ffffff; color: #475569; border: 1px solid #cbd5e1; padding: 8px 14px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; }
+    .btn-outline { background: #ffffff; color: #475569; border: 1px solid #cbd5e1; padding: 7px 12px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; }
     .btn-danger { background: #ef4444; color: #fff; border: none; padding: 6px 10px; font-size: 11px; font-weight: 700; border-radius: 6px; cursor: pointer; }
     
     .opt-btn { width: 100%; text-align: left; padding: 12px 14px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; margin-bottom: 10px; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
@@ -38,7 +38,7 @@
     .prog-bg { width: 100%; height: 6px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin: 8px 0 16px 0; }
     .prog-bar { height: 100%; background: #2563eb; transition: width 0.3s; }
     
-    /* Form */
+    /* Form Inputs */
     .form-group { margin-bottom: 12px; text-align: left; }
     .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; color: #334155; }
     .form-control { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; }
@@ -63,57 +63,21 @@
   <main id="app"></main>
 
   <script>
-    const BUILTIN_TESTS = [
-      {
-        id: "test-kautilya-01",
-        title: "कौटिल्य (Kautilya) : टेस्ट - 01",
-        section: "कौटिल्य",
-        desc: "अर्थशास्त्र का स्वरूप, दण्डनीति, राजा-राज्य संबंध, मैक्स वेबर एवं अरस्तू से तुलना।",
-        time: 15,
-        questions: [
-          {
-            q: "अर्थशास्त्र के स्वरूप के संबंध में निम्नलिखित कथनों पर विचार करें:<br>I. धर्म को आर्थिक प्राप्ति का एक साधन माना गया है।<br>II. राज्य का प्राथमिक उद्देश्य नैतिक व्यवस्था की स्थापना करना है।<br>III. यह ग्रंथ शासन कला और यथार्थवाद पर आधारित है।",
-            opt: ["केवल I और II", "केवल II और III", "केवल I और III", "I, II और III"],
-            ans: 2,
-            exp: "अर्थशास्त्र शासन कला और यथार्थवादी दृष्टिकोण पर आधारित है जिसमें धर्म को साधन माना गया है।"
-          },
-          {
-            q: "मैक्स वेबर ने अर्थशास्त्र की तुलना मैकियावेली के 'प्रिंस' से करते हुए क्या निष्कर्ष निकाला?",
-            opt: ["अर्थशास्त्र एक सरल ग्रंथ है।", "अर्थशास्त्र में अधिक उग्र मैकियावेलीवाद विद्यमान है।", "दोनों ग्रंथ नैतिक दर्शन पर आधारित हैं।", "अर्थशास्त्र केवल नियमावली है।"],
-            ans: 1,
-            exp: "वेबर के अनुसार कौटिल्य में मैकियावेली से अधिक उग्र यथार्थवाद है।"
-          },
-          {
-            q: "कौटिल्य के अनुसार दंडनीति के कार्यों का सही क्रम क्या है?",
-            opt: ["रक्षा, प्राप्ति, वृद्धि, वितरण", "प्राप्ति, रक्षा, वृद्धि, वितरण", "वृद्धि, प्राप्ति, रक्षा, वितरण", "वितरण, प्राप्ति, रक्षा, वृद्धि"],
-            ans: 1,
-            exp: "दंडनीति कार्य: प्राप्ति, रक्षा, वृद्धि और वितरण।"
-          },
-          {
-            q: "कौटिल्य के अनुसार राज्य के लिए गरीबी निवारण क्यों आवश्यक है?",
-            opt: ["राजा की व्यक्तिगत प्रतिष्ठा हेतु", "साम्राज्य की सुरक्षा और स्थिरता हेतु", "कर संग्रह सरल बनाने हेतु", "धार्मिक अनुष्ठानों हेतु"],
-            ans: 1,
-            exp: "दरिद्रता आंतरिक विद्रोह और अशांति का मूल कारण बनती है।"
-          }
-        ]
-      }
-    ];
-
-    // SMART RECOVERY STORAGE
+    // Unified Persistent Database
     function getStore() {
-      // 1. Check all previous storage keys
-      const keys = ['pol_tests_custom', 'ps_tests_list', 'pol_sci_complete_db_v1', 'pol_sci_hybrid_store_v1', 'master_ps_quizzes'];
-      let foundList = [];
-
+      const keys = ['master_ps_quizzes', 'pol_tests_custom', 'ps_tests_list', 'pol_sci_complete_db_v1', 'pol_sci_hybrid_store_v1'];
+      let list = [];
       for(let k of keys) {
         const val = localStorage.getItem(k);
         if(val) {
           try {
-            const parsed = JSON.parse(val);
-            if(Array.isArray(parsed)) {
-              parsed.forEach(item => {
-                if(!foundList.some(f => f.title === item.title || f.id === item.id)) {
-                  foundList.push(item);
+            const arr = JSON.parse(val);
+            if(Array.isArray(arr)) {
+              arr.forEach(item => {
+                // Harmonize section name
+                if(!item.section) item.section = item.category || 'कौटिल्य';
+                if(!list.some(x => x.id === item.id || x.title === item.title)) {
+                  list.push(item);
                 }
               });
             }
@@ -121,16 +85,28 @@
         }
       }
 
-      // Add builtin if not present
-      BUILTIN_TESTS.forEach(b => {
-        if(!foundList.some(f => f.title === b.title || f.id === b.id)) {
-          foundList.push(b);
-        }
-      });
+      if(list.length === 0) {
+        list = [
+          {
+            id: "kautilya-default",
+            title: "कौटिल्य (Kautilya) : टेस्ट - 01",
+            section: "कौटिल्य",
+            desc: "अर्थशास्त्र का स्वरूप, दण्डनीति एवं सप्तांग सिद्धांत।",
+            time: 15,
+            questions: [
+              {
+                q: "कौटिल्य के अनुसार दंडनीति के कार्यों का सही क्रम क्या है?",
+                opt: ["रक्षा, प्राप्ति, वृद्धि, वितरण", "प्राप्ति, रक्षा, वृद्धि, वितरण", "वृद्धि, प्राप्ति, रक्षा, वितरण", "वितरण, प्राप्ति, रक्षा, वृद्धि"],
+                ans: 1,
+                exp: "दंडनीति कार्य: प्राप्ति, रक्षा, वृद्धि और वितरण।"
+              }
+            ]
+          }
+        ];
+      }
 
-      // Save permanently to unified key
-      localStorage.setItem('master_ps_quizzes', JSON.stringify(foundList));
-      return foundList;
+      localStorage.setItem('master_ps_quizzes', JSON.stringify(list));
+      return list;
     }
 
     function setStore(data) {
@@ -145,7 +121,7 @@
     let timer = null;
     let sec = 0;
 
-    let editingTestId = null; 
+    let editingTestId = null;
     let draftQuestions = [];
 
     // --- HOME SCREEN ---
@@ -153,21 +129,25 @@
       if(timer) clearInterval(timer);
       allTests = getStore();
 
+      // Collect all unique sections
       const sections = ['All'];
       allTests.forEach(t => {
-        const secName = t.section || 'अन्य';
-        if(!sections.includes(secName)) sections.push(secName);
+        const s = (t.section || 'अन्य').trim();
+        if(!sections.includes(s)) sections.push(s);
       });
 
+      // Render Tabs
       let tabsHtml = '';
-      sections.forEach(secName => {
-        const activeCls = (selectedSection === secName) ? 'active' : '';
-        tabsHtml += `<button class="tab-btn ${activeCls}" onclick="filterSection('${secName}')">${secName === 'All' ? 'सभी टेस्ट' : secName}</button>`;
+      sections.forEach(s => {
+        const activeCls = (selectedSection === s) ? 'active' : '';
+        const label = (s === 'All') ? 'सभी टेस्ट' : s;
+        tabsHtml += `<button class="tab-btn ${activeCls}" onclick="filterSection('${s}')">${label}</button>`;
       });
 
+      // Filtered Test List
       const filtered = (selectedSection === 'All') 
         ? allTests 
-        : allTests.filter(t => (t.section || 'अन्य') === selectedSection);
+        : allTests.filter(t => (t.section || 'अन्य').trim() === selectedSection);
 
       let cardsHtml = '';
       if(filtered.length === 0) {
@@ -311,7 +291,7 @@
       `;
     }
 
-    // --- ADMIN PANEL WITH RECOVERY & BACKUP ---
+    // --- ADMIN PANEL ---
     function openAdmin() {
       const pin = prompt('Admin PIN दर्ज करें (PIN: 1234):');
       if (pin === '1234') {
@@ -326,14 +306,15 @@
       let testListHtml = '';
       allTests.forEach((t) => {
         testListHtml += `
-          <div style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+          <div style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
             <div>
-              <span class="tag" style="margin-bottom:2px;">${t.section || 'General'}</span>
+              <span class="tag" style="margin-bottom:2px;">${t.section || 'अन्य'}</span>
               <div style="font-weight:700; font-size:14px; color:#1e293b;">${t.title}</div>
               <div style="font-size:11px; color:#64748b;">${t.questions.length} प्रश्न &nbsp;·&nbsp; ${t.time} मिनट</div>
             </div>
             <div style="display:flex; gap:6px;">
-              <button class="btn-outline" style="border-color:#2563eb; color:#2563eb;" onclick="loadTestForEdit('${t.id}')">✏️ Edit</button>
+              <button class="btn-outline" style="border-color:#2563eb; color:#2563eb;" onclick="quickMoveSection('${t.id}')">📁 Section बदलें</button>
+              <button class="btn-outline" style="border-color:#059669; color:#059669;" onclick="loadTestForEdit('${t.id}')">✏️ Edit</button>
               <button class="btn-danger" onclick="deleteTest('${t.id}')">🗑️ Delete</button>
             </div>
           </div>
@@ -348,7 +329,7 @@
           </div>
 
           <button class="btn-success" style="width:100%; padding:12px; font-size:14px; margin-bottom:12px;" onclick="startNewTestForm()">
-            + बिल्कुल नया टेस्ट बनाएं (Manual Add)
+            + बिल्कुल नया टेस्ट जोड़ें
           </button>
 
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:18px;">
@@ -356,41 +337,20 @@
             <button class="btn-outline" onclick="importDataFromFile()">📤 Backup Restore करें</button>
           </div>
 
-          <h3 style="font-size:14px; font-weight:700; margin-bottom:10px; color:#334155;">सभी टेस्ट्स की सूची (Edit / Manage):</h3>
+          <h3 style="font-size:14px; font-weight:700; margin-bottom:10px; color:#334155;">सभी टेस्ट्स (Section बदलें / सुधार करें):</h3>
           ${testListHtml}
         </div>
       `;
     }
 
-    function exportDataToFile() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allTests, null, 2));
-      const dlAnchor = document.createElement('a');
-      dlAnchor.setAttribute("href", dataStr);
-      dlAnchor.setAttribute("download", "political_science_tests_backup.json");
-      dlAnchor.click();
-    }
-
-    function importDataFromFile() {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = '.json';
-      input.onchange = e => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.onload = event => {
-          try {
-            const imported = JSON.parse(event.target.result);
-            if(Array.isArray(imported)) {
-              setStore(imported);
-              allTests = imported;
-              alert('सफलतापूर्वक बैकअप रीस्टोर हो गया!');
-              renderAdminHome();
-            }
-          } catch(err) { alert('गलत फाइल!'); }
-        };
-        reader.readAsText(file);
-      };
-      input.click();
+    function quickMoveSection(id) {
+      const target = allTests.find(t => t.id === id);
+      const newSec = prompt(`इस टेस्ट का नया सेक्शन (Section Name) लिखें:\n(उदा. कौटिल्य, प्लेटो, अरस्तू, संविधान)\nवर्तमान: "${target.section || 'अन्य'}"`, target.section || '');
+      if (newSec !== null && newSec.trim() !== '') {
+        target.section = newSec.trim();
+        setStore(allTests);
+        renderAdminHome();
+      }
     }
 
     function deleteTest(id) {
@@ -403,14 +363,14 @@
     function startNewTestForm() {
       editingTestId = null;
       draftQuestions = [];
-      renderTestFormUI('नया टेस्ट बनाएं', '', 'प्लेटो', 15, '');
+      renderTestFormUI('नया टेस्ट बनाएं', '', 'कौटिल्य', 15, '');
     }
 
     function loadTestForEdit(id) {
       editingTestId = id;
       const target = allTests.find(t => t.id === id);
       draftQuestions = JSON.parse(JSON.stringify(target.questions));
-      renderTestFormUI('टेस्ट Edit करें (सुधार करें)', target.title, target.section || 'सामान्य', target.time, target.desc);
+      renderTestFormUI('टेस्ट Edit करें (सुधार करें)', target.title, target.section || 'कौटिल्य', target.time, target.desc);
     }
 
     function renderTestFormUI(heading, titleVal, secVal, timeVal, descVal) {
@@ -436,13 +396,13 @@
 
           <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:14px;">
             <div class="form-group">
-              <label>टेस्ट का नाम (Title)</label>
-              <input type="text" id="t-title" class="form-control" value="${titleVal}" placeholder="उदा. प्लेटो (Plato) : टेस्ट - 01">
+              <label>1. टेस्ट का नाम (Title)</label>
+              <input type="text" id="t-title" class="form-control" value="${titleVal}" placeholder="उदा. कौटिल्य (Kautilya) : टेस्ट - 02">
             </div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
               <div class="form-group">
-                <label>सेक्शन / विचारक (Section / Tab)</label>
-                <input type="text" id="t-sec" class="form-control" value="${secVal}" placeholder="उदा. प्लेटो / कौटिल्य / अरस्तू">
+                <label>2. सेक्शन / विचारक (Section Name)</label>
+                <input type="text" id="t-sec" class="form-control" value="${secVal}" placeholder="उदा. कौटिल्य / प्लेटो / अरस्तू">
               </div>
               <div class="form-group">
                 <label>समय (मिनट)</label>
@@ -546,12 +506,12 @@
 
     function saveTestFinal() {
       const title = document.getElementById('t-title').value.trim();
-      const secVal = document.getElementById('t-sec').value.trim() || 'General';
+      const secVal = document.getElementById('t-sec').value.trim() || 'अन्य';
       const time = parseInt(document.getElementById('t-time').value) || 15;
       const desc = document.getElementById('t-desc').value.trim() || 'Political Science Test';
 
       if (!title) return alert('टेस्ट का नाम लिखना ज़रूरी है!');
-      if (draftQuestions.length === 0) return alert('टेस्ट में कम से कम 1 प्रश्न जोड़ना ज़रूरी है!');
+      if (draftQuestions.length === 0) return alert('कम से कम 1 प्रश्न जोड़ना ज़रूरी है!');
 
       if (editingTestId) {
         const targetIndex = allTests.findIndex(t => t.id === editingTestId);
@@ -580,6 +540,37 @@
       setStore(allTests);
       alert('सफलतापूर्वक सेव हो गया!');
       showHome();
+    }
+
+    function exportDataToFile() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allTests, null, 2));
+      const dlAnchor = document.createElement('a');
+      dlAnchor.setAttribute("href", dataStr);
+      dlAnchor.setAttribute("download", "political_science_tests_backup.json");
+      dlAnchor.click();
+    }
+
+    function importDataFromFile() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      input.onchange = e => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = event => {
+          try {
+            const imported = JSON.parse(event.target.result);
+            if(Array.isArray(imported)) {
+              setStore(imported);
+              allTests = imported;
+              alert('सफलतापूर्वक बैकअप रीस्टोर हो गया!');
+              renderAdminHome();
+            }
+          } catch(err) { alert('गलत फाइल!'); }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
     }
 
     // App Start
