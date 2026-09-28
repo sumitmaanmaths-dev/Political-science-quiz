@@ -63,6 +63,106 @@
   <main id="app"></main>
 
   <script>
+    // BUILT-IN MASTER DATA (Includes Kautilya Test 03 from Video)
+    const BUILTIN_DATA = [
+      {
+        id: "kautilya-01",
+        title: "कौटिल्य (Kautilya) : टेस्ट - 01",
+        section: "कौटिल्य",
+        desc: "अर्थशास्त्र का स्वरूप, दण्डनीति एवं सप्तांग सिद्धांत।",
+        time: 15,
+        questions: [
+          {
+            q: "कौटिल्य के अनुसार दंडनीति के कार्यों का सही क्रम क्या है?",
+            opt: ["रक्षा, प्राप्ति, वृद्धि, वितरण", "प्राप्ति, रक्षा, वृद्धि, वितरण", "वृद्धि, प्राप्ति, रक्षा, वितरण", "वितरण, प्राप्ति, रक्षा, वृद्धि"],
+            ans: 1,
+            exp: "दंडनीति कार्य: प्राप्ति, रक्षा, वृद्धि और वितरण।"
+          }
+        ]
+      },
+      {
+        id: "kautilya-03",
+        title: "कौटिल्य (Kautilya) : टेस्ट - 03",
+        section: "कौटिल्य",
+        desc: "प्रशासनिक इकाइयाँ, न्यायालय, गुप्तचर, सप्तांग सिद्धांत एवं विजय व्यवस्था।",
+        time: 15,
+        questions: [
+          {
+            q: "निम्नलिखित विभागाध्यक्षों और उनके संबंधित विभागों का सही मिलान कीजिए:<br>I. सीताध्यक्ष - कृषि भूमि<br>II. विवीताध्यक्ष - चरागाह भूमि<br>III. कुप्याध्यक्ष - वनोपज<br>IV. पण्य अध्यक्ष - व्यापार",
+            opt: ["सभी चार मिलान सही हैं", "केवल प्रथम तीन सही हैं", "केवल प्रथम दो सही हैं", "केवल प्रथम, तृतीय और चतुर्थ सही हैं"],
+            ans: 0,
+            exp: "सीताध्यक्ष कृषि, विवीताध्यक्ष चरागाह, कुप्याध्यक्ष वनोपज तथा पण्य अध्यक्ष व्यापार विभाग का प्रमुख होता है।"
+          },
+          {
+            q: "कौटिल्य के प्रशासनिक ढांचे में 'कंटक शोधन' और 'धर्मस्थीय' न्यायालयों के बीच मुख्य अंतर क्या है?",
+            opt: ["कंटक शोधन दीवानी और धर्मस्थीय फौजदारी", "कंटक शोधन फौजदारी और धर्मस्थीय दीवानी", "कंटक शोधन ग्रामीण और धर्मस्थीय शहरी", "कंटक शोधन कर और धर्मस्थीय भूमि"],
+            ans: 1,
+            exp: "धर्मस्थीय न्यायालय दीवानी मामलों के लिए तथा कंटक शोधन न्यायालय फौजदारी व राज्य विरोधी अपराधों के लिए होते थे।"
+          },
+          {
+            q: "प्रशासनिक इकाइयों के संदर्भ में निम्नलिखित कथनों पर विचार कीजिए:<br>I. स्थानीय न्यायालय 800 गांवों पर स्थित था।<br>II. द्रोणमुख न्यायालय 400 गांवों पर स्थित था।<br>III. खार्वटिक न्यायालय 200 गांवों पर स्थित था।",
+            opt: ["केवल प्रथम और द्वितीय सही हैं", "केवल द्वितीय और तृतीय सही हैं", "केवल प्रथम और तृतीय सही हैं", "तीनों कथन पूर्णतः सही हैं"],
+            ans: 3,
+            exp: "प्रशासनिक क्रम: 800 गांवों पर स्थानीय, 400 पर द्रोणमुख, 200 पर खार्वटिक तथा 10 गांवों पर संग्राहण।"
+          },
+          {
+            q: "अधिकारियों के कार्यों के संबंध में निम्नलिखित कथनों पर विचार कीजिए:<br>I. अंतर्वंशिक राजा का अंगरक्षक और अंतःपुर का प्रभारी था।<br>II. दौवारिक राजमहल का प्रधान रक्षक था।<br>III. अन्तपाल टकसाल का निरीक्षक था।",
+            opt: ["केवल प्रथम और द्वितीय सही हैं", "केवल द्वितीय और तृतीय सही हैं", "केवल प्रथम और तृतीय सही हैं", "तीनों कथन पूर्णतः सही हैं"],
+            ans: 0,
+            exp: "अन्तपाल सीमा रक्षक होता था, जबकि टकसाल का निरीक्षक लक्षणाध्यक्ष कहलाता था।"
+          },
+          {
+            q: "कौटिल्य के अनुसार 'दृष्य' और 'कंटक' अपराधियों के साथ व्यवहार में क्या अंतर है?",
+            opt: ["दृष्य को सार्वजनिक और कंटक को गुप्त", "कंटक को सार्वजनिक और दृष्य को गुप्त", "दोनों को समान रूप से सार्वजनिक दंड", "दोनों को केवल आर्थिक दंड का प्रावधान"],
+            ans: 1,
+            exp: "कंटक सामान्य अपराधी होते थे जिन्हें सार्वजनिक दंड दिया जाता था, जबकि दृष्य प्रभावशाली व उच्च पदस्थ द्रोही होते थे जिन्हें गुप्त उपायों से दंडित किया जाता था।"
+          },
+          {
+            q: "शिल्पियों, व्यापारियों और मजदूरों के समूहों को क्रमशः क्या कहा जाता था?",
+            opt: ["श्रेणी, निगम, संघ", "संघ, श्रेणी, सम्भूय समुत्थान", "सार्थक समुदाय, श्रेणी, संघ", "श्रेणी, संघ, सम्भूय समुत्थान"],
+            ans: 0,
+            exp: "शिल्पियों के समूह को श्रेणी, व्यापारियों को निगम तथा मजदूरों/कारीगरों के समूह को संघ कहा जाता था।"
+          },
+          {
+            q: "कौटिल्य के अनुसार न्याय व्यवस्था में प्रयुक्त कानूनों के चार प्रकारों में से कौन सा 'इतिहास से प्राप्त परंपराओं' को संदर्भित करता है?",
+            opt: ["धर्म", "चरित्र", "व्यवहार", "राज-शासन"],
+            ans: 1,
+            exp: "चरित्र का अर्थ इतिहास, पुरानी परंपराओं व प्रथाओं से प्राप्त नियमों से है।"
+          },
+          {
+            q: "कौटिल्य के सप्तांग सिद्धांत के अनुसार, राज्य के अंगों की शरीर के अंगों से तुलना के संदर्भ में निम्नलिखित में कौन सा युग्म सही सुमेलित है?",
+            opt: ["स्वामी - मस्तिष्क", "अमात्य - कान", "दुर्ग - भुजाएं", "मित्र - सिर"],
+            ans: 2,
+            exp: "सप्तांग तुलना: स्वामी-सिर, अमात्य-आँखें, दुर्ग-बाहु (भुजाएं), कोष-मुख, दण्ड-मस्तिष्क, मित्र-कान।"
+          },
+          {
+            q: "कौटिल्य के अनुसार एक 'चक्रवर्ती राजा' के लिए किन तीन बलों का होना अनिवार्य है?",
+            opt: ["बुद्धि, सेना, आर्थिक", "धर्म, अर्थ, काम", "साहस, दया, प्रज्ञा", "शिक्षा, परंपरा, न्याय"],
+            ans: 0,
+            exp: "चक्रवर्ती राजा के पास मन्त्र शक्ति (बुद्धि), प्रभु शक्ति (सेना/कोष) और उत्साह शक्ति का संतुलन आवश्यक है।"
+          },
+          {
+            q: "कौटिल्य द्वारा वर्णित राजाओं के प्रकारों में 'असुर विजयी' राजा की मुख्य विशेषता क्या थी?",
+            opt: ["केवल धन सेवा", "वचन का पालन", "भूमि पर अधिकार", "सर्वस्व का अपहरण"],
+            ans: 3,
+            exp: "धर्मविजयी राजा केवल अधीनता चाहता है, लोभविजयी भूमि व धन चाहता है, जबकि असुरविजयी राजा सर्वस्व का विनाश व अपहरण करता है।"
+          },
+          {
+            q: "कौटिल्य के अनुसार गणतंत्रों (गण) को प्रत्यक्ष युद्ध के बजाय अप्रत्यक्ष रूप से जीतना क्यों आसान है?",
+            opt: ["सैन्य दुर्बलता", "आंतरिक मतभेद", "आर्थिक विपन्नता", "नेतृत्व का अभाव"],
+            ans: 1,
+            exp: "कौटिल्य के अनुसार गणराज्यों में आंतरिक मतभेद व फूट डलवाना सबसे आसान और प्रभावी भेद-नीति है।"
+          },
+          {
+            q: "कौटिल्य के राज्य और राजा के संबंध में निम्नलिखित कथनों पर विचार करें:<br>I. राजा का पद आनुवंशिक होता है।<br>II. राजा को 'उदार निरंकुश' माना गया है।<br>III. राजा पर धर्म और मंत्रियों का कोई नियंत्रण नहीं होता।<br>उपरोक्त में से कौन से कथन सही हैं?",
+            opt: ["केवल I और II", "केवल II और III", "केवल I और III", "I, II और III"],
+            ans: 0,
+            exp: "राजा आनुवंशिक व उदार निरंकुश होता है, परंतु वह धर्म, नीति और मंत्रिपरिषद के परामर्श से मर्यादित रहता है।"
+          }
+        ]
+      }
+    ];
+
     function getStore() {
       const keys = ['master_ps_quizzes', 'pol_tests_custom', 'ps_tests_list', 'pol_sci_complete_db_v1', 'pol_sci_hybrid_store_v1'];
       let list = [];
@@ -83,25 +183,11 @@
         }
       }
 
-      if(list.length === 0) {
-        list = [
-          {
-            id: "kautilya-default",
-            title: "कौटिल्य (Kautilya) : टेस्ट - 01",
-            section: "कौटिल्य",
-            desc: "अर्थशास्त्र का स्वरूप, दण्डनीति एवं सप्तांग सिद्धांत।",
-            time: 15,
-            questions: [
-              {
-                q: "कौटिल्य के अनुसार दंडनीति के कार्यों का सही क्रम क्या है?",
-                opt: ["रक्षा, प्राप्ति, वृद्धि, वितरण", "प्राप्ति, रक्षा, वृद्धि, वितरण", "वृद्धि, प्राप्ति, रक्षा, वितरण", "वितरण, प्राप्ति, रक्षा, वृद्धि"],
-                ans: 1,
-                exp: "दंडनीति कार्य: प्राप्ति, रक्षा, वृद्धि और वितरण।"
-              }
-            ]
-          }
-        ];
-      }
+      BUILTIN_DATA.forEach(b => {
+        if(!list.some(x => x.id === b.id || x.title === b.title)) {
+          list.push(b);
+        }
+      });
 
       localStorage.setItem('master_ps_quizzes', JSON.stringify(list));
       return list;
@@ -289,7 +375,7 @@
     // --- ADMIN PANEL ---
     function openAdmin() {
       const pin = prompt('Admin PIN दर्ज करें (PIN: 1234):');
-      if (pin === '7073') {
+      if (pin === '1234') {
         renderAdminHome();
       } else if (pin !== null) {
         alert('गलत पिन!');
@@ -323,24 +409,52 @@
             <button class="btn-outline" onclick="showHome()">✕ बाहर निकलें</button>
           </div>
 
-          <button class="btn-success" style="width:100%; padding:12px; font-size:14px; margin-bottom:12px;" onclick="startNewTestForm()">
-            + बिल्कुल नया टेस्ट जोड़ें
+          <button class="btn-success" style="width:100%; padding:12px; font-size:14px; margin-bottom:14px;" onclick="startNewTestForm()">
+            + बिल्कुल नया टेस्ट जोड़ें (Form)
           </button>
 
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:18px;">
-            <button class="btn-outline" onclick="exportDataToFile()">📥 Backup लें (Download)</button>
-            <button class="btn-outline" onclick="importDataFromFile()">📤 Backup Restore करें</button>
+          <!-- DIRECT PASTE BOX (NO FILE NEEDED) -->
+          <div style="background:#f8fafc; border:1px dashed #2563eb; padding:12px; border-radius:8px; margin-bottom:16px;">
+            <div style="font-weight:700; font-size:13px; color:#1e40af; margin-bottom:6px;">📋 JSON Text Paste करके Test जोड़ें (बिना फाइल के):</div>
+            <textarea id="raw-json-paste" class="form-control" style="min-height:80px; font-family:monospace; font-size:12px;" placeholder="यहाँ चैट से कॉपी किया गया डेटा पेस्ट करें..."></textarea>
+            <button class="btn-primary" style="margin-top:8px; width:100%;" onclick="importFromPasteBox()">📥 पेस्ट किया गया टेस्ट जोड़ें</button>
           </div>
 
-          <h3 style="font-size:14px; font-weight:700; margin-bottom:10px; color:#334155;">सभी टेस्ट्स (Section बदलें / सुधार करें):</h3>
+          <h3 style="font-size:14px; font-weight:700; margin-bottom:10px; color:#334155;">सभी टेस्ट्स (${allTests.length}):</h3>
           ${testListHtml}
         </div>
       `;
     }
 
+    // DIRECT IMPORT FROM PASTE BOX
+    function importFromPasteBox() {
+      const txt = document.getElementById('raw-json-paste').value.trim();
+      if(!txt) return alert('कृपया पहले बॉक्स में डेटा पेस्ट करें!');
+      try {
+        const imported = JSON.parse(txt);
+        let listToAdd = Array.isArray(imported) ? imported : [imported];
+        
+        listToAdd.forEach(newT => {
+          if(!newT.section) newT.section = 'कौटिल्य';
+          const existingIdx = allTests.findIndex(x => x.id === newT.id || x.title === newT.title);
+          if(existingIdx !== -1) {
+            allTests[existingIdx] = newT;
+          } else {
+            allTests.push(newT);
+          }
+        });
+
+        setStore(allTests);
+        alert('बधाई! नया टेस्ट सफलतापूर्वक जुड़ गया है!');
+        renderAdminHome();
+      } catch(e) {
+        alert('डेटा सही नहीं है! कृपया पूरा टेक्स्ट कॉपी करके पेस्ट करें।');
+      }
+    }
+
     function quickMoveSection(id) {
       const target = allTests.find(t => t.id === id);
-      const newSec = prompt(`इस टेस्ट का नया सेक्शन (Section Name) लिखें:\n(उदा. कौटिल्य, प्लेटो, अरस्तू, संविधान)\nवर्तमान: "${target.section || 'अन्य'}"`, target.section || '');
+      const newSec = prompt(`इस टेस्ट का नया सेक्शन (Section Name) लिखें:\n(उदा. कौटिल्य, प्लेटो, अरस्तू)\nवर्तमान: "${target.section || 'अन्य'}"`, target.section || '');
       if (newSec !== null && newSec.trim() !== '') {
         target.section = newSec.trim();
         setStore(allTests);
@@ -392,7 +506,7 @@
           <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:14px;">
             <div class="form-group">
               <label>1. टेस्ट का नाम (Title)</label>
-              <input type="text" id="t-title" class="form-control" value="${titleVal}" placeholder="उदा. कौटिल्य (Kautilya) : टेस्ट - 02">
+              <input type="text" id="t-title" class="form-control" value="${titleVal}" placeholder="उदा. कौटिल्य (Kautilya) : टेस्ट - 04">
             </div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
               <div class="form-group">
@@ -535,43 +649,6 @@
       setStore(allTests);
       alert('सफलतापूर्वक सेव हो गया!');
       showHome();
-    }
-
-    function exportDataToFile() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allTests, null, 2));
-      const dlAnchor = document.createElement('a');
-      dlAnchor.setAttribute("href", dataStr);
-      dlAnchor.setAttribute("download", "political_science_tests_backup.json");
-      dlAnchor.click();
-    }
-
-    // UNIVERSAL IMPORT (No restrictions, fixes greyed out files on Android)
-    function importDataFromFile() {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = '*/*'; // Accept all file types so Android won't disable it
-      input.onchange = e => {
-        const file = e.target.files[0];
-        if(!file) return;
-        const reader = new FileReader();
-        reader.onload = event => {
-          try {
-            const imported = JSON.parse(event.target.result);
-            if(Array.isArray(imported)) {
-              setStore(imported);
-              allTests = imported;
-              alert('बधाई! बैकअप सफलतापूर्वक रीस्टोर हो गया!');
-              renderAdminHome();
-            } else {
-              alert('फाइल का फॉर्मेट सही नहीं है!');
-            }
-          } catch(err) { 
-            alert('फाइल को पढ़ने में त्रुटि!'); 
-          }
-        };
-        reader.readAsText(file);
-      };
-      input.click();
     }
 
     // App Start
