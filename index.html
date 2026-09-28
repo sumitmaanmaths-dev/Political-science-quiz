@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -97,7 +96,7 @@
           body: JSON.stringify(allTests)
         });
         if (!res.ok) throw new Error("Status " + res.status);
-        alert('🎉 टेस्ट सेव हो गया!');
+        alert('🎉 टेस्ट तुरंत क्लाउड पर सेव हो गया!');
       } catch (e) {
         alert('डेटा सेव नहीं हुआ। Rules चेक करें।');
       }
@@ -268,7 +267,7 @@
     }
 
     function openAdmin() {
-      const pin = prompt('Admin PIN दर्ज करें (1234):');
+      const pin = prompt('Admin PIN दर्ज करें (7073):');
       if (pin === '7073') {
         renderAdminHome();
       } else if (pin !== null) {
@@ -302,20 +301,60 @@
             <button class="btn-outline" onclick="showHome()">✕ बाहर निकलें</button>
           </div>
 
-          <button class="btn-success" style="width:100%; padding:12px; font-size:14px; margin-bottom:14px;" onclick="startNewTestForm()">
+          <!-- NEW 1-CLICK FILE UPLOADER BUTTON -->
+          <div style="background:#eff6ff; border:2px dashed #2563eb; padding:16px; border-radius:10px; margin-bottom:16px; text-align:center;">
+            <div style="font-weight:800; font-size:14px; color:#1e40af; margin-bottom:6px;">🚀 बिना Copy-Paste सीधा File Upload करें (150-200 प्रश्न)</div>
+            <div style="font-size:12px; color:#64748b; margin-bottom:10px;">Chat से डाउनलोड की गई JSON फ़ाइल को यहाँ चुनें:</div>
+            <input type="file" id="json-file-input" accept=".json,.txt" style="display:none;" onchange="uploadJsonFile(event)">
+            <button class="btn-primary" style="padding:10px 20px; font-size:14px;" onclick="document.getElementById('json-file-input').click()">
+              📁 फ़ाइल चुनें और अपलोड करें
+            </button>
+          </div>
+
+          <div style="background:#f8fafc; border:1px dashed #cbd5e1; padding:12px; border-radius:8px; margin-bottom:16px;">
+            <div style="font-weight:700; font-size:13px; color:#475569; margin-bottom:6px;">📋 या JSON Text Paste करके जोड़ें:</div>
+            <textarea id="raw-json-paste" class="form-control" style="min-height:70px; font-family:monospace; font-size:12px;" placeholder="यहाँ JSON कोड पेस्ट करें..."></textarea>
+            <button class="btn-outline" style="margin-top:8px; width:100%; border-color:#2563eb; color:#2563eb;" onclick="importFromPasteBox()">क्लाउड पर सेव करें</button>
+          </div>
+
+          <button class="btn-success" style="width:100%; padding:10px; font-size:13px; margin-bottom:14px;" onclick="startNewTestForm()">
             + मैन्युअली नया टेस्ट बनाएं (Form से)
           </button>
-
-          <div style="background:#f8fafc; border:1px dashed #2563eb; padding:12px; border-radius:8px; margin-bottom:16px;">
-            <div style="font-weight:700; font-size:13px; color:#1e40af; margin-bottom:6px;">📋 JSON Text Paste करके नया टेस्ट जोड़ें:</div>
-            <textarea id="raw-json-paste" class="form-control" style="min-height:80px; font-family:monospace; font-size:12px;" placeholder="यहाँ चैट से कॉपी किया गया JSON कोड पेस्ट करें..."></textarea>
-            <button class="btn-primary" style="margin-top:8px; width:100%;" onclick="importFromPasteBox()">☁️ क्लाउड पर सेव करें (सभी के लिए लाइव)</button>
-          </div>
 
           <h3 style="font-size:14px; font-weight:700; margin-bottom:10px; color:#334155;">सभी उपलब्ध टेस्ट्स (${allTests.length}):</h3>
           ${testListHtml || '<div style="color:#64748b; font-size:13px;">अभी कोई टेस्ट नहीं है।</div>'}
         </div>
       `;
+    }
+
+    function uploadJsonFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          let listToAdd = Array.isArray(imported) ? imported : [imported];
+
+          listToAdd.forEach(newT => {
+            if (!newT.section) newT.section = 'सामान्य';
+            const existingIdx = allTests.findIndex(x => x.id === newT.id);
+            if (existingIdx !== -1) {
+              allTests[existingIdx] = newT;
+            } else {
+              allTests.push(newT);
+            }
+          });
+
+          await saveToCloud();
+          renderAdminHome();
+          alert('🎉 ' + file.name + ' सफलतापूर्वक अपलोड हो गई है!');
+        } catch (err) {
+          alert('फ़ाइल सही JSON फॉर्मेट में नहीं है!');
+        }
+      };
+      reader.readAsText(file);
     }
 
     async function changeSectionPrompt(id) {
@@ -335,6 +374,7 @@
       try {
         const imported = JSON.parse(txt);
         let listToAdd = Array.isArray(imported) ? imported : [imported];
+        
         listToAdd.forEach(newT => {
           if(!newT.section) newT.section = 'सामान्य';
           const existingIdx = allTests.findIndex(x => x.id === newT.id);
@@ -344,6 +384,7 @@
             allTests.push(newT);
           }
         });
+
         await saveToCloud();
         renderAdminHome();
       } catch(e) {
@@ -358,7 +399,7 @@
       renderAdminHome();
     }
 
-    function startNewTestForm() {
+ function startNewTestForm() {
       editingTestId = null;
       draftQuestions = [];
       renderTestFormUI('नया टेस्ट बनाएं (Manual Form)', '', 'कौटिल्य', 15, '');
