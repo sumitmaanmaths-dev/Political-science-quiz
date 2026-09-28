@@ -96,7 +96,6 @@
           body: JSON.stringify(allTests)
         });
         if (!res.ok) throw new Error("Status " + res.status);
-        alert('🎉 टेस्ट तुरंत क्लाउड पर सेव हो गया!');
       } catch (e) {
         alert('डेटा सेव नहीं हुआ। Rules चेक करें।');
       }
@@ -301,10 +300,9 @@
             <button class="btn-outline" onclick="showHome()">✕ बाहर निकलें</button>
           </div>
 
-          <!-- NEW 1-CLICK FILE UPLOADER BUTTON -->
           <div style="background:#eff6ff; border:2px dashed #2563eb; padding:16px; border-radius:10px; margin-bottom:16px; text-align:center;">
-            <div style="font-weight:800; font-size:14px; color:#1e40af; margin-bottom:6px;">🚀 बिना Copy-Paste सीधा File Upload करें (150-200 प्रश्न)</div>
-            <div style="font-size:12px; color:#64748b; margin-bottom:10px;">Chat से डाउनलोड की गई JSON फ़ाइल को यहाँ चुनें:</div>
+            <div style="font-weight:800; font-size:14px; color:#1e40af; margin-bottom:6px;">🚀 फ़ाइल से प्रश्न जोड़ें (ऑटोमैटिक जुड़ेंगे)</div>
+            <div style="font-size:12px; color:#64748b; margin-bottom:10px;">एक-एक करके फ़ाइलें चुनें, प्रश्न अपने आप आगे जुड़ते जाएँगे:</div>
             <input type="file" id="json-file-input" accept=".json,.txt" style="display:none;" onchange="uploadJsonFile(event)">
             <button class="btn-primary" style="padding:10px 20px; font-size:14px;" onclick="document.getElementById('json-file-input').click()">
               📁 फ़ाइल चुनें और अपलोड करें
@@ -337,21 +335,35 @@
           const imported = JSON.parse(e.target.result);
           let listToAdd = Array.isArray(imported) ? imported : [imported];
 
+          let totalAdded = 0;
+          let finalCount = 0;
+
           listToAdd.forEach(newT => {
-            if (!newT.section) newT.section = 'सामान्य';
+            if (!newT.section) newT.section = 'RPSC Political Science';
             const existingIdx = allTests.findIndex(x => x.id === newT.id);
+            const incomingQs = newT.questions || [];
+
             if (existingIdx !== -1) {
-              allTests[existingIdx] = newT;
+              // सुरक्षित रूप से प्रश्न आगे जोड़ना (APPEND)
+              const existingQs = allTests[existingIdx].questions || [];
+              allTests[existingIdx].questions = existingQs.concat(incomingQs);
+              allTests[existingIdx].time = newT.time || allTests[existingIdx].time;
+              allTests[existingIdx].title = newT.title || allTests[existingIdx].title;
+              finalCount = allTests[existingIdx].questions.length;
             } else {
               allTests.push(newT);
+              finalCount = incomingQs.length;
             }
+            totalAdded += incomingQs.length;
           });
 
           await saveToCloud();
           renderAdminHome();
-          alert('🎉 ' + file.name + ' सफलतापूर्वक अपलोड हो गई है!');
+          alert(`🎉 '${file.name}' से ${totalAdded} प्रश्न सफलतापूर्वक जुड़े!\n\nइस टेस्ट में अब कुल प्रश्न: ${finalCount}`);
         } catch (err) {
-          alert('फ़ाइल सही JSON फॉर्मेट में नहीं है!');
+          alert('फ़ाइल सही JSON फॉर्मेट में नहीं है! कृपया चेक करें कि कोड पूरा कॉपी हुआ था या नहीं।');
+        } finally {
+          event.target.value = ''; // इनपुट रीसेट ताकि अगली फ़ाइल तुरंत सेलेक्ट हो सके
         }
       };
       reader.readAsText(file);
@@ -360,7 +372,7 @@
     async function changeSectionPrompt(id) {
       const target = allTests.find(t => t.id === id);
       if(!target) return;
-      const newSec = prompt(`'${target.title}' के लिए नया Section नाम लिखें:`, target.section || 'कौटिल्य');
+      const newSec = prompt(`'${target.title}' के लिए नया Section नाम लिखें:`, target.section || 'सामान्य');
       if(newSec && newSec.trim()) {
         target.section = newSec.trim();
         await saveToCloud();
@@ -376,10 +388,12 @@
         let listToAdd = Array.isArray(imported) ? imported : [imported];
         
         listToAdd.forEach(newT => {
-          if(!newT.section) newT.section = 'सामान्य';
+          if(!newT.section) newT.section = 'RPSC Political Science';
           const existingIdx = allTests.findIndex(x => x.id === newT.id);
+          const incomingQs = newT.questions || [];
           if(existingIdx !== -1) {
-            allTests[existingIdx] = newT;
+            const existingQs = allTests[existingIdx].questions || [];
+            allTests[existingIdx].questions = existingQs.concat(incomingQs);
           } else {
             allTests.push(newT);
           }
@@ -387,6 +401,7 @@
 
         await saveToCloud();
         renderAdminHome();
+        alert('🎉 डेटा सफलतापूर्वक सेव हो गया!');
       } catch(e) {
         alert('डेटा सही JSON फॉर्मेट में नहीं है!');
       }
@@ -399,17 +414,17 @@
       renderAdminHome();
     }
 
- function startNewTestForm() {
+    function startNewTestForm() {
       editingTestId = null;
       draftQuestions = [];
-      renderTestFormUI('नया टेस्ट बनाएं (Manual Form)', '', 'कौटिल्य', 15, '');
+      renderTestFormUI('नया टेस्ट बनाएं (Manual Form)', '', 'RPSC Political Science', 15, '');
     }
 
     function loadTestForEdit(id) {
       editingTestId = id;
       const target = allTests.find(t => t.id === id);
       draftQuestions = JSON.parse(JSON.stringify(target.questions || []));
-      renderTestFormUI('टेस्ट Edit करें', target.title, target.section || 'कौटिल्य', target.time, target.desc);
+      renderTestFormUI('टेस्ट Edit करें', target.title, target.section || 'RPSC Political Science', target.time, target.desc);
     }
 
     function renderTestFormUI(heading, titleVal, secVal, timeVal, descVal) {
@@ -433,11 +448,11 @@
           <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:14px;">
             <div class="form-group">
               <label>1. टेस्ट का नाम (Title)</label>
-              <input type="text" id="t-title" class="form-control" value="${titleVal}" placeholder="उदा. कौटिल्य : टेस्ट - 04">
+              <input type="text" id="t-title" class="form-control" value="${titleVal}" placeholder="उदा. RPSC School Lecturer">
             </div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
               <div class="form-group">
-                <label>2. सेक्शन / विचारक (Section Tab Name)</label>
+                <label>2. सेक्शन (Section Tab Name)</label>
                 <input type="text" id="t-sec" class="form-control" value="${secVal}">
               </div>
               <div class="form-group">
@@ -517,7 +532,7 @@
 
     async function saveTestFinal() {
       const title = document.getElementById('t-title').value.trim();
-      const secVal = document.getElementById('t-sec').value.trim() || 'सामान्य';
+      const secVal = document.getElementById('t-sec').value.trim() || 'RPSC Political Science';
       const time = parseInt(document.getElementById('t-time').value) || 15;
       const desc = document.getElementById('t-desc').value.trim() || 'Mock Test';
 
