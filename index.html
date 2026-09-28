@@ -71,49 +71,145 @@
       } catch(e) {}
     };
 
-    // --- DEFAULT POLITICAL SCIENCE TESTS ---
+    // --- DEFAULT TESTS WITH VIDEO QUESTIONS ---
     const DEFAULT_TESTS = [
       {
-        id: "pol-science-01",
-        title: "भारतीय संविधान एवं राज्यव्यवस्था - टेस्ट 01",
-        description: "संविधान सभा, मौलिक अधिकार, नीति निदेशक तत्व एवं संसदीय शासन प्रणाली।",
-        category: "Political Science",
-        timeLimitMinutes: 10,
-        totalMarks: 10,
+        id: "kautilya-test-02",
+        title: "कौटिल्य (Kautilya) : टेस्ट - 02",
+        description: "अर्थशास्त्र का स्वरूप, दण्डनीति, राजा-राज्य संबंध, मैक्स वेबर एवं अरस्तू से तुलनात्मक अध्ययन।",
+        category: "भारतीय राजनीतिक विचारक",
+        timeLimitMinutes: 15,
+        totalMarks: 11,
         negativeMarking: 0.33,
         createdAt: new Date().toISOString(),
         questions: [
           {
-            id: "q1",
-            question: "भारतीय संविधान की प्रारूप समिति (Drafting Committee) के अध्यक्ष कौन थे?",
-            options: ["डॉ. राजेन्द्र प्रसाद", "डॉ. बी. आर. अम्बेडकर", "जवाहरलाल नेहरू", "सर बी. एन. राव"],
-            correctAnswer: 1,
-            explanation: "प्रारूप समिति के अध्यक्ष डॉ. भीमराव अम्बेडकर थे। इस समिति में 7 सदस्य थे।",
-            category: "संविधान सभा"
-          },
-          {
-            id: "q2",
-            question: "संविधान के किस अनुच्छेद को डॉ. अम्बेडकर ने 'संविधान का हृदय और आत्मा' कहा था?",
-            options: ["अनुच्छेद 14", "अनुच्छेद 19", "अनुच्छेद 21", "अनुच्छेद 32"],
-            correctAnswer: 3,
-            explanation: "अनुच्छेद 32 (संवैधानिक उपचारों का अधिकार) को डॉ. अम्बेडकर ने संविधान का हृदय और आत्मा माना था।",
-            category: "मौलिक अधिकार"
-          },
-          {
-            id: "q3",
-            question: "राज्य के नीति निदेशक तत्व (DPSP) किस देश के संविधान से लिए गए हैं?",
-            options: ["आयरलैंड", "संयुक्त राज्य अमेरिका", "रूस", "ब्रिटेन"],
-            correctAnswer: 0,
-            explanation: "भारतीय संविधान के भाग-4 में वर्णित नीति निदेशक तत्व आयरलैंड के संविधान से प्रेरित हैं।",
-            category: "विदेशी स्रोत"
-          },
-          {
-            id: "q4",
-            question: "भारत में राष्ट्रपति पर महाभियोग चलाने की प्रक्रिया किस अनुच्छेद में वर्णित है?",
-            options: ["अनुच्छेद 52", "अनुच्छेद 56", "अनुच्छेद 61", "अनुच्छेद 72"],
+            id: "k1",
+            question: "अर्थशास्त्र के स्वरूप के संबंध में निम्नलिखित कथनों पर विचार करें:\nI. धर्म को आर्थिक प्राप्ति का एक साधन माना गया है।\nII. राज्य का प्राथमिक उद्देश्य नैतिक व्यवस्था की स्थापना करना है।\nIII. यह ग्रंथ शासन कला और यथार्थवाद पर आधारित है।",
+            options: ["केवल I और II", "केवल II और III", "केवल I और III", "I, II और III"],
             correctAnswer: 2,
-            explanation: "अनुच्छेद 61 में राष्ट्रपति पर महाभियोग (Impeachment) चलाने की प्रक्रिया का प्रावधान है।",
-            category: "कार्यपालिका"
+            explanation: "अर्थशास्त्र शासन कला और यथार्थवादी दृष्टिकोण पर आधारित है जिसमें धर्म को राज्य/आर्थिक प्राप्ति का साधन रूप में देखा गया है।",
+            category: "कौटिल्य"
+          },
+          {
+            id: "k2",
+            question: "मैक्स वेबर ने अर्थशास्त्र की तुलना मैकियावेली के 'प्रिंस' से करते हुए क्या निष्कर्ष निकाला?",
+            options: [
+              "अर्थशास्त्र एक सरल और कम प्रभावशाली ग्रंथ है।",
+              "अर्थशास्त्र में अधिक उग्र मैकियावेलीवाद विद्यमान है।",
+              "दोनों ग्रंथ समान रूप से नैतिक दर्शन पर आधारित हैं।",
+              "अर्थशास्त्र केवल प्रशासनिक नियमावली है, प्रिंस दर्शन है।"
+            ],
+            correctAnswer: 1,
+            explanation: "मैक्स वेबर के अनुसार, कौटिल्य के अर्थशास्त्र में मैकियावेली के प्रिंस की तुलना में कहीं अधिक उग्र और यथार्थवादी विचार मिलते हैं।",
+            category: "कौटिल्य"
+          },
+          {
+            id: "k3",
+            question: "सूची-I (विचारक) को सूची-II (विचार) से सुमेलित करें:\n1. सुनील खिलनानी\n2. कांग्ले\n3. रोजर बोस\n4. शिव शंकर मेनन",
+            options: [
+              "1-B, 2-D, 3-A, 4-C",
+              "1-A, 2-B, 3-C, 4-D",
+              "1-C, 2-A, 3-D, 4-B",
+              "1-D, 2-C, 3-B, 4-A"
+            ],
+            correctAnswer: 0,
+            explanation: "विचारकों और उनके कौटिल्य विषयक दृष्टिकोण का सही सुमेलन विकल्प A (1-B, 2-D, 3-A, 4-C) है।",
+            category: "कौटिल्य"
+          },
+          {
+            id: "k4",
+            question: "अर्थशास्त्र में वर्णित कानूनों की प्रकृति के संबंध में कौन सा कथन सत्य है?",
+            options: [
+              "ये कानून धार्मिक रीति-रिवाजों पर आधारित हैं।",
+              "ये कानून सकारात्मक कानूनों की श्रेणी में आते हैं।",
+              "ये कानून राजा के व्यक्तिगत निर्णयों पर निर्भर हैं।",
+              "ये कानून प्राकृतिक और धर्मशास्त्र से प्रेरित हैं।"
+            ],
+            correctAnswer: 1,
+            explanation: "कौटिल्य द्वारा वर्णित विधि मुख्य रूप से सकारात्मक/संवैधानिक और व्यावहारिक राज्य-कानूनों की श्रेणी में आते हैं।",
+            category: "कौटिल्य"
+          },
+          {
+            id: "k5",
+            question: "कौटिल्य के अर्थशास्त्र और अरस्तू की 'पॉलिटिक्स' के बीच मुख्य अंतर क्या है?",
+            options: [
+              "अरस्तू का ग्रंथ शासन पर, अर्थशास्त्र दर्शन पर है।",
+              "अर्थशास्त्र में परिणामवाद का अभाव, पॉलिटिक्स में है।",
+              "अर्थशास्त्र साम्राज्य विस्तार पर, पॉलिटिक्स सुदृढ़ नगर-राज्य पर केंद्रित है।",
+              "पॉलिटिक्स में संरचनात्मक कानून, अर्थशास्त्र में नहीं।"
+            ],
+            correctAnswer: 2,
+            explanation: "कौटिल्य साम्राज्य विस्तार और विजिगीषु राजा पर बल देते हैं जबकि अरस्तू आदर्श और सीमित नगर-राज्य (Polis) की बात करते हैं।",
+            category: "कौटिल्य"
+          },
+          {
+            id: "k6",
+            question: "कौटिल्य के अर्थशास्त्र के बारे में किस विचारक ने यह टिप्पणी की कि यह 'यूनानी दर्शन' के सामने कहीं अधिक श्रेष्ठ है?",
+            options: ["डी. डी. कोसाम्बी", "मैक्स वेबर", "हेनरी किसिंजर", "जवाहरलाल नेहरू"],
+            correctAnswer: 0,
+            explanation: "इतिहासकार डी. डी. कोसाम्बी ने भारतीय यथार्थवाद और अर्थशास्त्र की महत्ता पर यह टिप्पणी की थी।",
+            category: "कौटिल्य"
+          },
+          {
+            id: "k7",
+            question: "कौटिल्य के राज्य की उत्पत्ति के सामाजिक समझौता सिद्धांत के संदर्भ में निम्नलिखित कथनों पर विचार करें:\nI. कौटिल्य ने राज्य की उत्पत्ति के लिए दैवी सिद्धांत को पूर्णतः स्वीकार किया है।\nII. कौटिल्य का सामाजिक समझौता सिद्धांत हॉब्स के लेविआथन के समान निरंकुश राजतंत्र की स्थापना करता है।\nIII. कौटिल्य के अनुसार, राजा समझौते का एक भाग है और वह धर्म व परंपराओं से बंधा हुआ है।",
+            options: ["केवल I और II", "केवल II और III", "केवल III", "I, II और III"],
+            correctAnswer: 2,
+            explanation: "कौटिल्य के अनुसार राजा समझौते से बंधा है और प्रजा के कल्याण तथा धर्म-सम्मत मर्यादाओं के अधीन शासन करता है।",
+            category: "कौटिल्य"
+          },
+          {
+            id: "k8",
+            question: "निम्नलिखित ग्रंथों और उनके लेखकों का सही मिलान करें:\nसूची-I: 1. नीतिवाक्यामृतम्, 2. नीतिसार, 3. किरातार्जुनीयम्\nसूची-II: क. कामन्दक, ख. भारवि, ग. सोमदेव सूरी",
+            options: [
+              "1-ग, 2-क, 3-ख",
+              "1-ग, 2-ख, 3-क",
+              "1-क, 2-ग, 3-ख",
+              "1-ख, 2-क, 3-ग"
+            ],
+            correctAnswer: 0,
+            explanation: "नीतिवाक्यामृतम् - सोमदेव सूरी, नीतिसार - कामन्दक, किरातार्जुनीयम् - भारवि।",
+            category: "कौटिल्य"
+          },
+          {
+            id: "k9",
+            question: "कौटिल्य के अनुसार दंडनीति के कार्यों का सही क्रम क्या है?",
+            options: [
+              "रक्षा, प्राप्ति, वृद्धि, वितरण",
+              "प्राप्ति, रक्षा, वृद्धि, वितरण",
+              "वृद्धि, प्राप्ति, रक्षा, वितरण",
+              "वितरण, प्राप्ति, रक्षा, वृद्धि"
+            ],
+            correctAnswer: 1,
+            explanation: "कौटिल्य के अनुसार दंडनीति का कार्य: अप्राप्त की प्राप्ति (अलब्धलाभार्था), प्राप्त की रक्षा, रक्षित की वृद्धि और संवर्धित का सुपात्रों में वितरण है।",
+            category: "कौटिल्य"
+          },
+          {
+            id: "k10",
+            question: "कौटिल्य के राजनीतिक दर्शन में राजा और राज्य के संबंधों के बारे में कौन से विद्वान यह मानते हैं कि कौटिल्य की दृष्टि में राजा और राज्य एक ही हैं?",
+            options: [
+              "पॉल सेनन, भंडारकर और पी. वी. काणे",
+              "मैनुअल कैस्टेल्स और हेनरी किसिंजर",
+              "के. पी. जायसवाल और ए. एस. अल्तेकर",
+              "रोजर बोस और आर. पी. कांग्ले"
+            ],
+            correctAnswer: 0,
+            explanation: "पॉल सेनन, भंडारकर और पी. वी. काणे का मत है कि कौटिल्य के दर्शन में 'राजा ही राज्य' का प्रतिनिधित्व करता है।",
+            category: "कौटिल्य"
+          },
+          {
+            id: "k11",
+            question: "कौटिल्य के अनुसार राज्य के लिए गरीबी निवारण क्यों आवश्यक है?",
+            options: [
+              "राजा की व्यक्तिगत प्रतिष्ठा बढ़ाने हेतु",
+              "साम्राज्य की सुरक्षा और स्थिरता हेतु",
+              "कर संग्रह की प्रक्रिया सरल बनाने हेतु",
+              "धार्मिक अनुष्ठानों के लिए धन जुटाने हेतु"
+            ],
+            correctAnswer: 1,
+            explanation: "कौटिल्य के अनुसार दरिद्रता विद्रोह और आंतरिक अशांति का मूल कारण बनती है, अतः राज्य की स्थिरता व सुरक्षा हेतु गरीबी निवारण आवश्यक है।",
+            category: "कौटिल्य"
           }
         ]
       }
@@ -122,7 +218,7 @@
     // --- MAIN APP COMPONENT ---
     function App() {
       const [tests, setTests] = useState(() => {
-        const saved = localStorage.getItem('pol_science_tests_v2');
+        const saved = localStorage.getItem('pol_science_kautilya_v1');
         return saved ? JSON.parse(saved) : DEFAULT_TESTS;
       });
 
@@ -194,7 +290,7 @@
                 tests={tests} 
                 onUpdateTests={(updated) => {
                   setTests(updated);
-                  localStorage.setItem('pol_science_tests_v2', JSON.stringify(updated));
+                  localStorage.setItem('pol_science_kautilya_v1', JSON.stringify(updated));
                 }} 
                 onClose={() => setView('home')} 
                 adminPin={adminPin}
@@ -206,11 +302,10 @@
       );
     }
 
-    // --- HOME VIEW WITH YOUR UPDATED BANNER ---
+    // --- HOME VIEW ---
     function HomeView({ tests, onStart }) {
       return (
         <div className="space-y-6">
-          {/* Targeted Banner */}
           <div className="rounded-2xl bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 text-white p-6 sm:p-8 shadow-lg">
             <span className="text-blue-200 text-xs font-bold uppercase tracking-wider">Exam Prep Series</span>
             <h2 className="text-xl sm:text-2xl font-display font-bold mt-1 mb-2 leading-snug">
@@ -221,7 +316,6 @@
             </p>
           </div>
 
-          {/* Available Tests Grid */}
           <div>
             <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center justify-between">
               <span>उपलब्ध टेस्ट श्रृंखला</span>
@@ -357,226 +451,4 @@
                 style={{ width: `${((currentIdx + 1) / test.questions.length) * 100}%` }}
               ></div>
             </div>
-          </div>
-
-          <div className="py-2">
-            <h4 className="text-base sm:text-lg font-bold text-slate-900 leading-relaxed">
-              {currentIdx + 1}. {q.question}
-            </h4>
-          </div>
-
-          <div className="space-y-3">
-            {q.options.map((opt, oIdx) => {
-              const isSelected = answers[currentIdx] === oIdx;
-              return (
-                <button
-                  key={oIdx}
-                  onClick={() => handleSelectOption(oIdx)}
-                  className={`w-full text-left p-4 rounded-xl border text-sm font-medium transition-all flex items-center justify-between ${
-                    isSelected 
-                      ? 'border-blue-600 bg-blue-50 text-blue-900 font-bold shadow-sm'
-                      : 'border-slate-200 hover:bg-slate-50 text-slate-800'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold ${
-                      isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'
-                    }`}>
-                      {String.fromCharCode(65 + oIdx)}
-                    </span>
-                    <span>{opt}</span>
-                  </div>
-                  {isSelected && <span className="text-blue-600 font-bold">✓</span>}
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="flex items-center justify-between pt-4 border-t border-slate-200">
-            <button
-              disabled={currentIdx === 0}
-              onClick={() => { playTone('click'); setCurrentIdx(c => c - 1); }}
-              className="px-4 py-2 rounded-lg border border-slate-300 font-bold text-xs text-slate-700 disabled:opacity-30"
-            >
-              ← पिछला
-            </button>
-
-            {currentIdx < test.questions.length - 1 ? (
-              <button
-                onClick={() => { playTone('click'); setCurrentIdx(c => c + 1); }}
-                className="px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm"
-              >
-                अगला प्रश्न →
-              </button>
-            ) : (
-              <button
-                onClick={handleSubmit}
-                className="px-6 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm"
-              >
-                सबमिट करें ✓
-              </button>
-            )}
-          </div>
-        </div>
-      );
-    }
-
-    // --- RESULT VIEW ---
-    function ResultView({ result, test, onHome, onRetry }) {
-      return (
-        <div className="max-w-2xl mx-auto bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm text-center space-y-6">
-          <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold border border-blue-200">
-            🎯
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold text-slate-900">परीक्षण परिणाम</h2>
-            <p className="text-slate-500 text-sm mt-1">{test.title}</p>
-          </div>
-
-          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
-            <span className="text-xs text-slate-500 uppercase font-bold tracking-wider">Score</span>
-            <div className="text-4xl font-black text-blue-600 mt-1">
-              {result.score} <span className="text-lg text-slate-400 font-normal">/ {test.totalMarks}</span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3">
-            <div className="p-3 bg-emerald-50 text-emerald-800 rounded-xl border border-emerald-200">
-              <div className="text-xl font-bold">{result.correctCount}</div>
-              <div className="text-xs font-semibold">सही उत्तर</div>
-            </div>
-            <div className="p-3 bg-red-50 text-red-800 rounded-xl border border-red-200">
-              <div className="text-xl font-bold">{result.wrongCount}</div>
-              <div className="text-xs font-semibold">गलत उत्तर</div>
-            </div>
-            <div className="p-3 bg-slate-100 text-slate-700 rounded-xl border border-slate-200">
-              <div className="text-xl font-bold">{result.skippedCount}</div>
-              <div className="text-xs font-semibold">छोड़े गए</div>
-            </div>
-          </div>
-
-          <div className="text-left space-y-4 pt-4 border-t border-slate-100">
-            <h4 className="font-bold text-slate-800 text-sm">प्रश्नों का विवरण एवं व्याख्या:</h4>
-            {test.questions.map((q, idx) => {
-              const userAns = result.userAnswers[idx];
-              const isCorrect = userAns === q.correctAnswer;
-              return (
-                <div key={idx} className="p-4 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1">
-                  <div className="font-bold text-slate-900">{idx + 1}. {q.question}</div>
-                  <div className={isCorrect ? 'text-emerald-700 font-bold' : 'text-red-600 font-bold'}>
-                    आपका उत्तर: {userAns !== undefined ? q.options[userAns] : 'नहीं दिया'} {isCorrect ? '✓' : '✗'}
-                  </div>
-                  {!isCorrect && (
-                    <div className="text-slate-700 font-semibold">
-                      सही उत्तर: {q.options[q.correctAnswer]}
-                    </div>
-                  )}
-                  {q.explanation && (
-                    <div className="text-slate-500 pt-1 italic">व्याख्या: {q.explanation}</div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="flex gap-3 justify-center pt-2">
-            <button
-              onClick={onRetry}
-              className="px-5 py-2.5 rounded-lg border border-slate-300 font-bold text-xs text-slate-700 hover:bg-slate-50"
-            >
-              दोबारा हल करें
-            </button>
-            <button
-              onClick={onHome}
-              className="px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs"
-            >
-              होम पेज पर जाएं
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    // --- ADMIN VIEW ---
-    function AdminView({ tests, onUpdateTests, onClose, adminPin, setAdminPin }) {
-      const [title, setTitle] = useState('');
-      const [timeLimit, setTimeLimit] = useState(10);
-      const [totalMarks, setTotalMarks] = useState(10);
-
-      const handleAddEmptyTest = () => {
-        if (!title.trim()) return alert('कृपया टेस्ट का नाम भरें!');
-        const newTest = {
-          id: 'test-' + Date.now(),
-          title,
-          category: 'Political Science',
-          description: 'Topic Wise Test',
-          timeLimitMinutes: Number(timeLimit),
-          totalMarks: Number(totalMarks),
-          negativeMarking: 0.33,
-          createdAt: new Date().toISOString(),
-          questions: [
-            {
-              id: 'q1',
-              question: 'प्रश्न यहाँ लिखें...',
-              options: ['Option A', 'Option B', 'Option C', 'Option D'],
-              correctAnswer: 0,
-              explanation: ''
-            }
-          ]
-        };
-        onUpdateTests([newTest, ...tests]);
-        setTitle('');
-        alert('टेस्ट सेव हो गया!');
-      };
-
-      return (
-        <div className="max-w-2xl mx-auto bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-6">
-          <div className="flex items-center justify-between pb-4 border-b border-slate-200">
-            <h3 className="font-bold text-slate-900 text-lg">⚙️ Admin Control Panel</h3>
-            <button onClick={onClose} className="px-3 py-1 bg-slate-100 text-slate-700 rounded-lg text-xs font-bold">
-              ✕ Close
-            </button>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="font-bold text-sm text-slate-800">नया टेस्ट जोड़ें</h4>
-            <input 
-              type="text" 
-              placeholder="टेस्ट का शीर्षक (Title)" 
-              value={title} 
-              onChange={e => setTitle(e.target.value)}
-              className="w-full p-2.5 rounded-lg border border-slate-300 text-xs"
-            />
-            <div className="flex gap-2">
-              <input 
-                type="number" 
-                placeholder="समय (मिनट)" 
-                value={timeLimit} 
-                onChange={e => setTimeLimit(e.target.value)}
-                className="w-1/2 p-2.5 rounded-lg border border-slate-300 text-xs"
-              />
-              <input 
-                type="number" 
-                placeholder="कुल अंक" 
-                value={totalMarks} 
-                onChange={e => setTotalMarks(e.target.value)}
-                className="w-1/2 p-2.5 rounded-lg border border-slate-300 text-xs"
-              />
-            </div>
-            <button 
-              onClick={handleAddEmptyTest}
-              className="w-full py-2.5 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700"
-            >
-              + टेस्ट सेव करें
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    // Mount Application
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
-  </script>
-</body>
-</html>
+          </di
