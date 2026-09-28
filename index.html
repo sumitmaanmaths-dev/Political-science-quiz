@@ -3,36 +3,46 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Political Science Quiz - RPSC & Assistant Professor</title>
+  <title>Political Science Quiz Portal - RPSC, NET, Assistant Professor</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: #f1f5f9; color: #0f172a; min-height: 100vh; display: flex; flex-direction: column; }
     header { background: #ffffff; border-bottom: 1px solid #cbd5e1; padding: 12px 16px; position: sticky; top: 0; z-index: 50; }
-    .header-inner { max-width: 720px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .header-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
     .logo-box { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-    .logo-icon { width: 38px; height: 38px; background: linear-gradient(135deg, #1d4ed8, #4338ca); color: #fff; font-weight: 800; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-    .btn-admin { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
-    main { max-width: 720px; width: 100%; margin: 0 auto; padding: 16px; flex: 1; }
-    .banner { background: linear-gradient(135deg, #1e40af, #3730a3); color: #fff; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #1d4ed8, #4338ca); color: #fff; font-weight: 800; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+    .btn-admin { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 12px; font-weight: 700; padding: 7px 14px; border-radius: 6px; cursor: pointer; }
+    main { max-width: 800px; width: 100%; margin: 0 auto; padding: 16px; flex: 1; }
+    .banner { background: linear-gradient(135deg, #1e40af, #3730a3); color: #fff; padding: 20px; border-radius: 12px; margin-bottom: 18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
     .banner span { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #93c5fd; font-weight: 700; }
     .banner h2 { font-size: 17px; margin: 8px 0; line-height: 1.4; }
     .banner p { font-size: 13px; color: #bfdbfe; }
-    .card { background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 18px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    
+    /* Category Filter Tabs */
+    .tabs-wrapper { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 14px; }
+    .tab-btn { background: #ffffff; border: 1px solid #cbd5e1; color: #475569; font-size: 13px; font-weight: 700; padding: 8px 14px; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: 0.2s; }
+    .tab-btn.active { background: #2563eb; color: #ffffff; border-color: #2563eb; }
+    
+    .card { background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 18px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
     .tag { display: inline-block; background: #dbeafe; color: #1e40af; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 20px; margin-bottom: 8px; }
     .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-top: 12px; }
     .btn-primary { background: #2563eb; color: #fff; border: none; padding: 9px 18px; font-size: 13px; font-weight: 700; border-radius: 8px; cursor: pointer; }
     .btn-success { background: #059669; color: #fff; border: none; padding: 10px 18px; font-size: 14px; font-weight: 700; border-radius: 8px; cursor: pointer; }
-    .btn-outline { background: #ffffff; color: #475569; border: 1px solid #cbd5e1; padding: 8px 16px; font-size: 13px; font-weight: 700; border-radius: 8px; cursor: pointer; }
-    .btn-danger { background: #ef4444; color: #fff; border: none; padding: 4px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; cursor: pointer; }
+    .btn-outline { background: #ffffff; color: #475569; border: 1px solid #cbd5e1; padding: 8px 14px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; }
+    .btn-danger { background: #ef4444; color: #fff; border: none; padding: 6px 10px; font-size: 11px; font-weight: 700; border-radius: 6px; cursor: pointer; }
+    
     .opt-btn { width: 100%; text-align: left; padding: 12px 14px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; margin-bottom: 10px; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
     .opt-btn.selected { border-color: #2563eb; background: #eff6ff; color: #1e40af; font-weight: 600; }
     .opt-badge { width: 26px; height: 26px; border-radius: 6px; background: #f1f5f9; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; margin-right: 8px; flex-shrink: 0; }
     .opt-btn.selected .opt-badge { background: #2563eb; color: #fff; }
     .prog-bg { width: 100%; height: 6px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin: 8px 0 16px 0; }
     .prog-bar { height: 100%; background: #2563eb; transition: width 0.3s; }
+    
+    /* Form */
     .form-group { margin-bottom: 12px; text-align: left; }
     .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; color: #334155; }
     .form-control { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; }
+    textarea.form-control { resize: vertical; min-height: 60px; }
   </style>
 </head>
 <body>
@@ -53,25 +63,28 @@
   <main id="app"></main>
 
   <script>
-    const INITIAL_TESTS = [
+    // ==========================================
+    // 1. MASTER BUILT-IN TESTS (Code ke zariye add hone wale test)
+    // ==========================================
+    const CODE_BUILTIN_TESTS = [
       {
-        id: "kautilya-02",
-        title: "कौटिल्य (Kautilya) : टेस्ट - 02",
-        desc: "अर्थशास्त्र का स्वरूप, दण्डनीति, राजा-राज्य संबंध, मैक्स वेबर एवं अरस्तू से तुलनात्मक अध्ययन।",
-        category: "भारतीय विचारक",
+        id: "test-kautilya-01",
+        title: "कौटिल्य (Kautilya) : टेस्ट - 01",
+        section: "कौटिल्य",
+        desc: "अर्थशास्त्र का स्वरूप, दण्डनीति, राजा-राज्य संबंध, मैक्स वेबर एवं अरस्तू से तुलना।",
         time: 15,
         questions: [
           {
             q: "अर्थशास्त्र के स्वरूप के संबंध में निम्नलिखित कथनों पर विचार करें:<br>I. धर्म को आर्थिक प्राप्ति का एक साधन माना गया है।<br>II. राज्य का प्राथमिक उद्देश्य नैतिक व्यवस्था की स्थापना करना है।<br>III. यह ग्रंथ शासन कला और यथार्थवाद पर आधारित है।",
             opt: ["केवल I और II", "केवल II और III", "केवल I और III", "I, II और III"],
             ans: 2,
-            exp: "अर्थशास्त्र शासन कला और यथार्थवादी दृष्टिकोण पर आधारित है।"
+            exp: "अर्थशास्त्र शासन कला और यथार्थवादी दृष्टिकोण पर आधारित है जिसमें धर्म को साधन माना गया है।"
           },
           {
             q: "मैक्स वेबर ने अर्थशास्त्र की तुलना मैकियावेली के 'प्रिंस' से करते हुए क्या निष्कर्ष निकाला?",
             opt: ["अर्थशास्त्र एक सरल ग्रंथ है।", "अर्थशास्त्र में अधिक उग्र मैकियावेलीवाद विद्यमान है।", "दोनों ग्रंथ नैतिक दर्शन पर आधारित हैं।", "अर्थशास्त्र केवल नियमावली है।"],
             ans: 1,
-            exp: "वेबर के अनुसार कौटिल्य में अधिक उग्र यथार्थवाद है।"
+            exp: "वेबर के अनुसार कौटिल्य में मैकियावेली से अधिक उग्र यथार्थवाद है।"
           },
           {
             q: "कौटिल्य के अनुसार दंडनीति के कार्यों का सही क्रम क्या है?",
@@ -83,46 +96,80 @@
             q: "कौटिल्य के अनुसार राज्य के लिए गरीबी निवारण क्यों आवश्यक है?",
             opt: ["राजा की व्यक्तिगत प्रतिष्ठा हेतु", "साम्राज्य की सुरक्षा और स्थिरता हेतु", "कर संग्रह सरल बनाने हेतु", "धार्मिक अनुष्ठानों हेतु"],
             ans: 1,
-            exp: "दरिद्रता विद्रोह का कारण बनती है, अतः सुरक्षा हेतु आवश्यक है।"
+            exp: "दरिद्रता आंतरिक विद्रोह और अशांति का मूल कारण बनती है।"
           }
         ]
       }
     ];
 
-    function getTests() {
-      const stored = localStorage.getItem('ps_tests_list');
-      return stored ? JSON.parse(stored) : INITIAL_TESTS;
+    // Master Storage Management: Dono ka mel
+    function getStore() {
+      const stored = localStorage.getItem('pol_sci_hybrid_store_v1');
+      if (!stored) {
+        setStore(CODE_BUILTIN_TESTS);
+        return CODE_BUILTIN_TESTS;
+      }
+      return JSON.parse(stored);
     }
 
-    function saveTests(list) {
-      localStorage.setItem('ps_tests_list', JSON.stringify(list));
+    function setStore(data) {
+      localStorage.setItem('pol_sci_hybrid_store_v1', JSON.stringify(data));
     }
 
-    let allTests = getTests();
+    let allTests = getStore();
+    let selectedSection = 'All';
     let currentQuiz = null;
     let cur = 0;
     let answers = {};
     let timer = null;
     let sec = 0;
+
+    let editingTestId = null; 
     let draftQuestions = [];
 
+    // --- HOME SCREEN ---
     function showHome() {
       if(timer) clearInterval(timer);
-      allTests = getTests();
-      let testCards = '';
-      allTests.forEach((t, idx) => {
-        testCards += `
-          <div class="card">
-            <span class="tag">${t.category}</span>
-            <h3 style="font-size: 16px; margin-bottom: 6px;">${t.title}</h3>
-            <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">${t.desc}</p>
-            <div class="card-footer">
-              <span style="font-size: 12px; color: #475569; font-weight: 600;">⏱️ ${t.time} मिनट &nbsp;|&nbsp; 📝 ${t.questions.length} प्रश्न</span>
-              <button class="btn-primary" onclick="startTest(${idx})">टेस्ट शुरू करें →</button>
-            </div>
-          </div>
-        `;
+      allTests = getStore();
+
+      // Collect unique sections
+      const sections = ['All'];
+      allTests.forEach(t => {
+        const secName = t.section || 'General';
+        if(!sections.includes(secName)) sections.push(secName);
       });
+
+      // Render Section Tabs
+      let tabsHtml = '';
+      sections.forEach(secName => {
+        const activeCls = (selectedSection === secName) ? 'active' : '';
+        tabsHtml += `<button class="tab-btn ${activeCls}" onclick="filterSection('${secName}')">${secName === 'All' ? 'सभी टेस्ट' : secName}</button>`;
+      });
+
+      // Filter tests
+      const filtered = (selectedSection === 'All') 
+        ? allTests 
+        : allTests.filter(t => (t.section || 'General') === selectedSection);
+
+      let cardsHtml = '';
+      if(filtered.length === 0) {
+        cardsHtml = '<div style="text-align:center; padding:30px; color:#64748b; font-size:13px;">इस सेक्शन में अभी कोई टेस्ट नहीं है।</div>';
+      } else {
+        filtered.forEach(t => {
+          const originalIndex = allTests.findIndex(item => item.id === t.id);
+          cardsHtml += `
+            <div class="card">
+              <span class="tag">${t.section || 'Political Science'}</span>
+              <h3 style="font-size: 16px; margin-bottom: 6px;">${t.title}</h3>
+              <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">${t.desc}</p>
+              <div class="card-footer">
+                <span style="font-size: 12px; color: #475569; font-weight: 600;">⏱️ ${t.time} मिनट &nbsp;|&nbsp; 📝 ${t.questions.length} प्रश्न</span>
+                <button class="btn-primary" onclick="startTest(${originalIndex})">टेस्ट शुरू करें →</button>
+              </div>
+            </div>
+          `;
+        });
+      }
 
       document.getElementById('app').innerHTML = `
         <div class="banner">
@@ -130,13 +177,22 @@
           <h2>Political science for RPSC school lecturer, assistant Professor, UP assistant Professor, DSSSB school lecturer etc.</h2>
           <p>Best questions for each topic and try to boost your preparation.</p>
         </div>
-        <div style="font-weight: 700; margin-bottom: 12px; font-size: 15px;">उपलब्ध टेस्ट श्रृंखला (${allTests.length})</div>
-        ${testCards}
+        <div class="tabs-wrapper">${tabsHtml}</div>
+        <div style="font-weight: 700; margin-bottom: 12px; font-size: 15px; color:#1e293b;">
+          ${selectedSection === 'All' ? 'सभी उपलब्ध टेस्ट' : selectedSection + ' - टेस्ट श्रृंखला'} (${filtered.length})
+        </div>
+        ${cardsHtml}
       `;
     }
 
-    function startTest(idx) {
-      currentQuiz = allTests[idx];
+    function filterSection(secName) {
+      selectedSection = secName;
+      showHome();
+    }
+
+    // --- TEST EXECUTION ---
+    function startTest(index) {
+      currentQuiz = allTests[index];
       cur = 0;
       answers = {};
       sec = currentQuiz.time * 60;
@@ -178,7 +234,7 @@
       document.getElementById('app').innerHTML = `
         <div class="card">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <span style="font-size:12px; font-weight:700; color:#2563eb;">${currentQuiz.category}</span>
+            <span style="font-size:12px; font-weight:700; color:#2563eb;">${currentQuiz.section || 'Political Science'}</span>
             <div style="display:flex; gap:10px; align-items:center;">
               <span id="tm" style="font-weight:700; font-size:13px; background:#eff6ff; color:#1e40af; padding:4px 8px; border-radius:6px;">⏳ ${m}:${s < 10 ? '0' : ''}${s}</span>
               <button onclick="if(confirm('टेस्ट छोड़ना चाहते हैं?')) showHome()" style="background:none; border:none; color:#ef4444; font-size:12px; font-weight:700; cursor:pointer;">छोड़ें</button>
@@ -237,24 +293,95 @@
       `;
     }
 
-    // --- ADMIN PANEL ---
+    // --- FULL ADMIN PANEL ---
     function openAdmin() {
       const pin = prompt('Admin PIN दर्ज करें (PIN: 1234):');
       if (pin === '1234') {
-        draftQuestions = [];
-        renderAdminUI();
+        renderAdminHome();
       } else if (pin !== null) {
         alert('गलत पिन!');
       }
     }
 
-    function renderAdminUI() {
+    function renderAdminHome() {
+      allTests = getStore();
+      let testListHtml = '';
+      allTests.forEach((t) => {
+        testListHtml += `
+          <div style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <span class="tag" style="margin-bottom:2px;">${t.section || 'General'}</span>
+              <div style="font-weight:700; font-size:14px; color:#1e293b;">${t.title}</div>
+              <div style="font-size:11px; color:#64748b;">${t.questions.length} प्रश्न &nbsp;·&nbsp; ${t.time} मिनट</div>
+            </div>
+            <div style="display:flex; gap:6px;">
+              <button class="btn-outline" style="border-color:#2563eb; color:#2563eb;" onclick="loadTestForEdit('${t.id}')">✏️ Edit</button>
+              <button class="btn-danger" onclick="deleteTest('${t.id}')">🗑️ Delete</button>
+            </div>
+          </div>
+        `;
+      });
+
+      document.getElementById('app').innerHTML = `
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid #e2e8f0; padding-bottom:8px;">
+            <h2 style="font-size:18px; font-weight:800;">⚙️ Admin Control Panel</h2>
+            <button class="btn-outline" onclick="showHome()">✕ बाहर निकलें</button>
+          </div>
+
+          <button class="btn-success" style="width:100%; padding:12px; font-size:14px; margin-bottom:12px;" onclick="startNewTestForm()">
+            + बिल्कुल नया टेस्ट बनाएं (Manual Add)
+          </button>
+
+          <button class="btn-outline" style="width:100%; border-color:#94a3b8; color:#475569; font-size:12px; margin-bottom:18px;" onclick="syncWithBuiltinCode()">
+            🔄 GitHub के कोड वाले टेस्ट रीलोड करें (Reset / Sync)
+          </button>
+
+          <h3 style="font-size:14px; font-weight:700; margin-bottom:10px; color:#334155;">सभी टेस्ट्स की सूची (Edit / Manage):</h3>
+          ${testListHtml}
+        </div>
+      `;
+    }
+
+    function syncWithBuiltinCode() {
+      if(confirm('क्या आप कोड में जोड़े गए मूल टेस्ट्स को फिर से रीलोड करना चाहते हैं?')) {
+        setStore(CODE_BUILTIN_TESTS);
+        allTests = CODE_BUILTIN_TESTS;
+        alert('कोड वाले टेस्ट सफलतापूर्वक रीलोड हो गए!');
+        renderAdminHome();
+      }
+    }
+
+    function deleteTest(id) {
+      if(!confirm('क्या आप सच में यह टेस्ट हटाना चाहते हैं?')) return;
+      allTests = allTests.filter(t => t.id !== id);
+      setStore(allTests);
+      renderAdminHome();
+    }
+
+    function startNewTestForm() {
+      editingTestId = null;
+      draftQuestions = [];
+      renderTestFormUI('नया टेस्ट बनाएं', '', 'कौटिल्य', 15, '');
+    }
+
+    function loadTestForEdit(id) {
+      editingTestId = id;
+      const target = allTests.find(t => t.id === id);
+      draftQuestions = JSON.parse(JSON.stringify(target.questions));
+      renderTestFormUI('टेस्ट Edit करें (सुधार करें)', target.title, target.section || 'कौटिल्य', target.time, target.desc);
+    }
+
+    function renderTestFormUI(heading, titleVal, secVal, timeVal, descVal) {
       let qListHtml = '';
       draftQuestions.forEach((dq, i) => {
         qListHtml += `
           <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:8px; margin-bottom:6px; font-size:12px; display:flex; justify-content:space-between; align-items:center;">
-            <span><b>Q${i+1}:</b> ${dq.q.substring(0, 30)}... (उत्तर: Option ${String.fromCharCode(65 + dq.ans)})</span>
-            <button class="btn-danger" onclick="draftQuestions.splice(${i}, 1); renderAdminUI();">हटाएं</button>
+            <span><b>Q${i+1}:</b> ${dq.q.substring(0, 32)}... (उत्तर: Opt ${String.fromCharCode(65 + dq.ans)})</span>
+            <div style="display:flex; gap:4px;">
+              <button class="btn-outline" style="padding:2px 6px; font-size:10px;" onclick="editDraftQuestion(${i})">Edit</button>
+              <button class="btn-danger" style="padding:2px 6px; font-size:10px;" onclick="draftQuestions.splice(${i}, 1); reRenderForm();">हटाएं</button>
+            </div>
           </div>
         `;
       });
@@ -262,36 +389,36 @@
       document.getElementById('app').innerHTML = `
         <div class="card">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid #e2e8f0; padding-bottom:8px;">
-            <h2 style="font-size:17px; font-weight:800;">⚙️ नया टेस्ट जोड़ें (Admin)</h2>
-            <button class="btn-outline" onclick="showHome()">✕ बंद करें</button>
+            <h2 style="font-size:16px; font-weight:800;">${heading}</h2>
+            <button class="btn-outline" onclick="renderAdminHome()">← वापस</button>
           </div>
 
           <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:14px;">
             <div class="form-group">
               <label>टेस्ट का नाम (Title)</label>
-              <input type="text" id="t-title" class="form-control" placeholder="उदा. प्लेटो (Plato) : टेस्ट - 01">
+              <input type="text" id="t-title" class="form-control" value="${titleVal}" placeholder="उदा. प्लेटो (Plato) : टेस्ट - 01">
             </div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
               <div class="form-group">
-                <label>Category</label>
-                <input type="text" id="t-cat" class="form-control" value="Political Science">
+                <label>सेक्शन / विचारक (Section / Tab)</label>
+                <input type="text" id="t-sec" class="form-control" value="${secVal}" placeholder="उदा. कौटिल्य / प्लेटो / अरस्तू">
               </div>
               <div class="form-group">
                 <label>समय (मिनट)</label>
-                <input type="number" id="t-time" class="form-control" value="15">
+                <input type="number" id="t-time" class="form-control" value="${timeVal}">
               </div>
             </div>
             <div class="form-group">
               <label>विवरण (Description)</label>
-              <input type="text" id="t-desc" class="form-control" placeholder="उदा. महत्वपूर्ण बहुविकल्पीय प्रश्न...">
+              <input type="text" id="t-desc" class="form-control" value="${descVal}" placeholder="उदा. महत्वपूर्ण बहुविकल्पीय प्रश्न...">
             </div>
           </div>
 
           <div style="border:1px dashed #2563eb; background:#eff6ff; padding:12px; border-radius:8px; margin-bottom:14px;">
-            <div style="font-weight:700; font-size:13px; margin-bottom:8px; color:#1e40af;">+ प्रश्न जोड़ें:</div>
+            <div style="font-weight:700; font-size:13px; margin-bottom:8px; color:#1e40af;">+ प्रश्न जोड़ें / सुधारें:</div>
             <div class="form-group">
               <label>प्रश्न लिखें</label>
-              <textarea id="q-txt" class="form-control" style="min-height:60px;" placeholder="यहाँ प्रश्न टाइप करें..."></textarea>
+              <textarea id="q-txt" class="form-control" placeholder="यहाँ प्रश्न टाइप करें..."></textarea>
             </div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
               <div class="form-group"><label>विकल्प A</label><input type="text" id="op-a" class="form-control"></div>
@@ -301,7 +428,7 @@
             </div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
               <div class="form-group">
-                <label>सही विकल्प</label>
+                <label>सही उत्तर</label>
                 <select id="op-ans" class="form-control">
                   <option value="0">विकल्प A</option>
                   <option value="1">विकल्प B</option>
@@ -314,17 +441,41 @@
                 <input type="text" id="q-exp" class="form-control" placeholder="उत्तर की व्याख्या...">
               </div>
             </div>
-            <button class="btn-primary" style="width:100%;" onclick="addQuestionBtn()">+ यह प्रश्न जोड़ें</button>
+            <button class="btn-primary" style="width:100%;" onclick="addQuestionBtn()">+ इस प्रश्न को सूची में शामिल करें</button>
           </div>
 
           <div style="margin-bottom:14px;">
-            <div style="font-size:12px; font-weight:700; color:#475569; margin-bottom:6px;">कुल जोड़े गए प्रश्न: ${draftQuestions.length}</div>
-            ${qListHtml || '<div style="font-size:12px; color:#94a3b8;">अभी कोई प्रश्न नहीं जुड़ा है।</div>'}
+            <div style="font-size:12px; font-weight:700; color:#475569; margin-bottom:6px;">इस टेस्ट में जोड़े गए प्रश्न (${draftQuestions.length}):</div>
+            ${qListHtml || '<div style="font-size:12px; color:#94a3b8;">कोई प्रश्न नहीं है। कम से कम 1 प्रश्न जोड़ें।</div>'}
           </div>
 
-          <button class="btn-success" style="width:100%;" onclick="saveNewTestBtn()">💾 पूरा टेस्ट सेव करें</button>
+          <button class="btn-success" style="width:100%; font-size:15px; padding:12px;" onclick="saveTestFinal()">
+            💾 टेस्ट को सेव करें और लाइव करें
+          </button>
         </div>
       `;
+    }
+
+    function reRenderForm() {
+      const title = document.getElementById('t-title').value;
+      const sec = document.getElementById('t-sec').value;
+      const time = document.getElementById('t-time').value;
+      const desc = document.getElementById('t-desc').value;
+      renderTestFormUI(editingTestId ? 'टेस्ट Edit करें' : 'नया टेस्ट बनाएं', title, sec, time, desc);
+    }
+
+    function editDraftQuestion(index) {
+      const qObj = draftQuestions[index];
+      document.getElementById('q-txt').value = qObj.q;
+      document.getElementById('op-a').value = qObj.opt[0];
+      document.getElementById('op-b').value = qObj.opt[1];
+      document.getElementById('op-c').value = qObj.opt[2];
+      document.getElementById('op-d').value = qObj.opt[3];
+      document.getElementById('op-ans').value = qObj.ans;
+      document.getElementById('q-exp').value = qObj.exp || '';
+      draftQuestions.splice(index, 1);
+      reRenderForm();
+      alert('प्रश्न फॉर्म में आ गया है, सुधार करके "+ इस प्रश्न को सूची में शामिल करें" दबाएँ।');
     }
 
     function addQuestionBtn() {
@@ -337,7 +488,7 @@
       const exp = document.getElementById('q-exp').value.trim();
 
       if (!q || !a || !b || !c || !d) {
-        return alert('प्रश्न और चारों विकल्प भरना ज़रूरी है!');
+        return alert('कृपया प्रश्न और चारों विकल्प ज़रूर भरें!');
       }
 
       draftQuestions.push({ q, opt: [a, b, c, d], ans, exp });
@@ -349,33 +500,48 @@
       document.getElementById('op-d').value = '';
       document.getElementById('q-exp').value = '';
 
-      renderAdminUI();
+      reRenderForm();
     }
 
-    function saveNewTestBtn() {
+    function saveTestFinal() {
       const title = document.getElementById('t-title').value.trim();
-      const cat = document.getElementById('t-cat').value.trim() || 'Political Science';
+      const secVal = document.getElementById('t-sec').value.trim() || 'General';
       const time = parseInt(document.getElementById('t-time').value) || 15;
-      const desc = document.getElementById('t-desc').value.trim() || 'Political Science Mock Test';
+      const desc = document.getElementById('t-desc').value.trim() || 'Political Science Test';
 
-      if (!title) return alert('टेस्ट का नाम (Title) लिखें!');
-      if (draftQuestions.length === 0) return alert('कम से कम 1 प्रश्न जोड़ना ज़रूरी है!');
+      if (!title) return alert('टेस्ट का नाम लिखना ज़रूरी है!');
+      if (draftQuestions.length === 0) return alert('टेस्ट में कम से कम 1 प्रश्न जोड़ना ज़रूरी है!');
 
-      const newT = {
-        id: 'test-' + Date.now(),
-        title,
-        desc,
-        category: cat,
-        time,
-        questions: draftQuestions
-      };
+      if (editingTestId) {
+        const targetIndex = allTests.findIndex(t => t.id === editingTestId);
+        if(targetIndex !== -1) {
+          allTests[targetIndex] = {
+            id: editingTestId,
+            title,
+            section: secVal,
+            time,
+            desc,
+            questions: draftQuestions
+          };
+        }
+      } else {
+        const newTest = {
+          id: 'test-' + Date.now(),
+          title,
+          section: secVal,
+          time,
+          desc,
+          questions: draftQuestions
+        };
+        allTests.push(newTest);
+      }
 
-      allTests.push(newT);
-      saveTests(allTests);
-      alert('नया टेस्ट सफलता से जुड़ गया!');
+      setStore(allTests);
+      alert('सफलतापूर्वक सेव हो गया!');
       showHome();
     }
 
+    // App Start
     showHome();
   </script>
 </body>
