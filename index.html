@@ -63,10 +63,7 @@
   <main id="app"></main>
 
   <script>
-    // ==========================================
-    // 1. MASTER BUILT-IN TESTS (Code ke zariye add hone wale test)
-    // ==========================================
-    const CODE_BUILTIN_TESTS = [
+    const BUILTIN_TESTS = [
       {
         id: "test-kautilya-01",
         title: "कौटिल्य (Kautilya) : टेस्ट - 01",
@@ -102,18 +99,42 @@
       }
     ];
 
-    // Master Storage Management: Dono ka mel
+    // SMART RECOVERY STORAGE
     function getStore() {
-      const stored = localStorage.getItem('pol_sci_hybrid_store_v1');
-      if (!stored) {
-        setStore(CODE_BUILTIN_TESTS);
-        return CODE_BUILTIN_TESTS;
+      // 1. Check all previous storage keys
+      const keys = ['pol_tests_custom', 'ps_tests_list', 'pol_sci_complete_db_v1', 'pol_sci_hybrid_store_v1', 'master_ps_quizzes'];
+      let foundList = [];
+
+      for(let k of keys) {
+        const val = localStorage.getItem(k);
+        if(val) {
+          try {
+            const parsed = JSON.parse(val);
+            if(Array.isArray(parsed)) {
+              parsed.forEach(item => {
+                if(!foundList.some(f => f.title === item.title || f.id === item.id)) {
+                  foundList.push(item);
+                }
+              });
+            }
+          } catch(e){}
+        }
       }
-      return JSON.parse(stored);
+
+      // Add builtin if not present
+      BUILTIN_TESTS.forEach(b => {
+        if(!foundList.some(f => f.title === b.title || f.id === b.id)) {
+          foundList.push(b);
+        }
+      });
+
+      // Save permanently to unified key
+      localStorage.setItem('master_ps_quizzes', JSON.stringify(foundList));
+      return foundList;
     }
 
     function setStore(data) {
-      localStorage.setItem('pol_sci_hybrid_store_v1', JSON.stringify(data));
+      localStorage.setItem('master_ps_quizzes', JSON.stringify(data));
     }
 
     let allTests = getStore();
@@ -132,24 +153,21 @@
       if(timer) clearInterval(timer);
       allTests = getStore();
 
-      // Collect unique sections
       const sections = ['All'];
       allTests.forEach(t => {
-        const secName = t.section || 'General';
+        const secName = t.section || 'अन्य';
         if(!sections.includes(secName)) sections.push(secName);
       });
 
-      // Render Section Tabs
       let tabsHtml = '';
       sections.forEach(secName => {
         const activeCls = (selectedSection === secName) ? 'active' : '';
         tabsHtml += `<button class="tab-btn ${activeCls}" onclick="filterSection('${secName}')">${secName === 'All' ? 'सभी टेस्ट' : secName}</button>`;
       });
 
-      // Filter tests
       const filtered = (selectedSection === 'All') 
         ? allTests 
-        : allTests.filter(t => (t.section || 'General') === selectedSection);
+        : allTests.filter(t => (t.section || 'अन्य') === selectedSection);
 
       let cardsHtml = '';
       if(filtered.length === 0) {
@@ -293,7 +311,7 @@
       `;
     }
 
-    // --- FULL ADMIN PANEL ---
+    // --- ADMIN PANEL WITH RECOVERY & BACKUP ---
     function openAdmin() {
       const pin = prompt('Admin PIN दर्ज करें (PIN: 1234):');
       if (pin === '1234') {
@@ -333,9 +351,10 @@
             + बिल्कुल नया टेस्ट बनाएं (Manual Add)
           </button>
 
-          <button class="btn-outline" style="width:100%; border-color:#94a3b8; color:#475569; font-size:12px; margin-bottom:18px;" onclick="syncWithBuiltinCode()">
-            🔄 GitHub के कोड वाले टेस्ट रीलोड करें (Reset / Sync)
-          </button>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:18px;">
+            <button class="btn-outline" onclick="exportDataToFile()">📥 Backup लें (Download)</button>
+            <button class="btn-outline" onclick="importDataFromFile()">📤 Backup Restore करें</button>
+          </div>
 
           <h3 style="font-size:14px; font-weight:700; margin-bottom:10px; color:#334155;">सभी टेस्ट्स की सूची (Edit / Manage):</h3>
           ${testListHtml}
@@ -343,13 +362,35 @@
       `;
     }
 
-    function syncWithBuiltinCode() {
-      if(confirm('क्या आप कोड में जोड़े गए मूल टेस्ट्स को फिर से रीलोड करना चाहते हैं?')) {
-        setStore(CODE_BUILTIN_TESTS);
-        allTests = CODE_BUILTIN_TESTS;
-        alert('कोड वाले टेस्ट सफलतापूर्वक रीलोड हो गए!');
-        renderAdminHome();
-      }
+    function exportDataToFile() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allTests, null, 2));
+      const dlAnchor = document.createElement('a');
+      dlAnchor.setAttribute("href", dataStr);
+      dlAnchor.setAttribute("download", "political_science_tests_backup.json");
+      dlAnchor.click();
+    }
+
+    function importDataFromFile() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      input.onchange = e => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = event => {
+          try {
+            const imported = JSON.parse(event.target.result);
+            if(Array.isArray(imported)) {
+              setStore(imported);
+              allTests = imported;
+              alert('सफलतापूर्वक बैकअप रीस्टोर हो गया!');
+              renderAdminHome();
+            }
+          } catch(err) { alert('गलत फाइल!'); }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
     }
 
     function deleteTest(id) {
@@ -362,14 +403,14 @@
     function startNewTestForm() {
       editingTestId = null;
       draftQuestions = [];
-      renderTestFormUI('नया टेस्ट बनाएं', '', 'कौटिल्य', 15, '');
+      renderTestFormUI('नया टेस्ट बनाएं', '', 'प्लेटो', 15, '');
     }
 
     function loadTestForEdit(id) {
       editingTestId = id;
       const target = allTests.find(t => t.id === id);
       draftQuestions = JSON.parse(JSON.stringify(target.questions));
-      renderTestFormUI('टेस्ट Edit करें (सुधार करें)', target.title, target.section || 'कौटिल्य', target.time, target.desc);
+      renderTestFormUI('टेस्ट Edit करें (सुधार करें)', target.title, target.section || 'सामान्य', target.time, target.desc);
     }
 
     function renderTestFormUI(heading, titleVal, secVal, timeVal, descVal) {
@@ -401,7 +442,7 @@
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
               <div class="form-group">
                 <label>सेक्शन / विचारक (Section / Tab)</label>
-                <input type="text" id="t-sec" class="form-control" value="${secVal}" placeholder="उदा. कौटिल्य / प्लेटो / अरस्तू">
+                <input type="text" id="t-sec" class="form-control" value="${secVal}" placeholder="उदा. प्लेटो / कौटिल्य / अरस्तू">
               </div>
               <div class="form-group">
                 <label>समय (मिनट)</label>
