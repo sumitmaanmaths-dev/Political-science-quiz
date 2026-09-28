@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>दैनिक क्विज़ टेस्ट - प्रतियोगिता परीक्षा तैयारी</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React & ReactDOM CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  
+  <!-- Babel for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Yantramanav:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Yantramanav', sans-serif;
+      background-color: #fafaf9;
+      color: #1c1917;
+    }
+    .font-display {
+      font-family: 'Rozha One', serif;
+    }
+  </style>
+</head>
+<body class="bg-stone-50 text-stone-900 min-h-screen">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // --- SUPABASE CONFIG ---
+    const SUPABASE_URL = 'https://jnmtkibukpbimzvkruui.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Z6pJI94XAxvy7Jo9q_UK1Q_91xuHmoU';
+
+    // --- AUDIO SYNTHESIZER (No external files needed) ---
+    const playTone = (type) => {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        const now = ctx.currentTime;
+        if (type === 'click') {
+          osc.frequency.setValueAtTime(600, now);
+          gain.gain.setValueAtTime(0.05, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+          osc.start(now);
+          osc.stop(now + 0.05);
+        } else if (type === 'correct') {
+          osc.frequency.setValueAtTime(523.25, now); // C5
+          osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } else if (type === 'wrong') {
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.setValueAtTime(196, now + 0.1);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        }
+      } catch(e) {}
+    };
+
+    // --- DEFAULT INITIAL TESTS ---
+    const DEFAULT_TESTS = [
+      {
+        id: "hindi-grammar-01",
+        title: "दैनिक हिंदी व्याकरण एवं साहित्य टेस्ट - 01",
+        description: "संधि, समास, रस, अलंकार, उपसर्ग और प्रत्यय से संबंधित 10 महत्वपूर्ण प्रश्न।",
+        category: "सामान्य हिंदी",
+        timeLimitMinutes: 10,
+        totalMarks: 10,
+        negativeMarking: 0.33,
+        createdAt: new Date().toISOString(),
+        questions: [
+          {
+            id: "q1",
+            question: "'पवन' शब्द का सही संधि-विच्छेद क्या होगा?",
+            options: ["पौ + अन", "पो + अन", "पव + अन", "प + वन"],
+            correctAnswer: 1,
+            explanation: "'पवन' का संधि-विच्छेद 'पो + अन' (अयादि स्वर संधि) होता है। यदि 'पौ + अन' हो तो 'पावन' बनता है।",
+            category: "संधि",
+            difficulty: "सरल"
+          },
+          {
+            id: "q2",
+            question: "निम्नलिखित में से 'द्विगु समास' का उपयुक्त उदाहरण कौन सा है?",
+            options: ["पीताम्बर", "दशानन", "पंचवटी", "यथाशक्ति"],
+            correctAnswer: 2,
+            explanation: "'पंचवटी' (पाँच वटों का समाहार) में पहला पद संख्यावाची विशेषण होने के कारण द्विगु समास है।",
+            category: "समास",
+            difficulty: "मध्यम"
+          },
+          {
+            id: "q3",
+            question: "'अंगूठा दिखाना' मुहावरे का सही अर्थ क्या है?",
+            options: ["मदद से साफ मना करना", "धोखा देना", "क्रोधित होना", "अंगूठे पर चोट लगना"],
+            correctAnswer: 0,
+            explanation: "'अंगूठा दिखाना' का अर्थ है ऐन वक्त पर किसी काम के लिए साफ मना कर देना।",
+            category: "मुहावरे",
+            difficulty: "सरल"
+          }
+        ]
+      }
+    ];
+
+    // --- SUPABASE SYNC SERVICE ---
+    const fetchCloudTests = async () => {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/quiz_tests?select=*&order=created_at.desc`, {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
+          }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            return data.map(row => ({
+              id: row.id,
+              title: row.title,
+              description: row.description || '',
+              category: row.category || 'सामान्य ज्ञान',
+              timeLimitMinutes: Number(row.time_limit_minutes) || 10,
+              totalMarks: Number(row.total_marks) || 10,
+              negativeMarking: Number(row.negative_marking) || 0.33,
+              createdAt: row.created_at,
+              questions: Array.isArray(row.questions) ? row.questions : []
+            }));
+          }
+        }
+      } catch (err) {
+        console.warn("Cloud offline, loading local", err);
+      }
+      return null;
+    };
+
+    const saveTestToCloud = async (test) => {
+      try {
+        const payload = {
+          id: test.id,
+          title: test.title,
+          description: test.description,
+          category: test.category,
+          time_limit_minutes: test.timeLimitMinutes,
+          total_marks: test.totalMarks,
+          negative_marking: test.negativeMarking,
+          created_at: test.createdAt,
+          questions: test.questions
+        };
+        await fetch(`${SUPABASE_URL}/rest/v1/quiz_tests`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates'
+          },
+          body: JSON.stringify(payload)
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    // --- MAIN APP COMPONENT ---
+    function App() {
+      const [tests, setTests] = useState(() => {
+        const saved = localStorage.getItem('hindi_tests');
+        return saved ? JSON.parse(saved) : DEFAULT_TESTS;
+      });
+
+      const [view, setView] = useState('home'); // 'home', 'quiz', 'result', 'admin'
+      const [activeTest, setActiveTest] = useState(null);
+      const [activeResult, setActiveResult] = useState(null);
+      const [adminPin, setAdminPin] = useState(() => localStorage.getItem('admin_pin') || '1234');
+      const [isAdminAuthed, setIsAdminAuthed] = useState(false);
+      const [cloudStatus, setCloudStatus] = useState('सिंक हो रहा है...');
+
+      // Load from Supabase on start
+      useEffect(() => {
+        fetchCloudTests().then(cloudData => {
+          if (cloudData && cloudData.length > 0) {
+            setTests(cloudData);
+            localStorage.setItem('hindi_tests', JSON.stringify(cloudData));
+            setCloudStatus('Supabase कनेक्टेड (लाइव)');
+          } else {
+            setCloudStatus('लोकल मोड');
+          }
+        });
+      }, []);
+
+      // Start a Quiz
+      const handleStartQuiz = (test) => {
+        playTone('click');
+        setActiveTest(test);
+        setView('quiz');
+      };
+
+      // Finish Quiz
+      const handleFinishQuiz = (result) => {
+        setActiveResult(result);
+        setView('result');
+      };
+
+      return (
+        <div className="min-h-screen flex flex-col">
+          {/* Header */}
+          <header className="sticky top-0 z-40 bg-white border-b border-stone-200 shadow-sm">
+            <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+              <div 
+                onClick={() => { playTone('click'); setView('home'); }} 
+                className="flex items-center gap-3 cursor-pointer"
+              >
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-white font-bold shadow-md shadow-amber-500/20 text-lg">
+                  हिं
+                </div>
+                <div>
+                  <h1 className="font-display font-bold text-lg text-stone-900 leading-tight">दैनिक क्विज़ टेस्ट</h1>
+                  <p className="text-[11px] text-stone-500 font-medium">हिंदी माध्यम प्रतियोगी परीक्षा</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  {cloudStatus}
+                </span>
+
+                <button
+                  onClick={() => {
+                    playTone('click');
+                    if (isAdminAuthed) setView('admin');
+                    else {
+                      const pin = prompt('एडमिन सुरक्षा पिन (Default: 1234) दर्ज करें:');
+                      if (pin === adminPin) {
+                        setIsAdminAuthed(true);
+                        setView('admin');
+                      } else if (pin !== null) {
+                        alert('गलत पिन! कृपया पुनः प्रयास करें।');
+                      }
+                    }
+                  }}
+                  className="px-3.5 py-1.5 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition-all border border-stone-300"
+                >
+                  ⚙️ एडमिन
+                </button>
+              </div>
+            </div>
+          </header>
+
+          {/* Main Views */}
+          <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-6">
+            {view === 'home' && <HomeView tests={tests} onStart={handleStartQuiz} />}
+            {view === 'quiz' && <QuizView test={activeTest} onFinish={handleFinishQuiz} onExit={() => setView('home')} />}
+            {view === 'result' && <ResultView result={activeResult} test={activeTest} onHome={() => setView('home')} onRetry={() => handleStartQuiz(activeTest)} />}
+            {view === 'admin' && (
+              <AdminView 
+                tests={tests} 
+                onUpdateTests={(updated) => {
+                  setTests(updated);
+                  localStorage.setItem('hindi_tests', JSON.stringify(updated));
+                }} 
+                onClose={() => setView('home')} 
+                adminPin={adminPin}
+                setAdminPin={setAdminPin}
+              />
+            )}
+          </main>
+        </div>
+      );
+    }
+
+    // --- HOME VIEW ---
+    function HomeView({ tests, onStart }) {
+      return (
+        <div className="space-y-6">
+          {/* Banner */}
+          <div className="rounded-2xl bg-gradient-to-r from-amber-600 to-amber-700 text-white p-6 sm:p-8 shadow-md">
+            <span className="text-amber-200 text-xs font-bold uppercase tracking-wider">विद्या ददाति विनयं</span>
+            <h2 className="text-2xl sm:text-3xl font-display font-bold mt-1 mb-2">दैनिक हिंदी टेस्ट एवं संपूर्ण मूल्यांकन</h2>
+            <p className="text-amber-100 text-sm max-w-2xl">
+              UPSC, UPPSC, MPPSC, RO/ARO, SI, Constable, शिक्षक भर्ती परीक्षा आदि के लिए तैयार किए गए महत्वपूर्ण बहुविकल्पीय प्रश्न।
+            </p>
+          </div>
+
+          {/* Tests Grid */}
+          <div>
+            <h3 className="text-lg font-bold text-stone-800 mb-4 flex items-center justify-between">
+              <span>उपलब्ध दैनिक टेस्ट श्रृंखला</span>
+              <span className="text-xs bg-stone-200 text-stone-700 px-2.5 py-1 rounded-full font-bold">{tests.length} टेस्ट</span>
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {tests.map(test => (
+                <div key={test.id} className="bg-white rounded-xl border border-stone-200 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800">
+                        {test.category}
+                      </span>
+                      <span className="text-xs text-stone-500 font-medium">⏱️ {test.timeLimitMinutes} मिनट</span>
+                    </div>
+                    <h4 className="font-bold text-stone-900 text-base leading-snug mb-1">{test.title}</h4>
+                    <p className="text-xs text-stone-500 mb-4 line-clamp-2">{test.description}</p>
+                  </div>
+
+                  <div className="pt-3 border-t border-stone-100 flex items-center justify-between">
+                    <span className="text-xs text-stone-600 font-semibold">
+                      📝 {test.questions.length} प्रश्न &nbsp;·&nbsp; 🎯 {test.totalMarks} अंक
+                    </span>
+                    <button
+                      onClick={() => onStart(test)}
+                      className="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-sm transition-all"
+                    >
+                      टेस्ट शुरू करें →
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // --- QUIZ VIEW (Interactive Test Engine) ---
+    function QuizView({ test, onFinish, onExit }) {
+      const [currentIdx, setCurrentIdx] = useState(0);
+      const [answers, setAnswers] = useState({});
+      const [timeLeft, setTimeLeft] = useState(test.timeLimitMinutes * 60);
+
+      useEffect(() => {
+        const timer = setInterval(() => {
+          setTimeLeft(t => {
+            if (t <= 1) {
+              clearInterval(timer);
+              handleSubmit();
+              return 0;
+            }
+            return t - 1;
+          });
+        }, 1000);
+        return () => clearInterval(timer);
+      }, [answers]);
+
+      const handleSelectOption = (optIdx) => {
+        playTone('click');
+        setAnswers({ ...answers, [currentIdx]: optIdx });
+      };
+
+      const handleSubmit = () => {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let skippedCount = 0;
+
+        test.questions.forEach((q, idx) => {
+          if (answers[idx] === undefined) {
+            skippedCount++;
+          } else if (answers[idx] === q.correctAnswer) {
+            correctCount++;
+          } else {
+            wrongCount++;
+          }
+        });
+
+        const perQMarks = test.totalMarks / (test.questions.length || 1);
+        const earned = (correctCount * perQMarks) - (wrongCount * (test.negativeMarking || 0));
+        const finalScore = Math.max(0, Number(earned.toFixed(2)));
+
+        playTone(finalScore >= (test.totalMarks * 0.6) ? 'correct' : 'wrong');
+
+        onFinish({
+          testId: test.id,
+          score: finalScore,
+          totalQuestions: test.questions.length,
+          correctCount,
+          wrongCount,
+          skippedCount,
+          userAnswers: answers,
+          timeTaken: (test.timeLimitMinutes * 60) - timeLeft
+        });
+      };
+
+      const q = test.questions[currentIdx];
+      const formatTime = (secs) => {
+        const m = Math.floor(secs / 60);
+        const s = secs % 60;
+        return `${m}:${s < 10 ? '0' : ''}${s}`;
+      };
+
+      return (
+        <div className="max-w-3xl mx-auto bg-white rounded-2xl border border-stone-200 p-6 shadow-sm space-y-6">
+          {/* Quiz Top bar */}
+          <div className="flex items-center justify-between pb-4 border-b border-stone-200">
+            <div>
+              <span className="text-xs text-stone-500 font-bold uppercase">{test.category}</span>
+              <h3 className="font-bold text-stone-900 text-sm">{test.title}</h3>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className={`px-3 py-1.5 rounded-lg text-sm font-bold font-mono ${timeLeft < 120 ? 'bg-red-100 text-red-700 animate-pulse' : 'bg-amber-100 text-amber-900'}`}>
+                ⏳ {formatTime(timeLeft)}
+              </span>
+              <button 
+                onClick={() => { if(confirm('क्या आप सच में टेस्ट छोड़ना चाहते हैं?')) onExit(); }}
+                className="text-xs text-stone-500 hover:text-red-600 font-bold px-2 py-1"
+              >
+                छोड़ें
+              </button>
+            </div>
+          </div>
+
+          {/* Progress */}
+          <div className="space-y-1">
+            <div className="flex justify-between text-xs font-bold text-stone-600">
+              <span>प्रश्न {currentIdx + 1} / {test.questions.length}</span>
+              <span>हल किए गए: {Object.keys(answers).length}</span>
+            </div>
+            <div className="w-full bg-stone-200 h-2 rounded-full overflow-hidden">
+              <div 
+                className="bg-amber-600 h-full transition-all duration-300"
+                style={{ width: `${((currentIdx + 1) / test.questions.length) * 100}%` }}
+              ></div>
+            </div>
+          </div>
+
+          {/* Question Text */}
+          <div className="py-2">
+            <h4 className="text-base sm:text-lg font-bold text-stone-900 leading-relaxed">
+              {currentIdx + 1}. {q.question}
+            </h4>
+          </div>
+
+          {/* Options */}
+          <div className="space-y-3">
+            {q.options.map((opt, oIdx) => {
+              const isSelected = answers[currentIdx] === oIdx;
+              return (
+                <button
+                  key={oIdx}
+                  onClick={() => handleSelectOption(oIdx)}
+                  className={`w-full text-left p-4 rounded-xl border text-sm font-medium transition-all flex items-center justify-between ${
+                    isSelected 
+                      ? 'border-amber-600 bg-amber-50 text-amber-900 font-bold shadow-sm'
+                      : 'border-stone-200 hover:bg-stone-50 text-stone-800'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold ${
+                      isSelected ? 'bg-amber-600 text-white' : 'bg-stone-100 text-stone-600'
+                    }`}>
+                      {String.fromCharCode(65 + oIdx)}
+                    </span>
+                    <span>{opt}</span>
+                  </div>
+                  {isSelected && <span className="text-amber-600 font-bold">✓</span>}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Nav Buttons */}
+          <div className="flex items-center justify-between pt-4 border-t border-stone-200">
+            <button
+              disabled={currentIdx === 0}
+              onClick={() => { playTone('click'); setCurrentIdx(c => c - 1); }}
+              className="px-4 py-2 rounded-lg border border-stone-300 font-bold text-xs text-stone-700 disabled:opacity-30"
+            >
+              ← पिछला
+            </button>
+
+            {currentIdx < test.questions.length - 1 ? (
+              <button
+                onClick={() => { playTone('click'); setCurrentIdx(c => c + 1); }}
+                className="px-5 py-2.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-sm"
+              >
+                अगला प्रश्न →
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  if (confirm('क्या आप टेस्ट जमा (Submit) करना चाहते हैं?')) {
+                    handleSubmit();
+                  }
+                }}
+                className="px-6 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm"
+              >
+                टेस्ट सबमिट करें ✓
+              </button>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // --- RESULT & DETAILED EXPLANATION VIEW ---
+    function ResultView({ result, test, onHome, onRetry }) {
+      const percentage = Math.round((result.score / test.totalMarks) * 100);
+
+      return (
+        <div className="max-w-3xl mx-auto space-y-6">
+          {/* Score Card */}
+          <div className="bg-white rounded-2xl border border-stone-200 p-6 text-center shadow-sm">
+            <span className="text-xs font-bold text-amber-700 uppercase tracking-widest">परिणाम पत्र (Scorecard)</span>
+            <h3 className="text-2xl font-bold font-display text-stone-900 mt-1 mb-4">{test.title}</h3>
+
+            <div className="inline-block p-6 rounded-2xl bg-amber-50 border border-amber-200 mb-6">
+              <div className="text-4xl font-extrabold text-amber-700 font-mono">
+                {result.score} <span className="text-xl text-stone-500 font-normal">/ {test.totalMarks}</span>
+              </div>
+              <div className="text-xs font-bold text-stone-600 mt-1">कुल प्राप्तांक ({percentage}%)</div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3 max-w-md mx-auto mb-6 text-xs font-bold">
+              <div className="p-3 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200">
+                <div className="text-lg font-mono">{result.correctCount}</div>
+                <div>सही</div>
+              </div>
+              <div className="p-3 rounded-xl bg-red-50 text-red-800 border border-red-200">
+                <div className="text-lg font-mono">{result.wrongCount}</div>
+                <div>गलत</div>
+              </div>
+              <div className="p-3 rounded-xl bg-stone-100 text-stone-700 border border-stone-200">
+                <div className="text-lg font-mono">{result.skippedCount}</div>
+                <div>छोड़े गए</div>
+              </div>
+            </div>
+
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={onRetry}
+                className="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs"
+              >
+                पुनः टेस्ट दें 🔄
+              </button>
+              <button
+                onClick={onHome}
+                className="px-4 py-2 rounded-lg bg-stone-200 hover:bg-stone-300 text-stone-800 font-bold text-xs"
+              >
+                मुख्य पृष्ठ पर जाएं 🏠
+              </button>
+            </div>
+          </div>
+
+          {/* Detailed Question Review */}
+          <div className="bg-white rounded-2xl border border-stone-200 p-6 shadow-sm space-y-4">
+            <h4 className="font-bold text-stone-900 text-base border-b border-stone-200 pb-3">
+              विस्तृत उत्तर एवं व्याख्या (Detailed Solutions)
+            </h4>
+
+            <div className="space-y-6">
+              {test.questions.map((q, idx) => {
+                const userAns = result.userAnswers[idx];
+                const isCorrect = userAns === q.correctAnswer;
+                const isSkipped = userAns === undefined;
+
+                return (
+                  <div key={idx} className="p-4 rounded-xl border border-stone-200 space-y-3 bg-stone-50/50">
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="font-bold text-stone-900 text-sm">
+                        {idx + 1}. {q.question}
+                      </span>
+                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
+                        isCorrect ? 'bg-emerald-100 text-emerald-800' : isSkipped ? 'bg-stone-200 text-stone-700' : 'bg-red-100 text-red-800'
+                      }`}>
+                        {isCorrect ? 'सही (+1)' : isSkipped ? 'अनुत्तरित (0)' : 'गलत (-0.33)'}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                      {q.options.map((opt, oIdx) => {
+                        let optStyle = 'border-stone-200 bg-white text-stone-700';
+                        if (oIdx === q.correctAnswer) optStyle = 'border-emerald-500 bg-emerald-50 text-emerald-900 font-bold';
+                        else if (userAns === oIdx) optStyle = 'border-red-400 bg-red-50 text-red-800';
+
+                        return (
+                          <div key={oIdx} className={`p-2.5 rounded-lg border flex items-center justify-between ${optStyle}`}>
+                            <span>{String.fromCharCode(65 + oIdx)}. {opt}</span>
+                            {oIdx === q.correctAnswer && <span className="text-emerald-700 font-bold">सही उत्तर</span>}
+                            {userAns === oIdx && oIdx !== q.correctAnswer && <span className="text-red-700 font-bold">आपका उत्तर</span>}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="text-xs bg-amber-50/70 border border-amber-200/80 rounded-lg p-3 text-amber-900">
+                      <strong>व्याख्या:</strong> {q.explanation}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // --- ADMIN VIEW (Add tests & questions) ---
+    function AdminView({ tests, onUpdateTests, onClose, adminPin, setAdminPin }) {
+      const [isCreating, setIsCreating] = useState(false);
+      const [title, setTitle] = useState('');
+      const [category, setCategory] = useState('सामान्य ज्ञान');
+      const [timeLimit, setTimeLimit] = useState(10);
+      const [questions, setQuestions] = useState([
+        {
+          question: '',
+          options: ['', '', '', ''],
+          correctAnswer: 0,
+          explanation: ''
+        }
+      ]);
+
+      const handleAddQuestionRow = () => {
+        setQuestions([
+          ...questions,
+          { question: '', options: ['', '', '', ''], correctAnswer: 0, explanation: '' }
+        ]);
+      };
+
+      const handleSave = async () => {
+        if (!title.trim()) return alert('कृपया टेस्ट का नाम भरें!');
+        for (let i = 0; i < questions.length; i++) {
+          if (!questions[i].question.trim()) return alert(`प्रश्न ${i+1} का नाम भरें!`);
+          if (questions[i].options.some(o => !o.trim())) return alert(`प्रश्न ${i+1} के सभी 4 विकल्प भरें!`);
+        }
+
+        const newTest = {
+          id: `test-${Date.now()}`,
+          title,
+          description: `दैनिक अभ्यास परीक्षा - ${category}`,
+          category,
+          timeLimitMinutes: Number(timeLimit) || 10,
+          totalMarks: questions.length,
+          negativeMarking: 0.33,
+          createdAt: new Date().toISOString(),
+          questions: questions.map((q, idx) => ({
+            id: `q-${idx}`,
+            ...q,
+            category
+          }))
+        };
+
+        const updated = [newTest, ...tests];
+        onUpdateTests(updated);
+        await saveTestToCloud(newTest);
+        alert('टेस्ट सफलतापूर्वक बन गया और Supabase क्लाउड में सेव हो गया!');
+        setIsCreating(false);
+      };
+
+      return (
+        <div className="bg-white rounded-2xl border border-stone-200 p-6 shadow-sm space-y-6">
+          <div className="flex items-center justify-between pb-4 border-b border-stone-200">
+            <div>
+              <h3 className="font-bold text-stone-900 text-lg">प्रशासक पोर्टल (Admin Dashboard)</h3>
+              <p className="text-xs text-stone-500">यहाँ से नए टेस्ट बनाएं जो सीधे सभी छात्रों को लाइव दिखेंगे।</p>
+            </div>
+            <button onClick={onClose} className="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold rounded-lg">
+              बंद करें ✕
+            </button>
+          </div>
+
+          {!isCreating ? (
+            <div className="space-y-4">
+              <button
+                onClick={() => setIsCreating(true)}
+                className="w-full py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm shadow-sm"
+              >
+                + नया टेस्ट एवं प्रश्न जोड़ें
+              </button>
+
+              <div className="space-y-2">
+                <h4 className="text-xs font-bold text-stone-500 uppercase">वर्तमान सक्रिय टेस्ट</h4>
+                {tests.map(t => (
+                  <div key={t.id} className="p-3 rounded-lg border border-stone-200 flex items-center justify-between text-xs font-medium">
+                    <span>{t.title} ({t.questions.length} प्रश्न)</span>
+                    <button
+                      onClick={() => {
+                        if (confirm('क्या आप इसे हटाना चाहते हैं?')) {
+                          onUpdateTests(tests.filter(x => x.id !== t.id));
+                        }
+                      }}
+                      className="text-red-600 font-bold hover:underline"
+                    >
+                      हटाएं
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-5">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-bold text-stone-700 mb-1">टेस्ट शीर्षक</label>
+                  <input
+                    type="text"
+                    value={title}
+                    onChange={e => setTitle(e.target.value)}
+                    placeholder="उदा. दैनिक इतिहास मॉक टेस्ट - 02"
+                    className="w-full p-2.5 text-xs rounded-lg border border-stone-300 font-medium"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-stone-700 mb-1">समय (मिनट)</label>
+                  <input
+                    type="number"
+                    value={timeLimit}
+                    onChange={e => setTimeLimit(e.target.value)}
+                    className="w-full p-2.5 text-xs rounded-lg border border-stone-300 font-medium"
+                  />
+                </div>
+              </div>
+
+              {/* Questions Form */}
+              <div className="space-y-4 pt-2">
+                <div className="flex justify-between items-center">
+                  <h5 className="text-xs font-bold uppercase text-stone-600">प्रश्न सूची ({questions.length})</h5>
+                  <button onClick={handleAddQuestionRow} className="text-xs font-bold text-amber-700 hover:underline">
+                    + और प्रश्न जोड़ें
+                  </button>
+                </div>
+
+                {questions.map((q, qIdx) => (
+                  <div key={qIdx} className="p-4 rounded-xl border border-stone-200 bg-stone-50 space-y-3">
+                    <span className="text-xs font-bold text-amber-800">प्रश्न संख्या {qIdx + 1}</span>
+                    <input
+                      type="text"
+                      value={q.question}
+                      onChange={e => {
+                        const newQ = [...questions];
+                        newQ[qIdx].question = e.target.value;
+                        setQuestions(newQ);
+                      }}
+                      placeholder="प्रश्न लिखें..."
+                      className="w-full p-2 text-xs rounded border border-stone-300 bg-white"
+                    />
+
+                    <div className="grid grid-cols-2 gap-2">
+                      {q.options.map((opt, oIdx) => (
+                        <div key={oIdx} className="flex items-center gap-1.5">
+                          <input
+                            type="radio"
+                            name={`correct-${qIdx}`}
+                            checked={q.correctAnswer === oIdx}
+                            onChange={() => {
+                              const newQ = [...questions];
+                              newQ[qIdx].correctAnswer = oIdx;
+                              setQuestions(newQ);
+                            }}
+                          />
+                          <input
+                            type="text"
+                            value={opt}
+                            onChange={e => {
+                              const newQ = [...questions];
+                              newQ[qIdx].options[oIdx] = e.target.value;
+                              setQuestions(newQ);
+                            }}
+                            placeholder={`विकल्प ${String.fromCharCode(65 + oIdx)}`}
+                            className="w-full p-1.5 text-xs rounded border border-stone-300 bg-white"
+                          />
+                        </div>
+                      ))}
+                    </div>
+
+                    <input
+                      type="text"
+                      value={q.explanation}
+                      onChange={e => {
+                        const newQ = [...questions];
+                        newQ[qIdx].explanation = e.target.value;
+                        setQuestions(newQ);
+                      }}
+                      placeholder="उत्तर की व्याख्या (Explanation)..."
+                      className="w-full p-2 text-xs rounded border border-stone-300 bg-white"
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t">
+                <button onClick={handleSave} className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg">
+                  सहेजें और क्लाउड पर प्रकाशित करें ✓
+                </button>
+                <button onClick={() => setIsCreating(false)} className="px-4 py-2.5 bg-stone-200 text-stone-700 font-bold text-xs rounded-lg">
+                  रद्द करें
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Render React to DOM
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
