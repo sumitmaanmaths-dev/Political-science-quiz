@@ -396,13 +396,14 @@
     }
 
     function openAdmin() {
-      const pin = prompt('Admin PIN दर्ज करें:');
-      if (pin === '7073') {
-        renderAdminHome();
-      } else if (pin !== galat pin) {
-        alert('गलत पिन! PIN 7073 है।');
-      }
+  const pin = prompt('Admin PIN दर्ज करें:');
+  if (pin === '7073') {
+    renderAdminHome();
+  } else if (pin !== null) {
+    alert('गलत पिन!');
+  }
     }
+    
 
     function renderAdminHome() {
       let testListHtml = '';
