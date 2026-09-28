@@ -3,493 +3,254 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Political Science Quiz - RPSC, Assistant Professor & Lecturer</title>
-  
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Yantramanav:wght@400;500;700;900&display=swap" rel="stylesheet">
-
+  <title>Political Science Quiz - RPSC & Assistant Professor</title>
   <style>
-    body {
-      font-family: 'Yantramanav', sans-serif;
-      background-color: #f8fafc;
-      color: #0f172a;
-    }
-    .font-display {
-      font-family: 'Rozha One', serif;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: #f1f5f9; color: #0f172a; min-height: 100vh; display: flex; flex-direction: column; }
+    header { background: #ffffff; border-bottom: 1px solid #cbd5e1; padding: 12px 16px; position: sticky; top: 0; z-index: 50; }
+    .header-inner { max-width: 720px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .logo-box { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+    .logo-icon { width: 38px; height: 38px; background: linear-gradient(135deg, #1d4ed8, #4338ca); color: #fff; font-weight: 800; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+    .btn-admin { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+    main { max-width: 720px; width: 100%; margin: 0 auto; padding: 16px; flex: 1; }
+    .banner { background: linear-gradient(135deg, #1e40af, #3730a3); color: #fff; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    .banner span { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #93c5fd; font-weight: 700; }
+    .banner h2 { font-size: 18px; margin: 8px 0; line-height: 1.4; }
+    .banner p { font-size: 13px; color: #bfdbfe; }
+    .card { background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 18px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .tag { display: inline-block; background: #dbeafe; color: #1e40af; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 20px; margin-bottom: 8px; }
+    .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-top: 12px; }
+    .btn-primary { background: #2563eb; color: #fff; border: none; padding: 9px 18px; font-size: 13px; font-weight: 700; border-radius: 8px; cursor: pointer; }
+    .btn-success { background: #059669; color: #fff; border: none; padding: 9px 18px; font-size: 13px; font-weight: 700; border-radius: 8px; cursor: pointer; }
+    .btn-outline { background: #ffffff; color: #475569; border: 1px solid #cbd5e1; padding: 8px 16px; font-size: 13px; font-weight: 700; border-radius: 8px; cursor: pointer; }
+    .opt-btn { width: 100%; text-align: left; padding: 12px 14px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; margin-bottom: 10px; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .opt-btn.selected { border-color: #2563eb; background: #eff6ff; color: #1e40af; font-weight: 600; }
+    .opt-badge { width: 26px; height: 26px; border-radius: 6px; background: #f1f5f9; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; margin-right: 8px; flex-shrink: 0; }
+    .opt-btn.selected .opt-badge { background: #2563eb; color: #fff; }
+    .prog-bg { width: 100%; height: 6px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin: 8px 0 16px 0; }
+    .prog-bar { height: 100%; background: #2563eb; transition: width 0.3s; }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
+<body>
 
-  <!-- Header -->
-  <header class="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-sm">
-    <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-      <div onclick="showHome()" class="flex items-center gap-3 cursor-pointer">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white font-bold shadow-md shadow-blue-500/20 text-lg">
-          PS
-        </div>
+  <header>
+    <div class="header-inner">
+      <div class="logo-box" onclick="showHome()">
+        <div class="logo-icon">PS</div>
         <div>
-          <h1 class="font-display font-bold text-lg text-slate-900 leading-tight">Political Science Quiz</h1>
-          <p class="text-[11px] text-slate-500 font-medium">Competitive Exam Portal</p>
+          <div style="font-weight: 800; font-size: 15px;">Political Science Quiz</div>
+          <div style="font-size: 11px; color: #64748b;">Competitive Exam Portal</div>
         </div>
       </div>
-
-      <div class="flex items-center gap-2">
-        <button onclick="openAdmin()" class="px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold transition-all border border-blue-200">
-          ⚙️ Admin
-        </button>
-      </div>
+      <button class="btn-admin" onclick="alert('Admin Login: 1234')">⚙️ Admin</button>
     </div>
   </header>
 
-  <!-- Main Container -->
-  <main class="flex-1 max-w-4xl w-full mx-auto px-4 py-6">
-    <div id="app-root"></div>
-  </main>
+  <main id="app"></main>
 
   <script>
-    // Audio synthesizer
-    function playTone(type) {
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        const now = ctx.currentTime;
-        if (type === 'click') {
-          osc.frequency.setValueAtTime(600, now);
-          gain.gain.setValueAtTime(0.05, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
-          osc.start(now);
-          osc.stop(now + 0.05);
-        } else if (type === 'correct') {
-          osc.frequency.setValueAtTime(523.25, now);
-          osc.frequency.setValueAtTime(659.25, now + 0.08);
-          gain.gain.setValueAtTime(0.1, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-          osc.start(now);
-          osc.stop(now + 0.25);
-        } else if (type === 'wrong') {
-          osc.frequency.setValueAtTime(220, now);
-          osc.frequency.setValueAtTime(196, now + 0.1);
-          gain.gain.setValueAtTime(0.12, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-          osc.start(now);
-          osc.stop(now + 0.3);
-        }
-      } catch(e) {}
-    }
-
-    // Default Political Science Quiz
-    const quizData = {
+    const quiz = {
       title: "कौटिल्य (Kautilya) : टेस्ट - 02",
-      description: "अर्थशास्त्र का स्वरूप, दण्डनीति, राजा-राज्य संबंध, मैक्स वेबर एवं अरस्तू से तुलनात्मक अध्ययन।",
+      desc: "अर्थशास्त्र का स्वरूप, दण्डनीति, राजा-राज्य संबंध, मैक्स वेबर एवं अरस्तू से तुलनात्मक अध्ययन।",
       category: "भारतीय राजनीतिक विचारक",
-      timeLimitMinutes: 15,
-      totalMarks: 11,
-      negativeMarking: 0.33,
+      time: 15,
       questions: [
         {
-          question: "अर्थशास्त्र के स्वरूप के संबंध में निम्नलिखित कथनों पर विचार करें:<br>I. धर्म को आर्थिक प्राप्ति का एक साधन माना गया है।<br>II. राज्य का प्राथमिक उद्देश्य नैतिक व्यवस्था की स्थापना करना है।<br>III. यह ग्रंथ शासन कला और यथार्थवाद पर आधारित है।",
-          options: ["केवल I और II", "केवल II और III", "केवल I और III", "I, II और III"],
-          correctAnswer: 2,
-          explanation: "अर्थशास्त्र शासन कला और यथार्थवादी दृष्टिकोण पर आधारित है जिसमें धर्म को राज्य/आर्थिक प्राप्ति का साधन रूप में देखा गया है।"
+          q: "अर्थशास्त्र के स्वरूप के संबंध में निम्नलिखित कथनों पर विचार करें:<br>I. धर्म को आर्थिक प्राप्ति का एक साधन माना गया है।<br>II. राज्य का प्राथमिक उद्देश्य नैतिक व्यवस्था की स्थापना करना है।<br>III. यह ग्रंथ शासन कला और यथार्थवाद पर आधारित है।",
+          opt: ["केवल I और II", "केवल II और III", "केवल I और III", "I, II और III"],
+          ans: 2,
+          exp: "अर्थशास्त्र शासन कला और यथार्थवादी दृष्टिकोण पर आधारित है जिसमें धर्म को राज्य/आर्थिक प्राप्ति का साधन माना गया है।"
         },
         {
-          question: "मैक्स वेबर ने अर्थशास्त्र की तुलना मैकियावेली के 'प्रिंस' से करते हुए क्या निष्कर्ष निकाला?",
-          options: [
-            "अर्थशास्त्र एक सरल और कम प्रभावशाली ग्रंथ है।",
-            "अर्थशास्त्र में अधिक उग्र मैकियावेलीवाद विद्यमान है।",
-            "दोनों ग्रंथ समान रूप से नैतिक दर्शन पर आधारित हैं।",
-            "अर्थशास्त्र केवल प्रशासनिक नियमावली है, प्रिंस दर्शन है।"
-          ],
-          correctAnswer: 1,
-          explanation: "मैक्स वेबर के अनुसार, कौटिल्य के अर्थशास्त्र में मैकियावेली के प्रिंस की तुलना में कहीं अधिक उग्र और यथार्थवादी विचार मिलते हैं।"
+          q: "मैक्स वेबर ने अर्थशास्त्र की तुलना मैकियावेली के 'प्रिंस' से करते हुए क्या निष्कर्ष निकाला?",
+          opt: ["अर्थशास्त्र एक सरल और कम प्रभावशाली ग्रंथ है।", "अर्थशास्त्र में अधिक उग्र मैकियावेलीवाद विद्यमान है।", "दोनों ग्रंथ समान रूप से नैतिक दर्शन पर आधारित हैं।", "अर्थशास्त्र केवल प्रशासनिक नियमावली है, प्रिंस दर्शन है।"],
+          ans: 1,
+          exp: "मैक्स वेबर के अनुसार, कौटिल्य के अर्थशास्त्र में मैकियावेली के प्रिंस की तुलना में कहीं अधिक उग्र और यथार्थवादी विचार मिलते हैं।"
         },
         {
-          question: "सूची-I (विचारक) को सूची-II (विचार) से सुमेलित करें:<br>1. सुनील खिलनानी<br>2. कांग्ले<br>3. रोजर बोस<br>4. शिव शंकर मेनन",
-          options: [
-            "1-B, 2-D, 3-A, 4-C",
-            "1-A, 2-B, 3-C, 4-D",
-            "1-C, 2-A, 3-D, 4-B",
-            "1-D, 2-C, 3-B, 4-A"
-          ],
-          correctAnswer: 0,
-          explanation: "विचारकों और उनके कौटिल्य विषयक दृष्टिकोण का सही सुमेलन विकल्प A (1-B, 2-D, 3-A, 4-C) है।"
+          q: "सूची-I (विचारक) को सूची-II (विचार) से सुमेलित करें:<br>1. सुनील खिलनानी<br>2. कांग्ले<br>3. रोजर बोस<br>4. शिव शंकर मेनन",
+          opt: ["1-B, 2-D, 3-A, 4-C", "1-A, 2-B, 3-C, 4-D", "1-C, 2-A, 3-D, 4-B", "1-D, 2-C, 3-B, 4-A"],
+          ans: 0,
+          exp: "विचारकों और उनके दृष्टिकोण का सही मेल विकल्प A है।"
         },
         {
-          question: "अर्थशास्त्र में वर्णित कानूनों की प्रकृति के संबंध में कौन सा कथन सत्य है?",
-          options: [
-            "ये कानून धार्मिक रीति-रिवाजों पर आधारित हैं।",
-            "ये कानून सकारात्मक कानूनों की श्रेणी में आते हैं।",
-            "ये कानून राजा के व्यक्तिगत निर्णयों पर निर्भर हैं।",
-            "ये कानून प्राकृतिक और धर्मशास्त्र से प्रेरित हैं।"
-          ],
-          correctAnswer: 1,
-          explanation: "कौटिल्य द्वारा वर्णित विधि मुख्य रूप से सकारात्मक/संवैधानिक और व्यावहारिक राज्य-कानूनों की श्रेणी में आते हैं।"
+          q: "अर्थशास्त्र में वर्णित कानूनों की प्रकृति के संबंध में कौन सा कथन सत्य है?",
+          opt: ["ये कानून धार्मिक रीति-रिवाजों पर आधारित हैं।", "ये कानून सकारात्मक कानूनों की श्रेणी में आते हैं।", "ये कानून राजा के व्यक्तिगत निर्णयों पर निर्भर हैं।", "ये कानून प्राकृतिक और धर्मशास्त्र से प्रेरित हैं।"],
+          ans: 1,
+          exp: "कौटिल्य द्वारा वर्णित विधि सकारात्मक और व्यावहारिक राज्य-कानूनों की श्रेणी में आते हैं।"
         },
         {
-          question: "कौटिल्य के अर्थशास्त्र और अरस्तू की 'पॉलिटिक्स' के बीच मुख्य अंतर क्या है?",
-          options: [
-            "अरस्तू का ग्रंथ शासन पर, अर्थशास्त्र दर्शन पर है।",
-            "अर्थशास्त्र में परिणामवाद का अभाव, पॉलिटिक्स में है।",
-            "अर्थशास्त्र साम्राज्य विस्तार पर, पॉलिटिक्स सुदृढ़ नगर-राज्य पर केंद्रित है।",
-            "पॉलिटिक्स में संरचनात्मक कानून, अर्थशास्त्र में नहीं।"
-          ],
-          correctAnswer: 2,
-          explanation: "कौटिल्य साम्राज्य विस्तार और विजिगीषु राजा पर बल देते हैं जबकि अरस्तू आदर्श और सीमित नगर-राज्य (Polis) की बात करते हैं।"
+          q: "कौटिल्य के अर्थशास्त्र और अरस्तू की 'पॉलिटिक्स' के बीच मुख्य अंतर क्या है?",
+          opt: ["अरस्तू का ग्रंथ शासन पर, अर्थशास्त्र दर्शन पर है।", "अर्थशास्त्र में परिणामवाद का अभाव, पॉलिटिक्स में है।", "अर्थशास्त्र साम्राज्य विस्तार पर, पॉलिटिक्स सुदृढ़ नगर-राज्य पर केंद्रित है।", "पॉलिटिक्स में संरचनात्मक कानून, अर्थशास्त्र में नहीं।"],
+          ans: 2,
+          exp: "कौटिल्य साम्राज्य विस्तार और विजिगीषु राजा पर बल देते हैं, अरस्तू सीमित नगर-राज्य पर।"
         },
         {
-          question: "कौटिल्य के अर्थशास्त्र के बारे में किस विचारक ने यह टिप्पणी की कि यह 'यूनानी दर्शन' के सामने कहीं अधिक श्रेष्ठ है?",
-          options: ["डी. डी. कोसाम्बी", "मैक्स वेबर", "हेनरी किसिंजर", "जवाहरलाल नेहरू"],
-          correctAnswer: 0,
-          explanation: "इतिहासकार डी. डी. कोसाम्बी ने भारतीय यथार्थवाद और अर्थशास्त्र की महत्ता पर यह टिप्पणी की थी।"
+          q: "कौटिल्य के अर्थशास्त्र के बारे में किस विचारक ने टिप्पणी की कि यह 'यूनानी दर्शन' के सामने कहीं अधिक श्रेष्ठ है?",
+          opt: ["डी. डी. कोसाम्बी", "मैक्स वेबर", "हेनरी किसिंजर", "जवाहरलाल नेहरू"],
+          ans: 0,
+          exp: "डी. डी. कोसाम्बी ने भारतीय यथार्थवाद और अर्थशास्त्र की महत्ता पर यह टिप्पणी की थी।"
         },
         {
-          question: "कौटिल्य के राज्य की उत्पत्ति के सामाजिक समझौता सिद्धांत के संदर्भ में निम्नलिखित कथनों पर विचार करें:<br>I. कौटिल्य ने राज्य की उत्पत्ति के लिए दैवी सिद्धांत को पूर्णतः स्वीकार किया है।<br>II. कौटिल्य का सामाजिक समझौता सिद्धांत हॉब्स के लेविआथन के समान निरंकुश राजतंत्र की स्थापना करता है।<br>III. कौटिल्य के अनुसार, राजा समझौते का एक भाग है और वह धर्म व परंपराओं से बंधा हुआ है।",
-          options: ["केवल I और II", "केवल II और III", "केवल III", "I, II और III"],
-          correctAnswer: 2,
-          explanation: "कौटिल्य के अनुसार राजा समझौते से बंधा है और प्रजा के कल्याण तथा धर्म-सम्मत मर्यादाओं के अधीन शासन करता है।"
+          q: "कौटिल्य के राज्य की उत्पत्ति के सामाजिक समझौता सिद्धांत के संदर्भ में निम्नलिखित कथनों पर विचार करें:<br>I. कौटिल्य ने राज्य की उत्पत्ति के लिए दैवी सिद्धांत को पूर्णतः स्वीकार किया है।<br>II. कौटिल्य का सिद्धांत हॉब्स के समान निरंकुश राजतंत्र स्थापित करता है।<br>III. कौटिल्य के अनुसार, राजा समझौते का एक भाग है और वह धर्म व परंपराओं से बंधा है।",
+          opt: ["केवल I और II", "केवल II और III", "केवल III", "I, II और III"],
+          ans: 2,
+          exp: "कौटिल्य के अनुसार राजा समझौते से बंधा है और प्रजा के कल्याण हेतु धर्म-सम्मत मर्यादाओं के अधीन कार्य करता है।"
         },
         {
-          question: "निम्नलिखित ग्रंथों और उनके लेखकों का सही मिलान करें:<br>सूची-I: 1. नीतिवाक्यामृतम्, 2. नीतिसार, 3. किरातार्जुनीयम्<br>सूची-II: क. कामन्दक, ख. भारवि, ग. सोमदेव सूरी",
-          options: [
-            "1-ग, 2-क, 3-ख",
-            "1-ग, 2-ख, 3-क",
-            "1-क, 2-ग, 3-ख",
-            "1-ख, 2-क, 3-ग"
-          ],
-          correctAnswer: 0,
-          explanation: "नीतिवाक्यामृतम् - सोमदेव सूरी, नीतिसार - कामन्दक, किरातार्जुनीयम् - भारवि।"
+          q: "निम्नलिखित ग्रंथों और उनके लेखकों का सही मिलान करें:<br>सूची-I: 1. नीतिवाक्यामृतम्, 2. नीतिसार, 3. किरातार्जुनीयम्<br>सूची-II: क. कामन्दक, ख. भारवि, ग. सोमदेव सूरी",
+          opt: ["1-ग, 2-क, 3-ख", "1-ग, 2-ख, 3-क", "1-क, 2-ग, 3-ख", "1-ख, 2-क, 3-ग"],
+          ans: 0,
+          exp: "नीतिवाक्यामृतम् - सोमदेव सूरी, नीतिसार - कामन्दक, किरातार्जुनीयम् - भारवि।"
         },
         {
-          question: "कौटिल्य के अनुसार दंडनीति के कार्यों का सही क्रम क्या है?",
-          options: [
-            "रक्षा, प्राप्ति, वृद्धि, वितरण",
-            "प्राप्ति, रक्षा, वृद्धि, वितरण",
-            "वृद्धि, प्राप्ति, रक्षा, वितरण",
-            "वितरण, प्राप्ति, रक्षा, वृद्धि"
-          ],
-          correctAnswer: 1,
-          explanation: "कौटिल्य के अनुसार दंडनीति का कार्य: अप्राप्त की प्राप्ति, प्राप्त की रक्षा, रक्षित की वृद्धि और संवर्धित का वितरण है।"
+          q: "कौटिल्य के अनुसार दंडनीति के कार्यों का सही क्रम क्या है?",
+          opt: ["रक्षा, प्राप्ति, वृद्धि, वितरण", "प्राप्ति, रक्षा, वृद्धि, वितरण", "वृद्धि, प्राप्ति, रक्षा, वितरण", "वितरण, प्राप्ति, रक्षा, वृद्धि"],
+          ans: 1,
+          exp: "दंडनीति का कार्य: अप्राप्त की प्राप्ति, प्राप्त की रक्षा, रक्षित की वृद्धि और संवर्धित का वितरण।"
         },
         {
-          question: "कौटिल्य के राजनीतिक दर्शन में राजा और राज्य के संबंधों के बारे में कौन से विद्वान यह मानते हैं कि कौटिल्य की दृष्टि में राजा और राज्य एक ही हैं?",
-          options: [
-            "पॉल सेनन, भंडारकर और पी. वी. काणे",
-            "मैनुअल कैस्टेल्स और हेनरी किसिंजर",
-            "के. पी. जायसवाल और ए. एस. अल्तेकर",
-            "रोजर बोस और आर. पी. कांग्ले"
-          ],
-          correctAnswer: 0,
-          explanation: "पॉल सेनन, भंडारकर और पी. वी. काणे का मत है कि कौटिल्य के दर्शन में राजा ही राज्य का प्रमुख वाहक है।"
+          q: "कौटिल्य के दर्शन में राजा और राज्य के संबंधों के बारे में कौन से विद्वान मानते हैं कि राजा और राज्य एक ही हैं?",
+          opt: ["पॉल सेनन, भंडारकर और पी. वी. काणे", "मैनुअल कैस्टेल्स और हेनरी किसिंजर", "के. पी. जायसवाल और ए. एस. अल्तेकर", "रोजर बोस और आर. पी. कांग्ले"],
+          ans: 0,
+          exp: "पॉल सेनन, भंडारकर और पी. वी. काणे का मत है कि कौटिल्य के अनुसार राजा ही राज्य का प्रमुख स्वरूप है।"
         },
         {
-          question: "कौटिल्य के अनुसार राज्य के लिए गरीबी निवारण क्यों आवश्यक है?",
-          options: [
-            "राजा की व्यक्तिगत प्रतिष्ठा बढ़ाने हेतु",
-            "साम्राज्य की सुरक्षा और स्थिरता हेतु",
-            "कर संग्रह की प्रक्रिया सरल बनाने हेतु",
-            "धार्मिक अनुष्ठानों के लिए धन जुटाने हेतु"
-          ],
-          correctAnswer: 1,
-          explanation: "कौटिल्य के अनुसार दरिद्रता आंतरिक विद्रोह और अशांति का कारण बनती है, अतः राज्य की स्थिरता हेतु गरीबी निवारण आवश्यक है।"
+          q: "कौटिल्य के अनुसार राज्य के लिए गरीबी निवारण क्यों आवश्यक है?",
+          opt: ["राजा की व्यक्तिगत प्रतिष्ठा बढ़ाने हेतु", "साम्राज्य की सुरक्षा और स्थिरता हेतु", "कर संग्रह की प्रक्रिया सरल बनाने हेतु", "धार्मिक अनुष्ठानों के लिए धन जुटाने हेतु"],
+          ans: 1,
+          exp: "दरिद्रता आंतरिक विद्रोह और अशांति का मूल कारण बनती है, अतः सुरक्षा हेतु गरीबी निवारण आवश्यक है।"
         }
       ]
     };
 
-    // State Variables
-    let currentIdx = 0;
-    let userAnswers = {};
-    let timerInterval = null;
-    let timeLeft = 0;
+    let cur = 0;
+    let answers = {};
+    let timer = null;
+    let sec = 0;
 
-    // Show Home Screen
     function showHome() {
-      if (timerInterval) clearInterval(timerInterval);
-      const root = document.getElementById('app-root');
-      root.innerHTML = `
-        <div class="space-y-6">
-          <div class="rounded-2xl bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 text-white p-6 sm:p-8 shadow-lg">
-            <span class="text-blue-200 text-xs font-bold uppercase tracking-wider">Exam Prep Series</span>
-            <h2 class="text-xl sm:text-2xl font-display font-bold mt-1 mb-2 leading-snug">
-              Political science for RPSC school lecturer, assistant Professor, UP assistant Professor, DSSSB school lecturer etc.
-            </h2>
-            <p class="text-blue-100 text-sm max-w-2xl leading-relaxed mt-2">
-              Best questions for each topic and try to boost your preparation.
-            </p>
-          </div>
-
-          <div>
-            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center justify-between">
-              <span>उपलब्ध टेस्ट श्रृंखला</span>
-              <span class="text-xs bg-blue-100 text-blue-800 px-2.5 py-1 rounded-full font-bold">1 टेस्ट</span>
-            </h3>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
-                <div>
-                  <div class="flex items-center justify-between gap-2 mb-2">
-                    <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                      ${quizData.category}
-                    </span>
-                    <span class="text-xs text-slate-500 font-medium">⏱️ ${quizData.timeLimitMinutes} मिनट</span>
-                  </div>
-                  <h4 class="font-bold text-slate-900 text-base leading-snug mb-1">${quizData.title}</h4>
-                  <p class="text-xs text-slate-500 mb-4 line-clamp-2">${quizData.description}</p>
-                </div>
-
-                <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
-                  <span class="text-xs text-slate-600 font-semibold">
-                    📝 ${quizData.questions.length} प्रश्न &nbsp;·&nbsp; 🎯 ${quizData.totalMarks} अंक
-                  </span>
-                  <button onclick="startQuiz()" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition-all">
-                    टेस्ट शुरू करें →
-                  </button>
-                </div>
-              </div>
-            </div>
+      if(timer) clearInterval(timer);
+      document.getElementById('app').innerHTML = `
+        <div class="banner">
+          <span>Exam Prep Series</span>
+          <h2>Political science for RPSC school lecturer, assistant Professor, UP assistant Professor, DSSSB school lecturer etc.</h2>
+          <p>Best questions for each topic and try to boost your preparation.</p>
+        </div>
+        <div style="font-weight: 700; margin-bottom: 12px; font-size: 15px;">उपलब्ध टेस्ट श्रृंखला</div>
+        <div class="card">
+          <span class="tag">${quiz.category}</span>
+          <h3 style="font-size: 16px; margin-bottom: 6px;">${quiz.title}</h3>
+          <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">${quiz.desc}</p>
+          <div class="card-footer">
+            <span style="font-size: 12px; color: #475569; font-weight: 600;">⏱️ ${quiz.time} मिनट &nbsp;|&nbsp; 📝 11 प्रश्न</span>
+            <button class="btn-primary" onclick="startTest()">टेस्ट शुरू करें →</button>
           </div>
         </div>
       `;
     }
 
-    // Start Quiz
-    function startQuiz() {
-      playTone('click');
-      currentIdx = 0;
-      userAnswers = {};
-      timeLeft = quizData.timeLimitMinutes * 60;
-
-      if (timerInterval) clearInterval(timerInterval);
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        const timerEl = document.getElementById('timer-text');
-        if (timerEl) {
-          const m = Math.floor(timeLeft / 60);
-          const s = timeLeft % 60;
-          timerEl.innerText = `⏳ ${m}:${s < 10 ? '0' : ''}${s}`;
+    function startTest() {
+      cur = 0;
+      answers = {};
+      sec = quiz.time * 60;
+      if(timer) clearInterval(timer);
+      timer = setInterval(() => {
+        sec--;
+        const el = document.getElementById('tm');
+        if(el) {
+          const m = Math.floor(sec / 60);
+          const s = sec % 60;
+          el.innerText = `⏳ ${m}:${s < 10 ? '0' : ''}${s}`;
         }
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          finishQuiz();
+        if(sec <= 0) {
+          clearInterval(timer);
+          finishTest();
         }
       }, 1000);
-
-      renderQuestion();
+      renderQ();
     }
 
-    // Render Question
-    function renderQuestion() {
-      const q = quizData.questions[currentIdx];
-      const m = Math.floor(timeLeft / 60);
-      const s = timeLeft % 60;
-      const progressPercent = ((currentIdx + 1) / quizData.questions.length) * 100;
-
-      let optionsHtml = '';
-      q.options.forEach((opt, oIdx) => {
-        const isSelected = userAnswers[currentIdx] === oIdx;
-        optionsHtml += `
-          <button onclick="selectOption(${oIdx})" class="w-full text-left p-4 rounded-xl border text-sm font-medium transition-all flex items-center justify-between ${
-            isSelected 
-              ? 'border-blue-600 bg-blue-50 text-blue-900 font-bold shadow-sm'
-              : 'border-slate-200 hover:bg-slate-50 text-slate-800'
-          }">
-            <div class="flex items-center gap-3">
-              <span class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold ${
-                isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'
-              }">
-                ${String.fromCharCode(65 + oIdx)}
-              </span>
-              <span>${opt}</span>
+    function renderQ() {
+      const q = quiz.questions[cur];
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      let optH = '';
+      q.opt.forEach((o, i) => {
+        const sel = answers[cur] === i ? 'selected' : '';
+        optH += `
+          <button class="opt-btn ${sel}" onclick="pick(${i})">
+            <div style="display:flex; align-items:center;">
+              <span class="opt-badge">${String.fromCharCode(65 + i)}</span>
+              <span>${o}</span>
             </div>
-            ${isSelected ? '<span class="text-blue-600 font-bold">✓</span>' : ''}
+            ${sel ? '<span style="font-weight:bold; color:#2563eb;">✓</span>' : ''}
           </button>
         `;
       });
 
-      const root = document.getElementById('app-root');
-      root.innerHTML = `
-        <div class="max-w-3xl mx-auto bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-6">
-          <div class="flex items-center justify-between pb-4 border-b border-slate-200">
-            <div>
-              <span class="text-xs text-blue-600 font-bold uppercase">${quizData.category}</span>
-              <h3 class="font-bold text-slate-900 text-sm">${quizData.title}</h3>
-            </div>
-            <div class="flex items-center gap-3">
-              <span id="timer-text" class="px-3 py-1.5 rounded-lg text-sm font-bold font-mono ${timeLeft < 120 ? 'bg-red-100 text-red-700 animate-pulse' : 'bg-blue-50 text-blue-800'}">
-                ⏳ ${m}:${s < 10 ? '0' : ''}${s}
-              </span>
-              <button onclick="if(confirm('क्या आप सच में टेस्ट छोड़ना चाहते हैं?')) showHome()" class="text-xs text-slate-400 hover:text-red-600 font-bold px-2 py-1">
-                छोड़ें
-              </button>
+      document.getElementById('app').innerHTML = `
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:12px; font-weight:700; color:#2563eb;">${quiz.category}</span>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <span id="tm" style="font-weight:700; font-size:13px; background:#eff6ff; color:#1e40af; padding:4px 8px; border-radius:6px;">⏳ ${m}:${s < 10 ? '0' : ''}${s}</span>
+              <button onclick="if(confirm('टेस्ट छोड़ना चाहते हैं?')) showHome()" style="background:none; border:none; color:#ef4444; font-size:12px; font-weight:700; cursor:pointer;">छोड़ें</button>
             </div>
           </div>
-
-          <div class="space-y-1">
-            <div class="flex justify-between text-xs font-bold text-slate-600">
-              <span>प्रश्न ${currentIdx + 1} / ${quizData.questions.length}</span>
-              <span>हल किए गए: ${Object.keys(userAnswers).length}</span>
-            </div>
-            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-              <div class="bg-blue-600 h-full transition-all duration-300" style="width: ${progressPercent}%"></div>
-            </div>
-          </div>
-
-          <div class="py-2">
-            <h4 class="text-base sm:text-lg font-bold text-slate-900 leading-relaxed">
-              ${currentIdx + 1}. ${q.question}
-            </h4>
-          </div>
-
-          <div class="space-y-3">${optionsHtml}</div>
-
-          <div class="flex items-center justify-between pt-4 border-t border-slate-200">
-            <button ${currentIdx === 0 ? 'disabled' : ''} onclick="prevQuestion()" class="px-4 py-2 rounded-lg border border-slate-300 font-bold text-xs text-slate-700 disabled:opacity-30">
-              ← पिछला
-            </button>
-
-            ${currentIdx < quizData.questions.length - 1 ? `
-              <button onclick="nextQuestion()" class="px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm">
-                अगला प्रश्न →
-              </button>
-            ` : `
-              <button onclick="finishQuiz()" class="px-6 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm">
-                सबमिट करें ✓
-              </button>
-            `}
+          <div class="prog-bg"><div class="prog-bar" style="width: ${((cur + 1)/quiz.questions.length)*100}%"></div></div>
+          <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:6px;">प्रश्न ${cur + 1} / ${quiz.questions.length}</div>
+          <h3 style="font-size:15px; line-height:1.5; margin-bottom:14px;">${q.q}</h3>
+          <div>${optH}</div>
+          <div class="card-footer">
+            <button class="btn-outline" ${cur === 0 ? 'disabled style="opacity:0.3"' : ''} onclick="prevQ()">← पिछला</button>
+            ${cur < quiz.questions.length - 1 ? 
+              `<button class="btn-primary" onclick="nextQ()">अगला प्रश्न →</button>` : 
+              `<button class="btn-success" onclick="finishTest()">सबमिट करें ✓</button>`}
           </div>
         </div>
       `;
     }
 
-    function selectOption(oIdx) {
-      playTone('click');
-      userAnswers[currentIdx] = oIdx;
-      renderQuestion();
-    }
+    function pick(i) { answers[cur] = i; renderQ(); }
+    function nextQ() { if(cur < quiz.questions.length - 1) { cur++; renderQ(); } }
+    function prevQ() { if(cur > 0) { cur--; renderQ(); } }
 
-    function nextQuestion() {
-      playTone('click');
-      if (currentIdx < quizData.questions.length - 1) {
-        currentIdx++;
-        renderQuestion();
-      }
-    }
+    function finishTest() {
+      if(timer) clearInterval(timer);
+      let cor = 0;
+      quiz.questions.forEach((q, i) => { if(answers[i] === q.ans) cor++; });
 
-    function prevQuestion() {
-      playTone('click');
-      if (currentIdx > 0) {
-        currentIdx--;
-        renderQuestion();
-      }
-    }
-
-    function finishQuiz() {
-      if (timerInterval) clearInterval(timerInterval);
-
-      let correctCount = 0;
-      let wrongCount = 0;
-      let skippedCount = 0;
-
-      quizData.questions.forEach((q, idx) => {
-        if (userAnswers[idx] === undefined) {
-          skippedCount++;
-        } else if (userAnswers[idx] === q.correctAnswer) {
-          correctCount++;
-        } else {
-          wrongCount++;
-        }
-      });
-
-      const perQ = quizData.totalMarks / quizData.questions.length;
-      const earned = (correctCount * perQ) - (wrongCount * quizData.negativeMarking);
-      const finalScore = Math.max(0, Number(earned.toFixed(2)));
-
-      playTone(finalScore >= (quizData.totalMarks * 0.6) ? 'correct' : 'wrong');
-
-      let explanationHtml = '';
-      quizData.questions.forEach((q, idx) => {
-        const uAns = userAnswers[idx];
-        const isCorrect = uAns === q.correctAnswer;
-        explanationHtml += `
-          <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1">
-            <div class="font-bold text-slate-900">${idx + 1}. ${q.question}</div>
-            <div class="${isCorrect ? 'text-emerald-700 font-bold' : 'text-red-600 font-bold'}">
-              आपका उत्तर: ${uAns !== undefined ? q.options[uAns] : 'नहीं दिया'} ${isCorrect ? '✓' : '✗'}
-            </div>
-            ${!isCorrect ? `<div class="text-slate-700 font-semibold">सही उत्तर: ${q.options[q.correctAnswer]}</div>` : ''}
-            ${q.explanation ? `<div class="text-slate-500 pt-1 italic">व्याख्या: ${q.explanation}</div>` : ''}
+      let listH = '';
+      quiz.questions.forEach((q, i) => {
+        const u = answers[i];
+        const isCor = u === q.ans;
+        listH += `
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px; margin-bottom:8px; font-size:12px;">
+            <div style="font-weight:700; margin-bottom:4px;">${i + 1}. ${q.q}</div>
+            <div style="color:${isCor ? '#059669':'#dc2626'}; font-weight:700;">आपका उत्तर: ${u !== undefined ? q.opt[u] : 'नहीं दिया'} ${isCor ? '✓' : '✗'}</div>
+            ${!isCor ? `<div style="color:#0f172a; font-weight:600;">सही उत्तर: ${q.opt[q.ans]}</div>` : ''}
+            <div style="color:#64748b; font-style:italic; margin-top:2px;">व्याख्या: ${q.exp}</div>
           </div>
         `;
       });
 
-      const root = document.getElementById('app-root');
-      root.innerHTML = `
-        <div class="max-w-2xl mx-auto bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm text-center space-y-6">
-          <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold border border-blue-200">
-            🎯
+      document.getElementById('app').innerHTML = `
+        <div class="card" style="text-align:center;">
+          <h2 style="font-size:20px; margin-bottom:12px;">परीक्षण परिणाम</h2>
+          <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:16px; margin-bottom:16px;">
+            <div style="font-size:11px; text-transform:uppercase; color:#64748b; font-weight:700;">अंक (Score)</div>
+            <div style="font-size:32px; font-weight:900; color:#1d4ed8;">${cor} <span style="font-size:16px; color:#94a3b8; font-weight:400;">/ 11</span></div>
           </div>
-          <div>
-            <h2 class="text-2xl font-bold text-slate-900">परीक्षण परिणाम</h2>
-            <p class="text-slate-500 text-sm mt-1">${quizData.title}</p>
+          <div style="text-align:left; margin-bottom:16px;">
+            <h4 style="font-size:13px; margin-bottom:8px;">प्रश्नों का विवरण एवं व्याख्या:</h4>
+            ${listH}
           </div>
-
-          <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
-            <span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Score</span>
-            <div class="text-4xl font-black text-blue-600 mt-1">
-              ${finalScore} <span class="text-lg text-slate-400 font-normal">/ ${quizData.totalMarks}</span>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-3 gap-3">
-            <div class="p-3 bg-emerald-50 text-emerald-800 rounded-xl border border-emerald-200">
-              <div class="text-xl font-bold">${correctCount}</div>
-              <div class="text-xs font-semibold">सही उत्तर</div>
-            </div>
-            <div class="p-3 bg-red-50 text-red-800 rounded-xl border border-red-200">
-              <div class="text-xl font-bold">${wrongCount}</div>
-              <div class="text-xs font-semibold">गलत उत्तर</div>
-            </div>
-            <div class="p-3 bg-slate-100 text-slate-700 rounded-xl border border-slate-200">
-              <div class="text-xl font-bold">${skippedCount}</div>
-              <div class="text-xs font-semibold">छोड़े गए</div>
-            </div>
-          </div>
-
-          <div class="text-left space-y-4 pt-4 border-t border-slate-100">
-            <h4 class="font-bold text-slate-800 text-sm">प्रश्नों का विवरण एवं व्याख्या:</h4>
-            ${explanationHtml}
-          </div>
-
-          <div class="flex gap-3 justify-center pt-2">
-            <button onclick="startQuiz()" class="px-5 py-2.5 rounded-lg border border-slate-300 font-bold text-xs text-slate-700 hover:bg-slate-50">
-              दोबारा हल करें
-            </button>
-            <button onclick="showHome()" class="px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs">
-              होम पेज पर जाएं
-            </button>
-          </div>
+          <button class="btn-primary" onclick="showHome()">होम पेज पर जाएं</button>
         </div>
       `;
     }
 
-    function openAdmin() {
-      const pin = prompt('Enter Admin PIN (Default: 1234):');
-      if (pin === '1234') {
-        alert('एडमिन लॉगिन सफल!');
-      } else if (pin !== null) {
-        alert('गलत पिन!');
-      }
-    }
-
-    // Initialize application
     showHome();
   </script>
 </body>
