@@ -75,35 +75,41 @@
     async function loadCloudData() {
       try {
         const res = await fetch(`${FIREBASE_DB_URL}/tests.json`);
-        const data = await res.json();
-        if(data) {
-          allTests = Array.isArray(data) ? data.filter(Boolean) : Object.values(data).filter(Boolean);
+        if (res.ok) {
+          const data = await res.json();
+          if (data) {
+            allTests = Array.isArray(data) ? data.filter(Boolean) : Object.values(data).filter(Boolean);
+          } else {
+            allTests = [];
+          }
         } else {
-          allTests = [];
+          console.warn("Firebase primary response error:", res.status);
         }
       } catch (err) {
-        console.error(err);
+        console.error("Fetch error:", err);
+      } finally {
+        showHome();
       }
-      showHome();
     }
 
     async function saveToCloud() {
       try {
-        await fetch(`${FIREBASE_DB_URL}/tests.json`, {
+        const res = await fetch(`${FIREBASE_DB_URL}/tests.json`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(allTests)
         });
-        alert('🎉 टेस्ट तुरंत क्लाउड पर सेव हो गया है! सभी दोस्तों के मोबाइल पर लाइव दिख रहा है।');
+        if (!res.ok) throw new Error("Status " + res.status);
+        alert('🎉 टेस्ट तुरंत क्लाउड पर सेव हो गया है! सभी दोस्तों के मोबाइल पर लाइव दिखेगा।');
       } catch (e) {
-        alert('डेटा सेव करने में समस्या हुई। इंटरनेट चेक करें!');
+        console.error(e);
+        alert('डेटा सेव करने में समस्या हुई। कृपया जांचें कि Firebase Rules में read/write दोनों true हैं।');
       }
     }
 
     function showHome() {
       if(timer) clearInterval(timer);
 
-      // Unique Dynamic Sections List
       const sections = ['All'];
       allTests.forEach(t => {
         const s = (t.section || 'सामान्य').trim();
@@ -123,7 +129,7 @@
 
       let cardsHtml = '';
       if(filtered.length === 0) {
-        cardsHtml = '<div style="text-align:center; padding:30px; color:#64748b; font-size:13px;">इस सेक्शन में अभी कोई टेस्ट नहीं है। ⚙️ Admin से नया टेस्ट जोड़ें।</div>';
+        cardsHtml = '<div style="text-align:center; padding:30px; color:#64748b; font-size:13px; background:#fff; border-radius:10px; border:1px dashed #cbd5e1;">इस सेक्शन में अभी कोई टेस्ट नहीं है। ऊपर <b>⚙️ Admin</b> बटन दबाकर नया टेस्ट जोड़ें।</div>';
       } else {
         filtered.forEach(t => {
           const originalIndex = allTests.findIndex(item => item.id === t.id);
@@ -267,11 +273,11 @@
 
     // ADMIN CONTROL
     function openAdmin() {
-      const pin = prompt('Admin PIN दर्ज करें (PIN: 1234):');
+      const pin = prompt('Admin PIN दर्ज करें:');
       if (pin === '7073') {
         renderAdminHome();
       } else if (pin !== null) {
-        alert('गलत पिन!');
+        alert('गलत पिन! (सही PIN: 7073)');
       }
     }
 
@@ -312,7 +318,7 @@
           </div>
 
           <h3 style="font-size:14px; font-weight:700; margin-bottom:10px; color:#334155;">सभी उपलब्ध टेस्ट्स (${allTests.length}):</h3>
-          ${testListHtml || '<div style="color:#64748b; font-size:13px;">अभी कोई टेस्ट नहीं है।</div>'}
+          ${testListHtml || '<div style="color:#64748b; font-size:13px;">अभी कोई टेस्ट नहीं है। ऊपर दिए गए बटन से नया टेस्ट जोड़ें।</div>'}
         </div>
       `;
     }
@@ -390,4 +396,121 @@
             <button class="btn-outline" onclick="renderAdminHome()">← वापस</button>
           </div>
 
-          <div style="background:#f8fafc; padding:12px; border-rad
+          <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:14px;">
+            <div class="form-group">
+              <label>1. टेस्ट का नाम (Title)</label>
+              <input type="text" id="t-title" class="form-control" value="${titleVal}" placeholder="उदा. कौटिल्य : टेस्ट - 04">
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <div class="form-group">
+                <label>2. सेक्शन / विचारक (Section Tab Name)</label>
+                <input type="text" id="t-sec" class="form-control" value="${secVal}" placeholder="उदा. प्लेटो / कौटिल्य / अरस्तू">
+              </div>
+              <div class="form-group">
+                <label>समय (मिनट)</label>
+                <input type="number" id="t-time" class="form-control" value="${timeVal}">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>विवरण (Description)</label>
+              <input type="text" id="t-desc" class="form-control" value="${descVal}">
+            </div>
+          </div>
+
+          <div style="border:1px dashed #2563eb; background:#eff6ff; padding:12px; border-radius:8px; margin-bottom:14px;">
+            <div style="font-weight:700; font-size:13px; margin-bottom:8px; color:#1e40af;">+ नया प्रश्न जोड़ें:</div>
+            <div class="form-group">
+              <label>प्रश्न लिखें</label>
+              <textarea id="q-txt" class="form-control"></textarea>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <div class="form-group"><label>विकल्प A</label><input type="text" id="op-a" class="form-control"></div>
+              <div class="form-group"><label>विकल्प B</label><input type="text" id="op-b" class="form-control"></div>
+              <div class="form-group"><label>विकल्प C</label><input type="text" id="op-c" class="form-control"></div>
+              <div class="form-group"><label>विकल्प D</label><input type="text" id="op-d" class="form-control"></div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <div class="form-group">
+                <label>सही उत्तर</label>
+                <select id="op-ans" class="form-control">
+                  <option value="0">विकल्प A</option>
+                  <option value="1">विकल्प B</option>
+                  <option value="2">विकल्प C</option>
+                  <option value="3">विकल्प D</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>व्याख्या (Explanation)</label>
+                <input type="text" id="q-exp" class="form-control">
+              </div>
+            </div>
+            <button class="btn-primary" style="width:100%;" onclick="addQuestionBtn()">+ इस प्रश्न को जोड़ें</button>
+          </div>
+
+          <div style="margin-bottom:14px;">
+            <div style="font-size:12px; font-weight:700; color:#475569; margin-bottom:6px;">इस टेस्ट के कुल प्रश्न (${draftQuestions.length}):</div>
+            ${qListHtml || '<div style="font-size:12px; color:#94a3b8;">अभी कोई प्रश्न नहीं जुड़ा है। ऊपर फॉर्म भरकर जोड़ें।</div>'}
+          </div>
+
+          <button class="btn-success" style="width:100%; font-size:15px; padding:12px;" onclick="saveTestFinal()">
+            ☁️ टेस्ट को क्लाउड पर सेव करें (लाइव)
+          </button>
+        </div>
+      `;
+    }
+
+    function reRenderForm() {
+      const title = document.getElementById('t-title').value;
+      const sec = document.getElementById('t-sec').value;
+      const time = document.getElementById('t-time').value;
+      const desc = document.getElementById('t-desc').value;
+      renderTestFormUI(editingTestId ? 'टेस्ट Edit करें' : 'नया टेस्ट बनाएं (Manual Form)', title, sec, time, desc);
+    }
+
+    function addQuestionBtn() {
+      const q = document.getElementById('q-txt').value.trim();
+      const a = document.getElementById('op-a').value.trim();
+      const b = document.getElementById('op-b').value.trim();
+      const c = document.getElementById('op-c').value.trim();
+      const d = document.getElementById('op-d').value.trim();
+      const ans = parseInt(document.getElementById('op-ans').value);
+      const exp = document.getElementById('q-exp').value.trim();
+
+      if (!q || !a || !b || !c || !d) return alert('कृपया प्रश्न और चारों विकल्प भरें!');
+      draftQuestions.push({ q, opt: [a, b, c, d], ans, exp });
+      reRenderForm();
+    }
+
+    async function saveTestFinal() {
+      const title = document.getElementById('t-title').value.trim();
+      const secVal = document.getElementById('t-sec').value.trim() || 'सामान्य';
+      const time = parseInt(document.getElementById('t-time').value) || 15;
+      const desc = document.getElementById('t-desc').value.trim() || 'Mock Test';
+
+      if (!title) return alert('टेस्ट का नाम लिखना ज़रूरी है!');
+      if (draftQuestions.length === 0) return alert('कम से कम 1 प्रश्न जोड़ना ज़रूरी है!');
+
+      const newTestObj = {
+        id: editingTestId || ('test-' + Date.now()),
+        title,
+        section: secVal,
+        time,
+        desc,
+        questions: draftQuestions
+      };
+
+      if (editingTestId) {
+        const idx = allTests.findIndex(t => t.id === editingTestId);
+        if(idx !== -1) allTests[idx] = newTestObj;
+      } else {
+        allTests.push(newTestObj);
+      }
+
+      await saveToCloud();
+      showHome();
+    }
+
+    loadCloudData();
+  </script>
+</body>
+</html>
