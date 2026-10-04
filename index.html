@@ -81,8 +81,8 @@
     .form-control { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; }
     textarea.form-control { resize: vertical; min-height: 60px; }
 
-    .badge-telegram { background: #0088cc; color: #fff; font-size: 11px; padding: 4px 8px; border-radius: 4px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
-    .badge-amazon { background: #ff9900; color: #111; font-size: 11px; padding: 4px 8px; border-radius: 4px; font-weight: 700; text-decoration: none; }
+    .badge-telegram { background: #0088cc; color: #fff; font-size: 11px; padding: 6px 12px; border-radius: 6px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+    .badge-amazon { background: #ff9900; color: #111; font-size: 11px; padding: 6px 12px; border-radius: 6px; font-weight: 700; text-decoration: none; }
   </style>
 </head>
 <body>
@@ -373,7 +373,7 @@
                 📥 Download from Telegram
               </a>
             </div>
-          </div>
+ </div>
         `;
       });
 
@@ -445,6 +445,11 @@
       renderQuestionScreen();
     }
 
+    function pick(i) {
+      answers[cur] = i;
+      renderQuestionScreen();
+    }
+
     function renderQuestionScreen() {
       if(!isSolutionMode) visited[cur] = true;
       const q = currentQuiz.questions[cur];
@@ -482,7 +487,6 @@
           </button>
         `;
       });
-
       const m = Math.floor(sec / 60);
       const s = sec % 60;
 
@@ -527,25 +531,20 @@
       let footerActions = '';
       if(isSolutionMode) {
         footerActions = `
-          <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:14px; margin-top:14px;">
-            <button class="btn-outline" ${cur === 0 ? 'disabled style="opacity:0.3"' : ''} onclick="prevQ()">← Previous</button>
-            <button class="btn-primary" ${cur === total - 1 ? 'disabled style="opacity:0.3"' : ''} onclick="nextQ()">Next Question →</button>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
+            <button class="btn-outline" onclick="prevQ()" ${cur === 0 ? 'disabled style="opacity:0.5;"' : ''}>← Previous</button>
+            <button class="btn-outline" onclick="nextQ()" ${cur === total - 1 ? 'disabled style="opacity:0.5;"' : ''}>Next →</button>
           </div>
         `;
       } else {
         footerActions = `
-          <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:14px; margin-top:14px; flex-wrap:wrap; gap:8px;">
-            <div style="display:flex; gap:6px;">
-              <button class="btn-outline" ${cur === 0 ? 'disabled style="opacity:0.3"' : ''} onclick="prevQ()">← Previous</button>
-              <button class="btn-warning" onclick="toggleReview()">
-                ${markedReview[cur] ? '★ Marked for Review' : '☆ Mark for Review'}
-              </button>
-              ${answers[cur] !== undefined ? `<button class="btn-outline" style="color:#ef4444;" onclick="clearResponse()">Clear Response</button>` : ''}
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; flex-wrap:wrap; gap:8px;">
+            <div style="display:flex; gap:8px;">
+              <button class="btn-outline" onclick="prevQ()" ${cur === 0 ? 'disabled style="opacity:0.5;"' : ''}>← Back</button>
+              <button class="btn-warning" onclick="toggleReview()">${markedReview[cur] ? '★ Marked' : '☆ Mark for Review'}</button>
             </div>
-            <div style="display:flex; gap:6px;">
-              ${cur < total - 1 ? 
-                `<button class="btn-primary" onclick="nextQ()">Save & Next →</button>` : 
-                `<button class="btn-success" onclick="finishTest()">Submit Test ✓</button>`}
+            <div style="display:flex; gap:8px;">
+              ${cur < total - 1 ? '<button class="btn-primary" onclick="nextQ()">Save & Next →</button>' : '<button class="btn-success" onclick="finishTest()">Submit Test ✓</button>'}
             </div>
           </div>
         `;
@@ -554,28 +553,13 @@
       document.getElementById('app').innerHTML = `
         ${topControls}
         <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <span style="font-size:13px; color:#64748b; font-weight:800;">Question ${cur + 1} of ${total}</span>
-            <span style="font-size:11px; background:#f1f5f9; color:#475569; padding:2px 8px; border-radius:4px; font-weight:700;">${q.topic || 'General'}</span>
-          </div>
-          <h3 style="font-size:15px; line-height:1.6; margin-bottom:16px;">${q.q}</h3>
-          <div>${optH}</div>
+          <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:6px;">Question ${cur + 1} of ${total}</div>
+          <h2 style="font-size:16px; font-weight:700; line-height:1.5; margin-bottom:16px;">${q.q}</h2>
+          ${optH}
           ${explanationBox}
           ${footerActions}
         </div>
       `;
-    }
-
-    function pick(i) {
-      if(isSolutionMode) return;
-      answers[cur] = i;
-      renderQuestionScreen();
-    }
-
-    function clearResponse() {
-      if(isSolutionMode) return;
-      delete answers[cur];
-      renderQuestionScreen();
     }
 
     function toggleReview() {
@@ -620,7 +604,6 @@
             cls = 'sol-wrong';
             wrongC++;
           }
-
           if(i === cur) cls += ' current';
           gridHtml += `<div class="p-box ${cls}" onclick="jumpToQ(${i})">${i + 1}</div>`;
         }
@@ -711,8 +694,6 @@
 
       const totalQs = currentQuiz.questions.length;
       const scorePct = Math.round((cor / totalQs) * 100);
-
-      // Save to attempt history
       const now = new Date();
       const dateStr = now.toLocaleDateString('en-GB') + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       if(!userAttempts[currentQuiz.id]) userAttempts[currentQuiz.id] = [];
@@ -725,7 +706,6 @@
       });
       localStorage.setItem('ps_user_attempts', JSON.stringify(userAttempts));
 
-      // Reattempt comparison logic
       const history = userAttempts[currentQuiz.id];
       let comparisonHtml = '';
       if(history.length > 1) {
@@ -739,7 +719,6 @@
         `;
       }
 
-      // Identify Strong & Weak topics
       let strongList = [];
       let weakList = [];
       Object.keys(topicStats).forEach(t => {
@@ -760,7 +739,6 @@
             <div style="font-size:38px; font-weight:900; color:#1d4ed8; margin: 4px 0;">${cor} <span style="font-size:16px; color:#94a3b8; font-weight:500;">/ ${totalQs}</span></div>
             <div style="font-size:13px; font-weight:700; color:#1e40af;">Accuracy: ${scorePct}%</div>
           </div>
-
           ${comparisonHtml}
 
           <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-bottom:16px;">
@@ -778,7 +756,6 @@
             </div>
           </div>
 
-          <!-- TOPIC ANALYSIS -->
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:left; margin-bottom:16px;">
             <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:10px;">
               <div style="font-weight:700; font-size:12px; color:#166534; margin-bottom:4px;">💪 Strong Topics:</div>
@@ -829,7 +806,26 @@
     }
 
     function renderAdminHome() {
-      let testListHtml = '';
+      // PDF & BOOKS RESOURCE LIST
+      let resListHtml = '';
+      allResources.forEach((r, idx) => {
+        const isNote = (r.type === 'note' || !r.type);
+        resListHtml += `
+          <div style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:10px 12px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <div>
+              <span class="tag" style="background:${isNote ? '#e0f2fe' : '#fef3c7'}; color:${isNote ? '#0369a1' : '#92400e'}; margin-bottom:2px;">
+                ${isNote ? '📄 PDF Note' : '🛒 Book'} · ${r.category || 'General'}
+              </span>
+              <div style="font-weight:700; font-size:13px; color:#1e293b;">${r.title}</div>
+              <div style="font-size:11px; color:#64748b; word-break:break-all;">${r.telegram_url || r.buy_url || 'No URL'}</div>
+            </div>
+            <button class="btn-danger" onclick="deleteResource(${idx})">🗑️ Delete</button>
+          </div>
+        `;
+      });
+
+      // MOCK TEST LIST
+    let testListHtml = '';
       allTests.forEach((t) => {
         testListHtml += `
           <div style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
@@ -859,6 +855,12 @@
             <button class="btn-warning" style="padding:10px;" onclick="promptAddResource('book')">+ Add Recommended Book Link</button>
           </div>
 
+          <!-- MANAGE PDF NOTES & BOOKS SECTION -->
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px; margin-bottom:16px;">
+            <h3 style="font-size:14px; font-weight:800; margin-bottom:10px; color:#1e293b;">📚 Uploaded PDFs & Book Links (${allResources.length}):</h3>
+            ${resListHtml || '<div style="color:#64748b; font-size:12px;">No PDFs or books added yet. Click above buttons to add.</div>'}
+          </div>
+
           <div style="background:#eff6ff; border:2px dashed #2563eb; padding:16px; border-radius:10px; margin-bottom:16px; text-align:center;">
             <div style="font-weight:800; font-size:14px; color:#1e40af; margin-bottom:6px;">🚀 Upload JSON Questions File</div>
             <div style="font-size:12px; color:#64748b; margin-bottom:10px;">Select JSON file containing questions to merge or create new tests:</div>
@@ -884,6 +886,19 @@
       `;
     }
 
+    async function deleteResource(index) {
+      const item = allResources[index];
+      if (!item) return;
+
+      const confirmDel = confirm(`Are you sure you want to permanently delete:\n"${item.title || 'this item'}"?`);
+      if (confirmDel) {
+        allResources.splice(index, 1);
+        await saveResourcesToCloud();
+        alert("✅ Item deleted successfully!");
+        renderAdminHome();
+      }
+    }
+
     async function promptAddResource(type) {
       const title = prompt(`Enter ${type === 'note' ? 'PDF/Notes' : 'Book'} Title:`);
       if(!title) return;
@@ -894,15 +909,16 @@
       allResources.push({
         id: 'res-' + Date.now(),
         type: type,
-        title: title,
-        category: cat || 'General',
+        title: title.trim(),
+        category: cat ? cat.trim() : 'General',
         desc: type === 'note' ? 'Curated PDF material for exam revision.' : 'Recommended reference book.',
-        telegram_url: url,
-        buy_url: url
+        telegram_url: url.trim(),
+        buy_url: url.trim()
       });
 
       await saveResourcesToCloud();
       alert(`🎉 ${type === 'note' ? 'PDF/Notes' : 'Book'} added successfully!`);
+      renderAdminHome();
     }
 
     async function uploadJsonFile(event) {
