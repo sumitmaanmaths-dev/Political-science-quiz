@@ -21,19 +21,17 @@
     .banner h2 { font-size: 18px; margin: 6px 0; line-height: 1.4; }
     .banner p { font-size: 13px; color: #bfdbfe; }
     
-    /* MAIN TOP TABS */
     .nav-tabs { display: flex; gap: 8px; border-bottom: 2px solid #e2e8f0; margin-bottom: 16px; overflow-x: auto; padding-bottom: 2px; }
     .nav-tab-btn { background: none; border: none; padding: 10px 18px; font-size: 14px; font-weight: 700; color: #64748b; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
     .nav-tab-btn.active { color: #1d4ed8; border-color: #1d4ed8; }
 
-    /* EXAM & SUBJECT PILLS */
     .filter-section-title { font-size: 13px; font-weight: 800; color: #334155; margin-bottom: 8px; margin-top: 6px; }
     .tabs-wrapper { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 10px; }
     
-    /* SPECIAL BLINKING EXAM PILLS */
+    /* BLINKING EXAM PILLS */
     .exam-tab-btn { 
       background: #ffffff; 
-      border: 2px solid #3b82f6; 
+      border: 2px solid #2563eb; 
       color: #1d4ed8; 
       font-size: 13px; 
       font-weight: 800; 
@@ -41,27 +39,44 @@
       border-radius: 22px; 
       cursor: pointer; 
       white-space: nowrap; 
-      transition: 0.2s ease;
-      animation: subtleBlink 1.8s infinite alternate ease-in-out;
+      transition: all 0.2s ease;
+      animation: continuousBlink 1.4s infinite alternate;
     }
     .exam-tab-btn.active { 
-      background: #1d4ed8; 
-      color: #ffffff; 
-      border-color: #1d4ed8; 
-      animation: none;
-      box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
+      background: #1d4ed8 !important; 
+      color: #ffffff !important; 
+      border-color: #1d4ed8 !important; 
+      animation: none !important;
+      box-shadow: 0 2px 10px rgba(29, 78, 216, 0.4);
     }
 
-    @keyframes subtleBlink {
-      0% { transform: scale(1); border-color: #93c5fd; background-color: #ffffff; }
-      50% { transform: scale(1.03); border-color: #2563eb; background-color: #eff6ff; box-shadow: 0 0 8px rgba(37, 99, 235, 0.25); }
-      100% { transform: scale(1); border-color: #93c5fd; background-color: #ffffff; }
+    @keyframes continuousBlink {
+      0% {
+        border-color: #3b82f6;
+        background-color: #ffffff;
+        color: #1d4ed8;
+        box-shadow: 0 0 0px rgba(59, 130, 246, 0);
+        transform: scale(1);
+      }
+      50% {
+        border-color: #1d4ed8;
+        background-color: #eff6ff;
+        color: #1e40af;
+        box-shadow: 0 0 12px rgba(37, 99, 235, 0.35);
+        transform: scale(1.04);
+      }
+      100% {
+        border-color: #60a5fa;
+        background-color: #ffffff;
+        color: #2563eb;
+        box-shadow: 0 0 2px rgba(59, 130, 246, 0.1);
+        transform: scale(1);
+      }
     }
 
     .subject-tab-btn { background: #ffffff; border: 1px solid #cbd5e1; color: #475569; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 18px; cursor: pointer; white-space: nowrap; transition: 0.15s ease; }
     .subject-tab-btn.active { background: #0284c7; color: #ffffff; border-color: #0284c7; }
 
-    /* SEARCH BAR */
     .search-box-wrapper { margin-bottom: 14px; position: relative; }
     .search-input { width: 100%; padding: 10px 14px 10px 38px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; background: #fff; }
     .search-input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
@@ -162,9 +177,8 @@
 
     let allTests = [];
     let allResources = [];
-    let activeNavTab = 'mocks'; // 'mocks', 'notes', 'books'
+    let activeNavTab = 'mocks';
 
-    // Filter states
     let selectedExam = 'All';
     let selectedSubject = 'All';
     let searchQuery = '';
@@ -181,9 +195,13 @@
     let editingTestId = null;
     let draftQuestions = [];
 
-    // User authentication & history
     let currentUser = localStorage.getItem('ps_user_name') || 'Guest User';
     let userAttempts = JSON.parse(localStorage.getItem('ps_user_attempts') || '{}');
+
+    // Case-insensitive clean string helper
+    function cleanStr(s) {
+      return (s || '').toString().trim().toLowerCase();
+    }
 
     window.onload = () => {
       updateUserBadge();
@@ -343,16 +361,18 @@
       `;
     }
 
-    /* GETTERS FOR EXAMS & SUBJECTS */
+    /* GET EXAM & SUBJECT LISTS */
     function getExamList(dataList) {
       const exams = ['All'];
-      // Default common exams
-      const defaults = ['1st Grade', '2nd Grade', '3rd Grade / REET', 'Assistant Professor', 'RSSB Exams'];
-      defaults.forEach(d => { if(!exams.includes(d)) exams.push(d); });
+      const defaultExams = ['1st Grade', '2nd Grade', '3rd Grade / REET', 'Assistant Professor', 'RSSB Exams'];
+      defaultExams.forEach(d => exams.push(d));
 
       dataList.forEach(item => {
-        const exam = (item.exam || item.section || '').trim();
-        if(exam && !exams.includes(exam)) exams.push(exam);
+        const raw = item.exam || item.section || '';
+        if(raw) {
+          const match = exams.find(e => cleanStr(e) === cleanStr(raw));
+          if(!match) exams.push(raw.trim());
+        }
       });
       return exams;
     }
@@ -361,11 +381,14 @@
       const subjects = ['All'];
       const filtered = (currentSelectedExam === 'All') 
         ? dataList 
-        : dataList.filter(item => (item.exam || item.section || 'General').trim() === currentSelectedExam);
+        : dataList.filter(item => cleanStr(item.exam || item.section) === cleanStr(currentSelectedExam));
 
       filtered.forEach(item => {
-        const subj = (item.subject || item.category || '').trim();
-        if(subj && !subjects.includes(subj)) subjects.push(subj);
+        const raw = item.subject || item.category || '';
+        if(raw) {
+          const match = subjects.find(s => cleanStr(s) === cleanStr(raw));
+          if(!match) subjects.push(raw.trim());
+        }
       });
       return subjects;
     }
@@ -377,7 +400,7 @@
 
       let examPills = '';
       examList.forEach(ex => {
-        const activeCls = (selectedExam === ex) ? 'active' : '';
+        const activeCls = (cleanStr(selectedExam) === cleanStr(ex)) ? 'active' : '';
         const label = (ex === 'All') ? '🌟 All Exams' : ex;
         examPills += `<button class="exam-tab-btn ${activeCls}" onclick="filterExam('${ex}')">${label}</button>`;
       });
@@ -386,7 +409,7 @@
       if(subjectList.length > 1) {
         subjPills += `<div class="filter-section-title">Select Subject ${selectedExam !== 'All' ? `(${selectedExam})` : ''}:</div><div class="tabs-wrapper">`;
         subjectList.forEach(sub => {
-          const activeCls = (selectedSubject === sub) ? 'active' : '';
+          const activeCls = (cleanStr(selectedSubject) === cleanStr(sub)) ? 'active' : '';
           subjPills += `<button class="subject-tab-btn ${activeCls}" onclick="filterSubject('${sub}')">${sub === 'All' ? 'All Subjects' : sub}</button>`;
         });
         subjPills += `</div>`;
@@ -402,8 +425,6 @@
           <input type="text" class="search-input" id="searchBarInput" placeholder="Search mock test by title, topic, or keyword..." oninput="handleSearch(this.value)" value="${searchQuery}">
         </div>
 
-        <div>
-
         <div id="tabResultsContainer">
           ${getFilteredMockCardsHtml()}
         </div>
@@ -412,8 +433,8 @@
 
     function getFilteredMockCardsHtml() {
       let filtered = allTests.filter(t => {
-        const examMatch = (selectedExam === 'All') || ((t.exam || t.section || 'General').trim() === selectedExam);
-        const subjMatch = (selectedSubject === 'All') || ((t.subject || t.category || 'General').trim() === selectedSubject);
+        const examMatch = (selectedExam === 'All') || (cleanStr(t.exam || t.section) === cleanStr(selectedExam));
+        const subjMatch = (selectedSubject === 'All') || (cleanStr(t.subject || t.category) === cleanStr(selectedSubject));
         const searchMatch = !searchQuery || 
           (t.title && t.title.toLowerCase().includes(searchQuery)) || 
           (t.desc && t.desc.toLowerCase().includes(searchQuery)) ||
@@ -422,7 +443,7 @@
       });
 
       if(filtered.length === 0) {
-        return '<div style="text-align:center; padding:30px; color:#64748b; font-size:13px; background:#fff; border-radius:10px; border:1px dashed #cbd5e1;">No mock tests match your selection or search query.</div>';
+        return '<div class="card" style="text-align:center; padding:30px; color:#64748b; font-size:13px; border:1px dashed #cbd5e1;">No mock tests match your selection or search query.</div>';
       }
 
       let cardsHtml = '';
@@ -439,6 +460,10 @@
           `;
         }
 
+        const negMarkText = (typeof t.negativeMark !== 'undefined' && t.negativeMark > 0) 
+          ? ` · ⚠️ Neg: -${t.negativeMark}` 
+          : ' · No Neg Marking';
+
         cardsHtml += `
           <div class="card">
             <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:6px;">
@@ -449,7 +474,7 @@
             <p style="font-size: 12px; color: #64748b; margin-bottom: 8px;">${t.desc || 'Comprehensive mock test with real exam pattern and explanations.'}</p>
             ${historyBadge}
             <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:12px; margin-top:12px; flex-wrap:wrap; gap:8px;">
-              <span style="font-size: 12px; color: #475569; font-weight: 600;">⏱️ ${t.time || 15} Mins &nbsp;|&nbsp; 📝 ${(t.questions || []).length} Questions</span>
+              <span style="font-size: 12px; color: #475569; font-weight: 600;">⏱️ ${t.time || 15} Mins &nbsp;|&nbsp; 📝 ${(t.questions || []).length} Qs${negMarkText}</span>
               <button class="btn-primary" onclick="startTest(${originalIndex})">
                 ${history.length > 0 ? '🔄 Reattempt Test' : 'Start Test →'}
               </button>
@@ -468,7 +493,7 @@
 
       let examPills = '';
       examList.forEach(ex => {
-        const activeCls = (selectedExam === ex) ? 'active' : '';
+        const activeCls = (cleanStr(selectedExam) === cleanStr(ex)) ? 'active' : '';
         const label = (ex === 'All') ? '🌟 All Exams' : ex;
         examPills += `<button class="exam-tab-btn ${activeCls}" onclick="filterExam('${ex}')">${label}</button>`;
       });
@@ -477,7 +502,7 @@
       if(subjectList.length > 1) {
         subjPills += `<div class="filter-section-title">Select Subject ${selectedExam !== 'All' ? `(${selectedExam})` : ''}:</div><div class="tabs-wrapper">`;
         subjectList.forEach(sub => {
-          const activeCls = (selectedSubject === sub) ? 'active' : '';
+          const activeCls = (cleanStr(selectedSubject) === cleanStr(sub)) ? 'active' : '';
           subjPills += `<button class="subject-tab-btn ${activeCls}" onclick="filterSubject('${sub}')">${sub === 'All' ? 'All Subjects' : sub}</button>`;
         });
         subjPills += `</div>`;
@@ -501,8 +526,8 @@
 
     function getFilteredNotesCardsHtml(notes) {
       let filtered = notes.filter(n => {
-        const examMatch = (selectedExam === 'All') || ((n.exam || n.section || 'General').trim() === selectedExam);
-        const subjMatch = (selectedSubject === 'All') || ((n.subject || n.category || 'General').trim() === selectedSubject);
+        const examMatch = (selectedExam === 'All') || (cleanStr(n.exam || n.section) === cleanStr(selectedExam));
+        const subjMatch = (selectedSubject === 'All') || (cleanStr(n.subject || n.category) === cleanStr(selectedSubject));
         const searchMatch = !searchQuery || 
           (n.title && n.title.toLowerCase().includes(searchQuery)) || 
           (n.desc && n.desc.toLowerCase().includes(searchQuery)) ||
@@ -549,7 +574,7 @@
 
       let examPills = '';
       examList.forEach(ex => {
-        const activeCls = (selectedExam === ex) ? 'active' : '';
+        const activeCls = (cleanStr(selectedExam) === cleanStr(ex)) ? 'active' : '';
         const label = (ex === 'All') ? '🌟 All Exams' : ex;
         examPills += `<button class="exam-tab-btn ${activeCls}" onclick="filterExam('${ex}')">${label}</button>`;
       });
@@ -558,7 +583,7 @@
       if(subjectList.length > 1) {
         subjPills += `<div class="filter-section-title">Select Subject ${selectedExam !== 'All' ? `(${selectedExam})` : ''}:</div><div class="tabs-wrapper">`;
         subjectList.forEach(sub => {
-          const activeCls = (selectedSubject === sub) ? 'active' : '';
+          const activeCls = (cleanStr(selectedSubject) === cleanStr(sub)) ? 'active' : '';
           subjPills += `<button class="subject-tab-btn ${activeCls}" onclick="filterSubject('${sub}')">${sub === 'All' ? 'All Subjects' : sub}</button>`;
         });
         subjPills += `</div>`;
@@ -582,8 +607,8 @@
 
     function getFilteredBooksCardsHtml(books) {
       let filtered = books.filter(b => {
-        const examMatch = (selectedExam === 'All') || ((b.exam || b.section || 'General').trim() === selectedExam);
-        const subjMatch = (selectedSubject === 'All') || ((b.subject || b.category || 'General').trim() === selectedSubject);
+        const examMatch = (selectedExam === 'All') || (cleanStr(b.exam || b.section) === cleanStr(selectedExam));
+        const subjMatch = (selectedSubject === 'All') || (cleanStr(b.subject || b.category) === cleanStr(selectedSubject));
         const searchMatch = !searchQuery || 
           (b.title && b.title.toLowerCase().includes(searchQuery)) || 
           (b.desc && b.desc.toLowerCase().includes(searchQuery)) ||
@@ -637,7 +662,7 @@
       }
     }
 
-    /* TEST TAKING SYSTEM */
+    /* TEST SCREEN */
     function startTest(index) {
       currentQuiz = allTests[index];
       if(!currentQuiz || !currentQuiz.questions || currentQuiz.questions.length === 0) {
@@ -887,7 +912,7 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    /* RESULT & PERFORMANCE TRACKING */
+    /* RESULT & PERFORMANCE TRACKING WITH NEGATIVE MARKING */
     function finishTest() {
       if(timer) clearInterval(timer);
       hideGrid();
@@ -896,6 +921,9 @@
       let cor = 0;
       let wrong = 0;
       let unattempted = 0;
+
+      const negRate = parseFloat(currentQuiz.negativeMark || 0);
+      const marksPerQ = parseFloat(currentQuiz.marksPerQuestion || 1);
 
       const topicStats = {};
 
@@ -915,15 +943,19 @@
       });
 
       const totalQs = currentQuiz.questions.length;
-      const scorePct = Math.round((cor / totalQs) * 100);
+      const rawMarks = (cor * marksPerQ) - (wrong * negRate);
+      const finalScore = Math.max(0, parseFloat(rawMarks.toFixed(2)));
+      const totalPossibleMarks = totalQs * marksPerQ;
+      const scorePct = Math.round((finalScore / totalPossibleMarks) * 100);
+
       const now = new Date();
-      const dateStr = now.toLocaleDateString('en-GB') + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const dateStr = now.toLocaleDateString('en-GB') + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
       if(!userAttempts[currentQuiz.id]) userAttempts[currentQuiz.id] = [];
       userAttempts[currentQuiz.id].push({
         candidate: currentUser,
-        score: cor,
-        total: totalQs,
+        score: finalScore,
+        total: totalPossibleMarks,
         percentage: scorePct,
         date: dateStr
       });
@@ -933,11 +965,11 @@
       let comparisonHtml = '';
       if(history.length > 1) {
         const prev = history[history.length - 2];
-        const diff = cor - prev.score;
+        const diff = (finalScore - prev.score).toFixed(2);
         const diffText = diff >= 0 ? `+${diff} marks improvement! 📈` : `${diff} marks change.`;
         comparisonHtml = `
           <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:12px; margin-bottom:16px; font-size:12px; color:#166534;">
-            <b>Performance Comparison:</b> Your previous score was <b>${prev.score}/${prev.total}</b> on ${prev.date}. (${diffText})
+            <b>Performance Comparison:</b> Previous Score: <b>${prev.score}/${prev.total}</b> on ${prev.date}. (${diffText})
           </div>
         `;
       }
@@ -950,7 +982,7 @@
         else weakList.push(`${t} (${Math.round(p)}%)`);
       });
 
-      const shareText = `🎯 I scored ${cor}/${totalQs} (${scorePct}%) in ${currentQuiz.title} on Exam Portal! Can you beat my score? Attempt here: ${window.location.href}`;
+      const shareText = `🎯 I scored ${finalScore}/${totalPossibleMarks} (${scorePct}%) in ${currentQuiz.title} on Exam Portal! Can you beat my score? Attempt here: ${window.location.href}`;
 
       document.getElementById('app').innerHTML = `
         <div class="card" style="text-align:center; padding:24px 16px;">
@@ -958,24 +990,25 @@
           <div style="font-size:12px; color:#64748b; margin-bottom:16px;">Candidate: <b>${currentUser}</b> · ${dateStr}</div>
 
           <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:20px; margin-bottom:16px;">
-            <div style="font-size:11px; text-transform:uppercase; color:#64748b; font-weight:700;">Total Score</div>
-            <div style="font-size:38px; font-weight:900; color:#1d4ed8; margin: 4px 0;">${cor} <span style="font-size:16px; color:#94a3b8; font-weight:500;">/ ${totalQs}</span></div>
+            <div style="font-size:11px; text-transform:uppercase; color:#64748b; font-weight:700;">Final Obtained Marks</div>
+            <div style="font-size:38px; font-weight:900; color:#1d4ed8; margin: 4px 0;">${finalScore} <span style="font-size:16px; color:#94a3b8; font-weight:500;">/ ${totalPossibleMarks}</span></div>
             <div style="font-size:13px; font-weight:700; color:#1e40af;">Accuracy: ${scorePct}%</div>
+            ${negRate > 0 ? `<div style="font-size:11px; color:#dc2626; margin-top:4px;">Negative deduction applied (-${(wrong * negRate).toFixed(2)} marks)</div>` : ''}
           </div>
           ${comparisonHtml}
 
           <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-bottom:16px;">
             <div style="background:#ecfdf5; border:1px solid #a7f3d0; padding:12px; border-radius:8px;">
               <div style="font-size:18px; font-weight:800; color:#059669;">${cor}</div>
-              <div style="font-size:11px; font-weight:700; color:#065f46;">Correct</div>
+              <div style="font-size:11px; font-weight:700; color:#065f46;">Correct (+${cor * marksPerQ})</div>
             </div>
             <div style="background:#fef2f2; border:1px solid #fecaca; padding:12px; border-radius:8px;">
               <div style="font-size:18px; font-weight:800; color:#dc2626;">${wrong}</div>
-              <div style="font-size:11px; font-weight:700; color:#991b1b;">Incorrect</div>
+              <div style="font-size:11px; font-weight:700; color:#991b1b;">Incorrect (-${(wrong * negRate).toFixed(2)})</div>
             </div>
             <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:12px; border-radius:8px;">
               <div style="font-size:18px; font-weight:800; color:#64748b;">${unattempted}</div>
-              <div style="font-size:11px; font-weight:700; color:#475569;">Skipped</div>
+              <div style="font-size:11px; font-weight:700; color:#475569;">Skipped (0)</div>
             </div>
           </div>
 
@@ -1056,7 +1089,7 @@
                 <span class="tag" style="background:#f1f5f9; color:#475569; margin-bottom:2px;">📖 ${t.subject || 'General'}</span>
               </div>
               <div style="font-weight:700; font-size:14px; color:#1e293b;">${t.title}</div>
-              <div style="font-size:11px; color:#64748b;">${(t.questions || []).length} Qs &nbsp;·&nbsp; ${t.time || 15} Mins &nbsp;·&nbsp; ID: ${t.id}</div>
+              <div style="font-size:11px; color:#64748b;">${(t.questions || []).length} Qs &nbsp;·&nbsp; ${t.time || 15} Mins &nbsp;·&nbsp; Neg: -${t.negativeMark || 0}</div>
             </div>
             <div style="display:flex; gap:6px; flex-wrap:wrap;">
               <button class="btn-outline" style="border-color:#2563eb; color:#2563eb;" onclick="loadTestForEdit('${t.id}')">✏️ Edit</button>
@@ -1077,7 +1110,8 @@
             <button class="btn-primary" style="padding:10px;" onclick="promptAddResource('note')">+ Add PDF / Telegram Note</button>
             <button class="btn-warning" style="padding:10px;" onclick="promptAddResource('book')">+ Add Recommended Book Link</button>
           </div>
-     <!-- MANAGE PDF NOTES & BOOKS SECTION -->
+
+          <!-- MANAGE PDF NOTES & BOOKS -->
           <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px; margin-bottom:16px;">
             <h3 style="font-size:14px; font-weight:800; margin-bottom:10px; color:#1e293b;">📚 Uploaded PDFs & Book Links (${allResources.length}):</h3>
             ${resListHtml || '<div style="color:#64748b; font-size:12px;">No PDFs or books added yet. Click above buttons to add.</div>'}
@@ -1085,7 +1119,7 @@
 
           <div style="background:#eff6ff; border:2px dashed #2563eb; padding:16px; border-radius:10px; margin-bottom:16px; text-align:center;">
             <div style="font-weight:800; font-size:14px; color:#1e40af; margin-bottom:6px;">🚀 Upload JSON Questions File</div>
-            <div style="font-size:12px; color:#64748b; margin-bottom:10px;">Select JSON file containing questions to merge or create new tests:</div>
+            <div style="font-size:12px; color:#64748b; margin-bottom:10px;">Select JSON file containing questions:</div>
             <input type="file" id="json-file-input" accept=".json,.txt" style="display:none;" onchange="uploadJsonFile(event)">
             <button class="btn-primary" style="padding:10px 20px; font-size:14px;" onclick="document.getElementById('json-file-input').click()">
               📁 Choose File & Upload
@@ -1130,10 +1164,10 @@
       if(!url) return;
 
       allResources.push({
-        id: 'res-' + Date.now(),
-        type: type,
+        id: 'res-' + Date.now(),type: type,
         title: title.trim(),
-        exam: exam ? exam.trim() : 'General',
+        exam: exam ? exam.trim() : '1st Grade',
+        section: exam ? exam.trim() : '1st Grade',
         subject: subj ? subj.trim() : 'General',
         desc: type === 'note' ? 'Curated PDF material for exam revision.' : 'Recommended reference book.',
         telegram_url: url.trim(),
@@ -1164,20 +1198,25 @@
         const suggestedId = imported.id || 'test-' + Date.now();
         let targetTest = allTests.find(t => t.id === suggestedId);
 
+        const chosenExam = imported.exam || imported.section || "1st Grade";
+        const chosenSubj = imported.subject || "Political Science";
+
         if (targetTest) {
-          const choice = confirm(`'${targetTest.title}' already exists!\n\n[OK] = Merge these ${newQs.length} questions into existing test\n[Cancel] = Create as a brand new test`);
+          const choice = confirm(`'${targetTest.title}' already exists!\n\n[OK] = Merge questions into existing test\n[Cancel] = Create as brand new test`);
           if (choice) {
             targetTest.questions = (targetTest.questions || []).concat(newQs);
             targetTest.time = imported.time || targetTest.time || 15;
+            targetTest.negativeMark = typeof imported.negativeMark !== 'undefined' ? imported.negativeMark : (targetTest.negativeMark || 0.33);
           } else {
             const newId = 'test-' + Date.now();
             allTests.push({
               id: newId,
               title: (imported.title || targetTest.title) + " (New)",
-              exam: imported.exam || targetTest.exam || "1st Grade",
-              section: imported.section || targetTest.section || "1st Grade",
-              subject: imported.subject || targetTest.subject || "Political Science",
+              exam: chosenExam,
+              section: chosenExam,
+              subject: chosenSubj,
               time: imported.time || 15,
+              negativeMark: typeof imported.negativeMark !== 'undefined' ? imported.negativeMark : 0.33,
               desc: imported.desc || "",
               questions: newQs
             });
@@ -1187,10 +1226,11 @@
           allTests.push({
             id: suggestedId,
             title: imported.title || file.name.replace(/\.[^/.]+$/, ""),
-            exam: imported.exam || imported.section || "1st Grade",
-            section: imported.section || imported.exam || "1st Grade",
-            subject: imported.subject || "Political Science",
+            exam: chosenExam,
+            section: chosenExam,
+            subject: chosenSubj,
             time: imported.time || 15,
+            negativeMark: typeof imported.negativeMark !== 'undefined' ? imported.negativeMark : 0.33,
             desc: imported.desc || "",
             questions: newQs
           });
@@ -1220,6 +1260,7 @@
           if(!newT.exam) newT.exam = newT.section || '1st Grade';
           if(!newT.section) newT.section = newT.exam;
           if(!newT.subject) newT.subject = 'Political Science';
+          if(typeof newT.negativeMark === 'undefined') newT.negativeMark = 0.33;
           if(!newT.id) newT.id = 'test-' + Date.now();
           
           const existingIdx = allTests.findIndex(x => x.id === newT.id);
@@ -1246,9 +1287,9 @@
     }
 
     function startNewTestForm() {
-    editingTestId = null;
+      editingTestId = null;
       draftQuestions = [];
-      renderTestFormUI('Create New Mock Test', '', '1st Grade', 'Political Science', 15, '');
+      renderTestFormUI('Create New Mock Test', '', '1st Grade', 'Political Science', 15, 0.33, '');
     }
 
     function loadTestForEdit(id) {
@@ -1256,10 +1297,10 @@
       if(!t) return;
       editingTestId = id;
       draftQuestions = JSON.parse(JSON.stringify(t.questions || []));
-      renderTestFormUI('Edit Mock Test', t.title, t.exam || t.section || '1st Grade', t.subject || 'Political Science', t.time || 15, t.desc || '');
+      renderTestFormUI('Edit Mock Test', t.title, t.exam || t.section || '1st Grade', t.subject || 'Political Science', t.time || 15, typeof t.negativeMark !== 'undefined' ? t.negativeMark : 0.33, t.desc || '');
     }
 
-    function renderTestFormUI(heading, titleVal, examVal, subjVal, timeVal, descVal) {
+    function renderTestFormUI(heading, titleVal, examVal, subjVal, timeVal, negVal, descVal) {
       let qListHtml = '';
       draftQuestions.forEach((dq, index) => {
         qListHtml += `
@@ -1282,18 +1323,24 @@
               <label>Test Title</label>
               <input type="text" id="t-title" class="form-control" value="${titleVal}">
             </div>
-            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
               <div class="form-group">
-                <label>Target Exam (Category)</label>
-                <input type="text" id="t-exam" class="form-control" value="${examVal}" placeholder="e.g. 1st Grade, 2nd Grade, 3rd Grade / REET">
+                <label>Target Exam (e.g. 1st Grade, 2nd Grade, 3rd Grade / REET)</label>
+                <input type="text" id="t-exam" class="form-control" value="${examVal}" placeholder="1st Grade">
               </div>
               <div class="form-group">
-                <label>Subject</label>
-                <input type="text" id="t-subject" class="form-control" value="${subjVal}" placeholder="e.g. Political Science, History, Hindi">
+                <label>Subject (e.g. Political Science, History, GK)</label>
+                <input type="text" id="t-subject" class="form-control" value="${subjVal}" placeholder="Political Science">
               </div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
               <div class="form-group">
                 <label>Time Duration (Minutes)</label>
                 <input type="number" id="t-time" class="form-control" value="${timeVal}">
+              </div>
+              <div class="form-group">
+                <label>Negative Marking per Wrong Answer (e.g. 0.33, 0.25, 0)</label>
+                <input type="number" step="0.01" id="t-neg" class="form-control" value="${negVal}">
               </div>
             </div>
             <div class="form-group">
@@ -1352,6 +1399,7 @@
         document.getElementById('t-exam').value,
         document.getElementById('t-subject').value,
         document.getElementById('t-time').value,
+        document.getElementById('t-neg').value,
         document.getElementById('t-desc').value
       );
     }
@@ -1379,10 +1427,14 @@
       const exam = document.getElementById('t-exam').value.trim();
       const subject = document.getElementById('t-subject').value.trim();
       const time = parseInt(document.getElementById('t-time').value, 10) || 15;
+      const neg = parseFloat(document.getElementById('t-neg').value) || 0;
       const desc = document.getElementById('t-desc').value.trim();
 
       if(!title) return alert('Test title is required!');
       if(draftQuestions.length === 0) return alert('At least one question is required!');
+
+      const finalExam = exam || '1st Grade';
+      const finalSubj = subject || 'General';
 
       if(editingTestId) {
         const idx = allTests.findIndex(t => t.id === editingTestId);
@@ -1390,10 +1442,11 @@
           allTests[idx] = { 
             ...allTests[idx], 
             title, 
-            exam: exam || '1st Grade', 
-            section: exam || '1st Grade', 
-            subject: subject || 'General', 
+            exam: finalExam, 
+            section: finalExam, 
+            subject: finalSubj, 
             time, 
+            negativeMark: neg,
             desc, 
             questions: draftQuestions 
           };
@@ -1402,10 +1455,11 @@
         allTests.push({
           id: 'test-' + Date.now(),
           title,
-          exam: exam || '1st Grade',
-          section: exam || '1st Grade',
-          subject: subject || 'General',
+          exam: finalExam,
+          section: finalExam,
+          subject: finalSubj,
           time,
+          negativeMark: neg,
           desc,
           questions: draftQuestions
         });
