@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Political Science & Competitive Exam Portal</title>
+  <title>RPSC, RSSB & Competitive Exam Portal</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: #f1f5f9; color: #0f172a; min-height: 100vh; display: flex; flex-direction: column; }
@@ -26,10 +26,46 @@
     .nav-tab-btn { background: none; border: none; padding: 10px 18px; font-size: 14px; font-weight: 700; color: #64748b; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
     .nav-tab-btn.active { color: #1d4ed8; border-color: #1d4ed8; }
 
-    /* SUB TABS & PILLS */
-    .tabs-wrapper { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 14px; }
-    .tab-btn { background: #ffffff; border: 1px solid #cbd5e1; color: #475569; font-size: 12px; font-weight: 700; padding: 7px 14px; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: 0.15s ease; }
-    .tab-btn.active { background: #2563eb; color: #ffffff; border-color: #2563eb; }
+    /* EXAM & SUBJECT PILLS */
+    .filter-section-title { font-size: 13px; font-weight: 800; color: #334155; margin-bottom: 8px; margin-top: 6px; }
+    .tabs-wrapper { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 10px; }
+    
+    /* SPECIAL BLINKING EXAM PILLS */
+    .exam-tab-btn { 
+      background: #ffffff; 
+      border: 2px solid #3b82f6; 
+      color: #1d4ed8; 
+      font-size: 13px; 
+      font-weight: 800; 
+      padding: 9px 18px; 
+      border-radius: 22px; 
+      cursor: pointer; 
+      white-space: nowrap; 
+      transition: 0.2s ease;
+      animation: subtleBlink 1.8s infinite alternate ease-in-out;
+    }
+    .exam-tab-btn.active { 
+      background: #1d4ed8; 
+      color: #ffffff; 
+      border-color: #1d4ed8; 
+      animation: none;
+      box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
+    }
+
+    @keyframes subtleBlink {
+      0% { transform: scale(1); border-color: #93c5fd; background-color: #ffffff; }
+      50% { transform: scale(1.03); border-color: #2563eb; background-color: #eff6ff; box-shadow: 0 0 8px rgba(37, 99, 235, 0.25); }
+      100% { transform: scale(1); border-color: #93c5fd; background-color: #ffffff; }
+    }
+
+    .subject-tab-btn { background: #ffffff; border: 1px solid #cbd5e1; color: #475569; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 18px; cursor: pointer; white-space: nowrap; transition: 0.15s ease; }
+    .subject-tab-btn.active { background: #0284c7; color: #ffffff; border-color: #0284c7; }
+
+    /* SEARCH BAR */
+    .search-box-wrapper { margin-bottom: 14px; position: relative; }
+    .search-input { width: 100%; padding: 10px 14px 10px 38px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; background: #fff; }
+    .search-input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 15px; color: #94a3b8; }
 
     .card { background: #ffffff; border-radius: 10px; border: 1px solid #cbd5e1; padding: 16px; margin-bottom: 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
     .tag { display: inline-block; background: #dbeafe; color: #1e40af; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 12px; margin-bottom: 8px; }
@@ -47,7 +83,6 @@
     .opt-badge { width: 26px; height: 26px; border-radius: 6px; background: #f1f5f9; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; margin-right: 10px; flex-shrink: 0; }
     .opt-btn.selected .opt-badge { background: #2563eb; color: #fff; }
 
-    /* SOLUTION STYLING */
     .opt-btn.sol-correct { border-color: #059669; background: #ecfdf5; color: #065f46; font-weight: 700; }
     .opt-btn.sol-correct .opt-badge { background: #059669; color: #fff; }
     .opt-btn.sol-wrong { border-color: #dc2626; background: #fef2f2; color: #991b1b; font-weight: 700; }
@@ -58,8 +93,7 @@
 
     .modal-backdrop { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 100; display: none; align-items: center; justify-content: center; padding: 14px; }
     .modal-backdrop.active { display: flex; }
-    .grid-modal { width: 100%; max-width: 520px; max-height: 85vh; background: #ffffff; border-radius: 14px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.25); animation: popIn 0.2s ease; }
-    @keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .grid-modal { width: 100%; max-width: 520px; max-height: 85vh; background: #ffffff; border-radius: 14px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.25); }
 
     .modal-head { padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 15px; }
     .legend-box { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 11px; font-weight: 700; padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; }
@@ -90,10 +124,10 @@
   <header>
     <div class="header-inner">
       <div class="logo-box" onclick="showHome()">
-        <div class="logo-icon">PS</div>
+        <div class="logo-icon">RP</div>
         <div>
-          <div style="font-weight: 800; font-size: 15px;">Political Science Quiz Portal</div>
-          <div style="font-size: 11px; color: #64748b;">Exam Prep & Study Center</div>
+          <div style="font-weight: 800; font-size: 13px; line-height: 1.3;">RPSC (Assistant Professor, School Lecturer, 2nd Grade), RSSB & Other State Exams</div>
+          <div style="font-size: 11px; color: #64748b;">Comprehensive Preparation & Test Portal</div>
         </div>
       </div>
       <div class="header-actions">
@@ -129,7 +163,12 @@
     let allTests = [];
     let allResources = [];
     let activeNavTab = 'mocks'; // 'mocks', 'notes', 'books'
-    let selectedSection = 'All';
+
+    // Filter states
+    let selectedExam = 'All';
+    let selectedSubject = 'All';
+    let searchQuery = '';
+
     let currentQuiz = null;
     let cur = 0;
     let answers = {};
@@ -157,7 +196,7 @@
     }
 
     function promptCandidateLogin() {
-      const name = prompt("Enter your Name or Roll Number for progress tracking (or leave blank for Guest):", currentUser === 'Guest User' ? '' : currentUser);
+      const name = prompt("Enter your Name or Roll Number for progress tracking:", currentUser === 'Guest User' ? '' : currentUser);
       if (name !== null) {
         currentUser = name.trim() || 'Guest User';
         localStorage.setItem('ps_user_name', currentUser);
@@ -249,8 +288,26 @@
 
     function setNavTab(tab) {
       activeNavTab = tab;
-      selectedSection = 'All';
+      selectedExam = 'All';
+      selectedSubject = 'All';
+      searchQuery = '';
       showHome();
+    }
+
+    function filterExam(exam) {
+      selectedExam = exam;
+      selectedSubject = 'All';
+      showHome();
+    }
+
+    function filterSubject(subj) {
+      selectedSubject = subj;
+      showHome();
+    }
+
+    function handleSearch(val) {
+      searchQuery = val.toLowerCase().trim();
+      renderCurrentTabResults();
     }
 
     function showHome() {
@@ -266,105 +323,210 @@
         </div>
       `;
 
-      let contentHtml = '';
-
+      let bodyContent = '';
       if (activeNavTab === 'mocks') {
-        contentHtml = renderMockTestsTab();
+        bodyContent = renderMocksView();
       } else if (activeNavTab === 'notes') {
-        contentHtml = renderNotesTab();
+        bodyContent = renderNotesView();
       } else {
-        contentHtml = renderBooksTab();
+        bodyContent = renderBooksView();
       }
 
       document.getElementById('app').innerHTML = `
         <div class="banner">
           <span>Official Preparation Portal</span>
-          <h2>Target SSC, Teaching Exams (CTET, DSSSB, RPSC, UGC NET) & Polity</h2>
-          <p>Practice topic-wise mocks, download curated Telegram notes, and assess your weak spots.</p>
+          <h2>RPSC, School Lecturer, 2nd Grade, 3rd Grade / REET & RSSB Exams</h2>
+          <p>Select your Exam and Subject to practice high-yield tests, download curated notes, and track progress.</p>
         </div>
         ${navHtml}
-        ${contentHtml}
+        ${bodyContent}
       `;
     }
 
-    function renderMockTestsTab() {
-      const sections = ['All'];
-      allTests.forEach(t => {
-        const s = (t.section || 'General').trim();
-        if(!sections.includes(s)) sections.push(s);
+    /* GETTERS FOR EXAMS & SUBJECTS */
+    function getExamList(dataList) {
+      const exams = ['All'];
+      // Default common exams
+      const defaults = ['1st Grade', '2nd Grade', '3rd Grade / REET', 'Assistant Professor', 'RSSB Exams'];
+      defaults.forEach(d => { if(!exams.includes(d)) exams.push(d); });
+
+      dataList.forEach(item => {
+        const exam = (item.exam || item.section || '').trim();
+        if(exam && !exams.includes(exam)) exams.push(exam);
+      });
+      return exams;
+    }
+
+    function getSubjectList(dataList, currentSelectedExam) {
+      const subjects = ['All'];
+      const filtered = (currentSelectedExam === 'All') 
+        ? dataList 
+        : dataList.filter(item => (item.exam || item.section || 'General').trim() === currentSelectedExam);
+
+      filtered.forEach(item => {
+        const subj = (item.subject || item.category || '').trim();
+        if(subj && !subjects.includes(subj)) subjects.push(subj);
+      });
+      return subjects;
+    }
+
+    /* MOCK TESTS VIEW */
+    function renderMocksView() {
+      const examList = getExamList(allTests);
+      const subjectList = getSubjectList(allTests, selectedExam);
+
+      let examPills = '';
+      examList.forEach(ex => {
+        const activeCls = (selectedExam === ex) ? 'active' : '';
+        const label = (ex === 'All') ? '🌟 All Exams' : ex;
+        examPills += `<button class="exam-tab-btn ${activeCls}" onclick="filterExam('${ex}')">${label}</button>`;
       });
 
-      let tabsHtml = '';
-      sections.forEach(s => {
-        const activeCls = (selectedSection === s) ? 'active' : '';
-        const label = (s === 'All') ? 'All Exams / Sections' : s;
-        tabsHtml += `<button class="tab-btn ${activeCls}" onclick="filterSection('${s}')">${label}</button>`;
-      });
-
-      const filtered = (selectedSection === 'All') 
-        ? allTests 
-        : allTests.filter(t => (t.section || 'General').trim() === selectedSection);
-
-      let cardsHtml = '';
-      if(filtered.length === 0) {
-        cardsHtml = '<div style="text-align:center; padding:30px; color:#64748b; font-size:13px; background:#fff; border-radius:10px; border:1px dashed #cbd5e1;">No mock tests found in this category.</div>';
-      } else {
-        filtered.forEach(t => {
-          const originalIndex = allTests.findIndex(item => item.id === t.id);
-          const history = userAttempts[t.id] || [];
-          let historyBadge = '';
-          if(history.length > 0) {
-            const lastAttempt = history[history.length - 1];
-            historyBadge = `
-              <div style="font-size:11px; background:#f0fdf4; color:#166534; padding:4px 8px; border-radius:4px; margin-top:8px; display:inline-block; font-weight:600;">
-                ✓ Attempted ${history.length} time(s) · Last Score: ${lastAttempt.score}/${lastAttempt.total} (${lastAttempt.date})
-              </div>
-            `;
-          }
-
-          cardsHtml += `
-            <div class="card">
-              <span class="tag">${t.section || 'General'}</span>
-              <h3 style="font-size: 16px; margin-bottom: 6px;">${t.title}</h3>
-              <p style="font-size: 12px; color: #64748b; margin-bottom: 8px;">${t.desc || 'Comprehensive mock test with real exam questions and explanations.'}</p>
-              ${historyBadge}
-              <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:12px; margin-top:12px; flex-wrap:wrap; gap:8px;">
-                <span style="font-size: 12px; color: #475569; font-weight: 600;">⏱️ ${t.time || 15} Mins &nbsp;|&nbsp; 📝 ${(t.questions || []).length} Questions</span>
-                <button class="btn-primary" onclick="startTest(${originalIndex})">
-                  ${history.length > 0 ? '🔄 Reattempt Test' : 'Start Test →'}
-                </button>
-              </div>
-            </div>
-          `;
+      let subjPills = '';
+      if(subjectList.length > 1) {
+        subjPills += `<div class="filter-section-title">Select Subject ${selectedExam !== 'All' ? `(${selectedExam})` : ''}:</div><div class="tabs-wrapper">`;
+        subjectList.forEach(sub => {
+          const activeCls = (selectedSubject === sub) ? 'active' : '';
+          subjPills += `<button class="subject-tab-btn ${activeCls}" onclick="filterSubject('${sub}')">${sub === 'All' ? 'All Subjects' : sub}</button>`;
         });
+        subjPills += `</div>`;
       }
 
       return `
-        <div class="tabs-wrapper">${tabsHtml}</div>
-        <div style="font-weight: 700; margin-bottom: 12px; font-size: 15px; color:#1e293b;">
-          ${selectedSection === 'All' ? 'All Available Mock Tests' : selectedSection + ' - Series'} (${filtered.length})
+        <div class="filter-section-title">⚡ Select Target Exam:</div>
+        <div class="tabs-wrapper">${examPills}</div>
+        ${subjPills}
+        
+        <div class="search-box-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" id="searchBarInput" placeholder="Search mock test by title, topic, or keyword..." oninput="handleSearch(this.value)" value="${searchQuery}">
         </div>
-        ${cardsHtml}
+
+        <div>
+
+        <div id="tabResultsContainer">
+          ${getFilteredMockCardsHtml()}
+        </div>
       `;
     }
 
-    function renderNotesTab() {
+    function getFilteredMockCardsHtml() {
+      let filtered = allTests.filter(t => {
+        const examMatch = (selectedExam === 'All') || ((t.exam || t.section || 'General').trim() === selectedExam);
+        const subjMatch = (selectedSubject === 'All') || ((t.subject || t.category || 'General').trim() === selectedSubject);
+        const searchMatch = !searchQuery || 
+          (t.title && t.title.toLowerCase().includes(searchQuery)) || 
+          (t.desc && t.desc.toLowerCase().includes(searchQuery)) ||
+          (t.subject && t.subject.toLowerCase().includes(searchQuery));
+        return examMatch && subjMatch && searchMatch;
+      });
+
+      if(filtered.length === 0) {
+        return '<div style="text-align:center; padding:30px; color:#64748b; font-size:13px; background:#fff; border-radius:10px; border:1px dashed #cbd5e1;">No mock tests match your selection or search query.</div>';
+      }
+
+      let cardsHtml = '';
+      filtered.forEach(t => {
+        const originalIndex = allTests.findIndex(item => item.id === t.id);
+        const history = userAttempts[t.id] || [];
+        let historyBadge = '';
+        if(history.length > 0) {
+          const lastAttempt = history[history.length - 1];
+          historyBadge = `
+            <div style="font-size:11px; background:#f0fdf4; color:#166534; padding:4px 8px; border-radius:4px; margin-top:8px; display:inline-block; font-weight:600;">
+              ✓ Attempted ${history.length} time(s) · Last Score: ${lastAttempt.score}/${lastAttempt.total} (${lastAttempt.date})
+            </div>
+          `;
+        }
+
+        cardsHtml += `
+          <div class="card">
+            <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:6px;">
+              <span class="tag">${t.exam || t.section || 'General'}</span>
+              ${t.subject ? `<span class="tag" style="background:#f1f5f9; color:#475569;">${t.subject}</span>` : ''}
+            </div>
+            <h3 style="font-size: 16px; margin-bottom: 6px;">${t.title}</h3>
+            <p style="font-size: 12px; color: #64748b; margin-bottom: 8px;">${t.desc || 'Comprehensive mock test with real exam pattern and explanations.'}</p>
+            ${historyBadge}
+            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:12px; margin-top:12px; flex-wrap:wrap; gap:8px;">
+              <span style="font-size: 12px; color: #475569; font-weight: 600;">⏱️ ${t.time || 15} Mins &nbsp;|&nbsp; 📝 ${(t.questions || []).length} Questions</span>
+              <button class="btn-primary" onclick="startTest(${originalIndex})">
+                ${history.length > 0 ? '🔄 Reattempt Test' : 'Start Test →'}
+              </button>
+            </div>
+          </div>
+        `;
+      });
+      return cardsHtml;
+    }
+
+    /* NOTES VIEW */
+    function renderNotesView() {
       const notes = allResources.filter(r => r.type === 'note' || !r.type);
-      if (notes.length === 0) {
+      const examList = getExamList(notes);
+      const subjectList = getSubjectList(notes, selectedExam);
+
+      let examPills = '';
+      examList.forEach(ex => {
+        const activeCls = (selectedExam === ex) ? 'active' : '';
+        const label = (ex === 'All') ? '🌟 All Exams' : ex;
+        examPills += `<button class="exam-tab-btn ${activeCls}" onclick="filterExam('${ex}')">${label}</button>`;
+      });
+
+      let subjPills = '';
+      if(subjectList.length > 1) {
+        subjPills += `<div class="filter-section-title">Select Subject ${selectedExam !== 'All' ? `(${selectedExam})` : ''}:</div><div class="tabs-wrapper">`;
+        subjectList.forEach(sub => {
+          const activeCls = (selectedSubject === sub) ? 'active' : '';
+          subjPills += `<button class="subject-tab-btn ${activeCls}" onclick="filterSubject('${sub}')">${sub === 'All' ? 'All Subjects' : sub}</button>`;
+        });
+        subjPills += `</div>`;
+      }
+
+      return `
+        <div class="filter-section-title">⚡ Select Target Exam:</div>
+        <div class="tabs-wrapper">${examPills}</div>
+        ${subjPills}
+        
+        <div class="search-box-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" id="searchBarInput" placeholder="Search notes by topic or subject..." oninput="handleSearch(this.value)" value="${searchQuery}">
+        </div>
+
+        <div id="tabResultsContainer">
+          ${getFilteredNotesCardsHtml(notes)}
+        </div>
+      `;
+    }
+
+    function getFilteredNotesCardsHtml(notes) {
+      let filtered = notes.filter(n => {
+        const examMatch = (selectedExam === 'All') || ((n.exam || n.section || 'General').trim() === selectedExam);
+        const subjMatch = (selectedSubject === 'All') || ((n.subject || n.category || 'General').trim() === selectedSubject);
+        const searchMatch = !searchQuery || 
+          (n.title && n.title.toLowerCase().includes(searchQuery)) || 
+          (n.desc && n.desc.toLowerCase().includes(searchQuery)) ||
+          (n.subject && n.subject.toLowerCase().includes(searchQuery));
+        return examMatch && subjMatch && searchMatch;
+      });
+
+      if (filtered.length === 0) {
         return `
           <div class="card" style="text-align:center; padding:30px;">
-            <h3 style="font-size:16px; margin-bottom:6px;">No Notes Uploaded Yet</h3>
-            <p style="font-size:12px; color:#64748b; margin-bottom:12px;">Admin can add PDFs and direct Telegram channel links via Admin Panel.</p>
-            <button class="btn-outline" onclick="openAdmin()">Open Admin to Add Notes</button>
+            <h3 style="font-size:16px; margin-bottom:6px;">No Notes Found</h3>
+            <p style="font-size:12px; color:#64748b; margin-bottom:12px;">No PDFs matching your criteria. Admin can add PDFs via Admin Panel.</p>
           </div>
         `;
       }
 
       let list = '';
-      notes.forEach(n => {
+      filtered.forEach(n => {
         list += `
           <div class="card">
-            <span class="tag" style="background:#e0f2fe; color:#0369a1;">📁 ${n.category || 'Study Material'}</span>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:6px;">
+              <span class="tag" style="background:#e0f2fe; color:#0369a1;">📁 ${n.exam || n.section || 'General'}</span>
+              ${n.subject || n.category ? `<span class="tag" style="background:#f1f5f9; color:#475569;">${n.subject || n.category}</span>` : ''}
+            </div>
             <h3 style="font-size:15px; margin-bottom:6px;">${n.title}</h3>
             <p style="font-size:12px; color:#64748b; margin-bottom:12px;">${n.desc || 'Free PDF notes for exam preparation.'}</p>
             <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:10px;">
@@ -373,32 +535,81 @@
                 📥 Download from Telegram
               </a>
             </div>
- </div>
+          </div>
         `;
       });
-
       return list;
     }
 
-    function renderBooksTab() {
+    /* BOOKS VIEW */
+    function renderBooksView() {
       const books = allResources.filter(r => r.type === 'book');
-      if (books.length === 0) {
+      const examList = getExamList(books);
+      const subjectList = getSubjectList(books, selectedExam);
+
+      let examPills = '';
+      examList.forEach(ex => {
+        const activeCls = (selectedExam === ex) ? 'active' : '';
+        const label = (ex === 'All') ? '🌟 All Exams' : ex;
+        examPills += `<button class="exam-tab-btn ${activeCls}" onclick="filterExam('${ex}')">${label}</button>`;
+      });
+
+      let subjPills = '';
+      if(subjectList.length > 1) {
+        subjPills += `<div class="filter-section-title">Select Subject ${selectedExam !== 'All' ? `(${selectedExam})` : ''}:</div><div class="tabs-wrapper">`;
+        subjectList.forEach(sub => {
+          const activeCls = (selectedSubject === sub) ? 'active' : '';
+          subjPills += `<button class="subject-tab-btn ${activeCls}" onclick="filterSubject('${sub}')">${sub === 'All' ? 'All Subjects' : sub}</button>`;
+        });
+        subjPills += `</div>`;
+      }
+
+      return `
+        <div class="filter-section-title">⚡ Select Target Exam:</div>
+        <div class="tabs-wrapper">${examPills}</div>
+        ${subjPills}
+        
+        <div class="search-box-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" id="searchBarInput" placeholder="Search books by title, author, or subject..." oninput="handleSearch(this.value)" value="${searchQuery}">
+        </div>
+
+        <div id="tabResultsContainer">
+          ${getFilteredBooksCardsHtml(books)}
+        </div>
+      `;
+    }
+
+    function getFilteredBooksCardsHtml(books) {
+      let filtered = books.filter(b => {
+        const examMatch = (selectedExam === 'All') || ((b.exam || b.section || 'General').trim() === selectedExam);
+        const subjMatch = (selectedSubject === 'All') || ((b.subject || b.category || 'General').trim() === selectedSubject);
+        const searchMatch = !searchQuery || 
+          (b.title && b.title.toLowerCase().includes(searchQuery)) || 
+          (b.desc && b.desc.toLowerCase().includes(searchQuery)) ||
+          (b.subject && b.subject.toLowerCase().includes(searchQuery));
+        return examMatch && subjMatch && searchMatch;
+      });
+
+      if (filtered.length === 0) {
         return `
           <div class="card" style="text-align:center; padding:30px;">
             <h3 style="font-size:16px; margin-bottom:6px;">No Recommended Books Listed</h3>
-            <p style="font-size:12px; color:#64748b; margin-bottom:12px;">Curated books for SSC and Teaching exams will be available here.</p>
-            <button class="btn-outline" onclick="openAdmin()">Open Admin to Add Books</button>
+            <p style="font-size:12px; color:#64748b; margin-bottom:12px;">Curated books for RPSC & RSSB exams will appear here.</p>
           </div>
         `;
       }
 
       let list = '';
-      books.forEach(b => {
+      filtered.forEach(b => {
         list += `
           <div class="card">
-            <span class="tag" style="background:#fef3c7; color:#92400e;">⭐ Recommended</span>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:6px;">
+              <span class="tag" style="background:#fef3c7; color:#92400e;">⭐ ${b.exam || b.section || 'Exam Recommended'}</span>
+              ${b.subject || b.category ? `<span class="tag" style="background:#f1f5f9; color:#475569;">${b.subject || b.category}</span>` : ''}
+            </div>
             <h3 style="font-size:15px; margin-bottom:6px;">${b.title}</h3>
-            <p style="font-size:12px; color:#64748b; margin-bottom:12px;">${b.desc || 'Standard reference material for political science & general studies.'}</p>
+            <p style="font-size:12px; color:#64748b; margin-bottom:12px;">${b.desc || 'Standard reference material for exam preparation.'}</p>
             <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:10px;">
               <span style="font-size:12px; font-weight:700; color:#059669;">${b.price || 'Check Online'}</span>
               <a href="${b.buy_url || '#'}" target="_blank" class="badge-amazon">
@@ -408,15 +619,25 @@
           </div>
         `;
       });
-
       return list;
     }
 
-    function filterSection(secName) {
-      selectedSection = secName;
-      showHome();
+    function renderCurrentTabResults() {
+      const container = document.getElementById('tabResultsContainer');
+      if(!container) return;
+
+      if(activeNavTab === 'mocks') {
+        container.innerHTML = getFilteredMockCardsHtml();
+      } else if(activeNavTab === 'notes') {
+        const notes = allResources.filter(r => r.type === 'note' || !r.type);
+        container.innerHTML = getFilteredNotesCardsHtml(notes);
+      } else {
+        const books = allResources.filter(r => r.type === 'book');
+        container.innerHTML = getFilteredBooksCardsHtml(books);
+      }
     }
 
+    /* TEST TAKING SYSTEM */
     function startTest(index) {
       currentQuiz = allTests[index];
       if(!currentQuiz || !currentQuiz.questions || currentQuiz.questions.length === 0) {
@@ -487,6 +708,7 @@
           </button>
         `;
       });
+
       const m = Math.floor(sec / 60);
       const s = sec % 60;
 
@@ -523,7 +745,7 @@
           <div style="background:#f8fafc; border-left:4px solid #2563eb; padding:12px; border-radius:6px; margin-top:14px; font-size:13px; color:#334155; line-height:1.5;">
             <div style="font-weight:700; color:#1e40af; margin-bottom:4px;">💡 Detailed Solution & Explanation:</div>
             <div>${q.exp || 'No detailed solution available for this question.'}</div>
-            <div style="font-size:11px; color:#64748b; margin-top:6px;">Tag: <b>${q.subject || 'Polity'}</b> &gt; ${q.topic || 'General'}</div>
+            <div style="font-size:11px; color:#64748b; margin-top:6px;">Tag: <b>${q.subject || 'Subject'}</b> &gt; ${q.topic || 'General'}</div>
           </div>
         `;
       }
@@ -696,6 +918,7 @@
       const scorePct = Math.round((cor / totalQs) * 100);
       const now = new Date();
       const dateStr = now.toLocaleDateString('en-GB') + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
       if(!userAttempts[currentQuiz.id]) userAttempts[currentQuiz.id] = [];
       userAttempts[currentQuiz.id].push({
         candidate: currentUser,
@@ -727,7 +950,7 @@
         else weakList.push(`${t} (${Math.round(p)}%)`);
       });
 
-      const shareText = `🎯 I scored ${cor}/${totalQs} (${scorePct}%) in ${currentQuiz.title} on Political Science Quiz Portal! Can you beat my score? Attempt here: ${window.location.href}`;
+      const shareText = `🎯 I scored ${cor}/${totalQs} (${scorePct}%) in ${currentQuiz.title} on Exam Portal! Can you beat my score? Attempt here: ${window.location.href}`;
 
       document.getElementById('app').innerHTML = `
         <div class="card" style="text-align:center; padding:24px 16px;">
@@ -806,7 +1029,6 @@
     }
 
     function renderAdminHome() {
-      // PDF & BOOKS RESOURCE LIST
       let resListHtml = '';
       allResources.forEach((r, idx) => {
         const isNote = (r.type === 'note' || !r.type);
@@ -814,7 +1036,7 @@
           <div style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:10px 12px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
             <div>
               <span class="tag" style="background:${isNote ? '#e0f2fe' : '#fef3c7'}; color:${isNote ? '#0369a1' : '#92400e'}; margin-bottom:2px;">
-                ${isNote ? '📄 PDF Note' : '🛒 Book'} · ${r.category || 'General'}
+                ${isNote ? '📄 PDF Note' : '🛒 Book'} · ${r.exam || 'All Exams'} · ${r.subject || r.category || 'General'}
               </span>
               <div style="font-weight:700; font-size:13px; color:#1e293b;">${r.title}</div>
               <div style="font-size:11px; color:#64748b; word-break:break-all;">${r.telegram_url || r.buy_url || 'No URL'}</div>
@@ -824,19 +1046,20 @@
         `;
       });
 
-      // MOCK TEST LIST
-    let testListHtml = '';
+      let testListHtml = '';
       allTests.forEach((t) => {
         testListHtml += `
           <div style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
             <div>
-              <span class="tag" style="margin-bottom:2px;">📁 ${t.section || 'General'}</span>
+              <div style="display:flex; gap:6px;">
+                <span class="tag" style="margin-bottom:2px;">🏛️ ${t.exam || t.section || 'General'}</span>
+                <span class="tag" style="background:#f1f5f9; color:#475569; margin-bottom:2px;">📖 ${t.subject || 'General'}</span>
+              </div>
               <div style="font-weight:700; font-size:14px; color:#1e293b;">${t.title}</div>
               <div style="font-size:11px; color:#64748b;">${(t.questions || []).length} Qs &nbsp;·&nbsp; ${t.time || 15} Mins &nbsp;·&nbsp; ID: ${t.id}</div>
             </div>
             <div style="display:flex; gap:6px; flex-wrap:wrap;">
-              <button class="btn-outline" style="border-color:#2563eb; color:#2563eb;" onclick="changeSectionPrompt('${t.id}')">📁 Rename Section</button>
-              <button class="btn-outline" style="border-color:#059669; color:#059669;" onclick="loadTestForEdit('${t.id}')">✏️ Edit</button>
+              <button class="btn-outline" style="border-color:#2563eb; color:#2563eb;" onclick="loadTestForEdit('${t.id}')">✏️ Edit</button>
               <button class="btn-danger" onclick="deleteTest('${t.id}')">🗑️ Delete</button>
             </div>
           </div>
@@ -854,8 +1077,7 @@
             <button class="btn-primary" style="padding:10px;" onclick="promptAddResource('note')">+ Add PDF / Telegram Note</button>
             <button class="btn-warning" style="padding:10px;" onclick="promptAddResource('book')">+ Add Recommended Book Link</button>
           </div>
-
-          <!-- MANAGE PDF NOTES & BOOKS SECTION -->
+     <!-- MANAGE PDF NOTES & BOOKS SECTION -->
           <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px; margin-bottom:16px;">
             <h3 style="font-size:14px; font-weight:800; margin-bottom:10px; color:#1e293b;">📚 Uploaded PDFs & Book Links (${allResources.length}):</h3>
             ${resListHtml || '<div style="color:#64748b; font-size:12px;">No PDFs or books added yet. Click above buttons to add.</div>'}
@@ -902,7 +1124,8 @@
     async function promptAddResource(type) {
       const title = prompt(`Enter ${type === 'note' ? 'PDF/Notes' : 'Book'} Title:`);
       if(!title) return;
-      const cat = prompt("Enter Category/Section (e.g. SSC Polity, Teaching Exams):", "General");
+      const exam = prompt("Enter Target Exam (e.g. 1st Grade, 2nd Grade, 3rd Grade / REET, RSSB Exams):", "1st Grade");
+      const subj = prompt("Enter Subject (e.g. Political Science, History, Geography, Hindi, Maths):", "Political Science");
       const url = prompt(type === 'note' ? "Enter Telegram File URL or Direct Link:" : "Enter Store/Amazon Affiliate Link:");
       if(!url) return;
 
@@ -910,7 +1133,8 @@
         id: 'res-' + Date.now(),
         type: type,
         title: title.trim(),
-        category: cat ? cat.trim() : 'General',
+        exam: exam ? exam.trim() : 'General',
+        subject: subj ? subj.trim() : 'General',
         desc: type === 'note' ? 'Curated PDF material for exam revision.' : 'Recommended reference book.',
         telegram_url: url.trim(),
         buy_url: url.trim()
@@ -950,7 +1174,9 @@
             allTests.push({
               id: newId,
               title: (imported.title || targetTest.title) + " (New)",
-              section: imported.section || targetTest.section || "SSC Exams",
+              exam: imported.exam || targetTest.exam || "1st Grade",
+              section: imported.section || targetTest.section || "1st Grade",
+              subject: imported.subject || targetTest.subject || "Political Science",
               time: imported.time || 15,
               desc: imported.desc || "",
               questions: newQs
@@ -961,7 +1187,9 @@
           allTests.push({
             id: suggestedId,
             title: imported.title || file.name.replace(/\.[^/.]+$/, ""),
-            section: imported.section || "SSC Exams",
+            exam: imported.exam || imported.section || "1st Grade",
+            section: imported.section || imported.exam || "1st Grade",
+            subject: imported.subject || "Political Science",
             time: imported.time || 15,
             desc: imported.desc || "",
             questions: newQs
@@ -989,7 +1217,9 @@
         
         listToAdd.forEach(newT => {
           newT.questions = normalizeQuestions(newT.questions || []);
-          if(!newT.section) newT.section = 'SSC Exams';
+          if(!newT.exam) newT.exam = newT.section || '1st Grade';
+          if(!newT.section) newT.section = newT.exam;
+          if(!newT.subject) newT.subject = 'Political Science';
           if(!newT.id) newT.id = 'test-' + Date.now();
           
           const existingIdx = allTests.findIndex(x => x.id === newT.id);
@@ -1008,17 +1238,6 @@
       }
     }
 
-    async function changeSectionPrompt(id) {
-      const target = allTests.find(t => t.id === id);
-      if(!target) return;
-      const newSec = prompt(`Enter new Section/Exam Category for '${target.title}':`, target.section || 'General');
-      if(newSec && newSec.trim()) {
-        target.section = newSec.trim();
-        await saveToCloud();
-        renderAdminHome();
-      }
-    }
-
     async function deleteTest(id) {
       if(!confirm('Are you sure you want to permanently delete this test?')) return;
       allTests = allTests.filter(t => t.id !== id);
@@ -1027,45 +1246,50 @@
     }
 
     function startNewTestForm() {
-      editingTestId = null;
+    editingTestId = null;
       draftQuestions = [];
-      renderTestFormUI('Create New Mock Test', '', 'SSC Exams', 15, '');
+      renderTestFormUI('Create New Mock Test', '', '1st Grade', 'Political Science', 15, '');
     }
 
     function loadTestForEdit(id) {
+      const t = allTests.find(item => item.id === id);
+      if(!t) return;
       editingTestId = id;
-      const target = allTests.find(t => t.id === id);
-      draftQuestions = JSON.parse(JSON.stringify(target.questions || []));
-      renderTestFormUI('Edit Mock Test', target.title, target.section || 'SSC Exams', target.time, target.desc);
+      draftQuestions = JSON.parse(JSON.stringify(t.questions || []));
+      renderTestFormUI('Edit Mock Test', t.title, t.exam || t.section || '1st Grade', t.subject || 'Political Science', t.time || 15, t.desc || '');
     }
 
-    function renderTestFormUI(heading, titleVal, secVal, timeVal, descVal) {
+    function renderTestFormUI(heading, titleVal, examVal, subjVal, timeVal, descVal) {
       let qListHtml = '';
-      draftQuestions.forEach((dq, i) => {
+      draftQuestions.forEach((dq, index) => {
         qListHtml += `
-          <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:8px; margin-bottom:6px; font-size:12px; display:flex; justify-content:space-between; align-items:center;">
-            <span><b>Q${i+1}:</b> ${dq.q.substring(0, 35)}... (Ans: Opt ${String.fromCharCode(65 + dq.ans)}) [${dq.topic || 'General'}]</span>
-            <button class="btn-danger" style="padding:2px 6px; font-size:10px;" onclick="draftQuestions.splice(${i}, 1); reRenderForm();">Remove</button>
+          <div style="background:#fff; border:1px solid #cbd5e1; border-radius:6px; padding:8px 10px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-size:12px; font-weight:600; color:#334155;">${index + 1}. ${dq.q.substring(0, 45)}...</div>
+            <button class="btn-danger" style="padding:3px 7px; font-size:10px;" onclick="draftQuestions.splice(${index}, 1); reRenderForm();">Delete</button>
           </div>
         `;
       });
 
       document.getElementById('app').innerHTML = `
         <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid #e2e8f0; padding-bottom:8px;">
-            <h2 style="font-size:16px; font-weight:800;">${heading}</h2>
-            <button class="btn-outline" onclick="renderAdminHome()">← Back</button>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3 style="font-size:16px; font-weight:800;">${heading}</h3>
+            <button class="btn-outline" onclick="renderAdminHome()">Cancel</button>
           </div>
 
-          <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:14px;">
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px; margin-bottom:14px;">
             <div class="form-group">
-              <label>1. Test Title</label>
-              <input type="text" id="t-title" class="form-control" value="${titleVal}" placeholder="e.g. SSC CGL Tier-1 Polity Sectional">
+              <label>Test Title</label>
+              <input type="text" id="t-title" class="form-control" value="${titleVal}">
             </div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
               <div class="form-group">
-                <label>2. Exam Section / Sub-section</label>
-                <input type="text" id="t-sec" class="form-control" value="${secVal}">
+                <label>Target Exam (Category)</label>
+                <input type="text" id="t-exam" class="form-control" value="${examVal}" placeholder="e.g. 1st Grade, 2nd Grade, 3rd Grade / REET">
+              </div>
+              <div class="form-group">
+                <label>Subject</label>
+                <input type="text" id="t-subject" class="form-control" value="${subjVal}" placeholder="e.g. Political Science, History, Hindi">
               </div>
               <div class="form-group">
                 <label>Time Duration (Minutes)</label>
@@ -1125,7 +1349,8 @@
       renderTestFormUI(
         heading,
         document.getElementById('t-title').value,
-        document.getElementById('t-sec').value,
+        document.getElementById('t-exam').value,
+        document.getElementById('t-subject').value,
         document.getElementById('t-time').value,
         document.getElementById('t-desc').value
       );
@@ -1151,7 +1376,8 @@
 
     async function saveDraftTest() {
       const title = document.getElementById('t-title').value.trim();
-      const sec = document.getElementById('t-sec').value.trim();
+      const exam = document.getElementById('t-exam').value.trim();
+      const subject = document.getElementById('t-subject').value.trim();
       const time = parseInt(document.getElementById('t-time').value, 10) || 15;
       const desc = document.getElementById('t-desc').value.trim();
 
@@ -1161,13 +1387,24 @@
       if(editingTestId) {
         const idx = allTests.findIndex(t => t.id === editingTestId);
         if(idx !== -1) {
-          allTests[idx] = { ...allTests[idx], title, section: sec, time, desc, questions: draftQuestions };
+          allTests[idx] = { 
+            ...allTests[idx], 
+            title, 
+            exam: exam || '1st Grade', 
+            section: exam || '1st Grade', 
+            subject: subject || 'General', 
+            time, 
+            desc, 
+            questions: draftQuestions 
+          };
         }
       } else {
         allTests.push({
           id: 'test-' + Date.now(),
           title,
-          section: sec,
+          exam: exam || '1st Grade',
+          section: exam || '1st Grade',
+          subject: subject || 'General',
           time,
           desc,
           questions: draftQuestions
