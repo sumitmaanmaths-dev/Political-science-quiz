@@ -146,6 +146,8 @@
     .form-control { width: 100%; padding: 8px 10px; background: #1e293b; border: 1px solid #334155; color: #f8fafc; border-radius: 6px; font-size: 13px; }
     .form-control:focus { outline: none; border-color: #3b82f6; }
     textarea.form-control { resize: vertical; min-height: 60px; }
+
+    .q-draft-item { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   </style>
 </head>
 <body>
@@ -196,7 +198,7 @@
     let currentView = 'exams';
     let currentExam = null;
     let currentSubject = null;
-    let currentContentType = 'mocks'; // 'mocks', 'notes', 'books'
+    let currentContentType = 'mocks';
     let searchQuery = '';
 
     let currentQuiz = null;
@@ -346,7 +348,7 @@
     }
 
     function selectContentType(type) {
-      currentContentType = type; // 'mocks', 'notes', 'books'
+      currentContentType = type;
       currentView = 'items';
       searchQuery = '';
       renderPortalView();
@@ -718,7 +720,7 @@
       filtered.sort((a, b) => (parseInt(a.order || 9999, 10)) - (parseInt(b.order || 9999, 10)));
 
       let listHtml = '';
-      if(filtered.length === 0) {
+    if(filtered.length === 0) {
         listHtml = `<div class="card" style="text-align:center; padding:30px; color:#94a3b8; border:1px dashed #334155;">No recommended books added in this subject yet.</div>`;
       } else {
         filtered.forEach((b, idx) => {
@@ -733,7 +735,7 @@
                   🛒 Buy on Amazon / Flipkart
                 </a>
               </div>
-     </div>
+            </div>
           `;
         });
       }
@@ -997,7 +999,7 @@
     }
 
     function jumpToQ(index) {
-      cur = index;
+    cur = index;
       hideGrid();
       renderQuestionScreen();
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1136,7 +1138,7 @@
       renderQuestionScreen();
     }
 
-    /* COMPLETE ADMIN PANEL (NO FEATURES REMOVED) */
+    /* COMPLETE ADMIN PANEL */
     function openAdmin() {
       const pin = prompt('Enter Admin Security PIN:');
       if (pin === '7073') {
@@ -1182,8 +1184,9 @@
               <div style="font-weight:800; font-size:14px; color:#f8fafc; margin-top:4px;">${t.title}</div>
               <div style="font-size:11px; color:#94a3b8;">${(t.questions || []).length} Qs · ${t.time || 15} Mins · Neg: -${t.negativeMark || 0}</div>
             </div>
-            <div style="display:flex; gap:6px;">
-              <button class="btn-outline" style="border-color:#3b82f6; color:#60a5fa;" onclick="loadTestForEdit('${t.id}')">✏️ Edit / Reorder</button>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button class="btn-outline" style="border-color:#38bdf8; color:#38bdf8;" onclick="quickEditTestPrompt('${t.id}')">⚡ Quick Rename / Order</button>
+              <button class="btn-outline" style="border-color:#3b82f6; color:#60a5fa;" onclick="loadTestForEdit('${t.id}')">✏️ Edit All</button>
               <button class="btn-danger" onclick="deleteTest('${t.id}')">🗑️</button>
             </div>
           </div>
@@ -1236,6 +1239,29 @@
           ${testListHtml || '<div style="color:#64748b; font-size:13px;">No tests found.</div>'}
         </div>
       `;
+    }
+
+    async function quickEditTestPrompt(id) {
+      const t = allTests.find(item => item.id === id);
+      if(!t) return;
+      const newTitle = prompt("Edit Test Title:", t.title);
+      if(newTitle === null) return;
+      const newExam = prompt("Edit Exam Category (e.g. 1st Grade, 2nd Grade, 3rd Grade / REET):", t.exam || t.section || "1st Grade");
+      if(newExam === null) return;
+      const newSubj = prompt("Edit Subject (e.g. Political Science, History, GK):", t.subject || "Political Science");
+      if(newSubj === null) return;
+      const newOrder = prompt("Edit Sequence / Order #:", t.order || 1);
+      if(newOrder === null) return;
+
+      t.title = newTitle.trim() || t.title;
+      t.exam = newExam.trim() || t.exam;
+      t.section = t.exam;
+      t.subject = newSubj.trim() || t.subject;
+      t.order = parseInt(newOrder, 10) || t.order;
+
+      await saveToCloud();
+      alert("✅ Test updated successfully!");
+      renderAdminHome();
     }
 
     async function deleteResource(index) {
@@ -1313,7 +1339,7 @@
             const newId = 'test-' + Date.now();
             allTests.push({
               id: newId,
-    title: (imported.title || targetTest.title) + " (New)",
+              title: (imported.title || targetTest.title) + " (New)",
               exam: chosenExam,
               section: chosenExam,
               subject: chosenSubj,
@@ -1402,18 +1428,24 @@
       let qListHtml = '';
       draftQuestions.forEach((dq, index) => {
         qListHtml += `
-          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:8px 10px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
-            <div style="font-size:12px; color:#cbd5e1;">${index + 1}. ${dq.q.substring(0, 45)}...</div>
-            <button class="btn-danger" style="padding:2px 6px; font-size:10px;" onclick="draftQuestions.splice(${index}, 1); reRenderForm();">Delete</button>
+          <div class="q-draft-item">
+            <div style="font-size:12px; color:#cbd5e1; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+              <b>#${index + 1}</b> ${dq.q}
+            </div>
+            <button class="btn-danger" style="padding:4px 8px; font-size:11px;" onclick="draftQuestions.splice(${index}, 1); reRenderForm();">Delete</button>
           </div>
         `;
       });
 
       document.getElementById('app').innerHTML = `
-        <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div class="card" style="padding-bottom: 70px;">
+          <!-- TOP HEADER WITH IMMEDIATE SAVE BUTTON -->
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid #334155; padding-bottom:10px; gap:8px;">
             <h3 style="font-size:16px; font-weight:800; color:#f8fafc;">${heading}</h3>
-            <button class="btn-outline" onclick="renderAdminHome()">Cancel</button>
+            <div style="display:flex; gap:6px;">
+              <button class="btn-success" style="padding:7px 14px; font-size:12px;" onclick="saveDraftTest()">💾 Save to Cloud ✓</button>
+              <button class="btn-outline" style="padding:7px 12px; font-size:12px;" onclick="renderAdminHome()">Cancel</button>
+            </div>
           </div>
 
           <div class="form-group">
@@ -1453,7 +1485,7 @@
           </div>
 
           <!-- Question Creator -->
-          <div style="border:1px dashed #3b82f6; background:#172554; padding:12px; border-radius:8px; margin-bottom:14px;">
+          <div style="border:1.5px dashed #3b82f6; background:#172554; padding:12px; border-radius:10px; margin-bottom:14px;">
             <div style="font-weight:800; font-size:13px; margin-bottom:8px; color:#93c5fd;">+ Add New Question:</div>
             <div class="form-group">
               <label>Question Text</label>
@@ -1487,10 +1519,16 @@
             <button class="btn-primary" style="width:100%; margin-top:6px;" onclick="addQuestionToDraft()">Add Question to Draft +</button>
           </div>
 
-          <h4 style="font-size:13px; font-weight:700; margin-bottom:8px;">Questions in this Test (${draftQuestions.length}):</h4>
-          <div style="max-height:180px; overflow-y:auto; margin-bottom:14px;">${qListHtml || '<div style="color:#64748b; font-size:12px;">No questions added yet.</div>'}</div>
+          <h4 style="font-size:13px; font-weight:800; margin-bottom:8px; color:#f8fafc;">
+            Questions in this Test (${draftQuestions.length}):
+          </h4>
+          <div style="max-height:240px; overflow-y:auto; margin-bottom:16px; border:1px solid #334155; padding:8px; border-radius:8px; background:#0b1120;">
+            ${qListHtml || '<div style="color:#64748b; font-size:12px; text-align:center; padding:10px;">No questions in draft.</div>'}
+          </div>
 
-          <button class="btn-success" style="width:100%; padding:12px;" onclick="saveDraftTest()">Save Full Test to Cloud ✓</button>
+          <button class="btn-success" style="width:100%; padding:13px; font-size:14px; font-weight:800;" onclick="saveDraftTest()">
+            💾 Save Full Test to Cloud ✓
+          </button>
         </div>
       `;
     }
@@ -1537,7 +1575,7 @@
       const desc = document.getElementById('t-desc').value.trim();
 
       if(!title) return alert('Test title is required!');
-      if(draftQuestions.length === 0) return alert('At least one question is required!');
+      if(draftQuestions.length === 0) return alert('Add at least one question!');
 
       const finalExam = exam || '1st Grade';
       const finalSubj = subject || 'Political Science';
@@ -1575,11 +1613,11 @@
 
       await saveToCloud();
       renderAdminHome();
-      alert('🎉 Test saved successfully!');
+      alert('🎉 Test saved to Cloud successfully!');
     }
 
     async function deleteTest(id) {
-      if(!confirm('Are you sure you want to permanently delete this test?')) return;
+      if(!confirm('Permanently delete this test?')) return;
       allTests = allTests.filter(t => t.id !== id);
       await saveToCloud();
       renderAdminHome();
