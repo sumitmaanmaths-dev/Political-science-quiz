@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RPSC, RSSB & State Exams Portal</title>
+  <title>RPSC, RSSB & Competitive Exam Portal</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: #0b1120; color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; }
@@ -100,8 +100,8 @@
       background: #172554;
       border: 1.5px solid #3b82f6;
       border-radius: 10px;
-      padding: 10px 14px;
-      margin-bottom: 14px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -148,6 +148,15 @@
     textarea.form-control { resize: vertical; min-height: 60px; }
 
     .q-draft-item { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+
+    /* Leaderboard Table */
+    .leaderboard-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; text-align: left; }
+    .leaderboard-table th { background: #1e293b; color: #38bdf8; padding: 8px 10px; border-bottom: 1px solid #334155; }
+    .leaderboard-table td { padding: 8px 10px; border-bottom: 1px solid #1e293b; color: #cbd5e1; }
+    .rank-badge { font-weight: 900; border-radius: 4px; padding: 2px 6px; display: inline-block; }
+    .rank-1 { background: #fbbf24; color: #000; }
+    .rank-2 { background: #cbd5e1; color: #000; }
+    .rank-3 { background: #b45309; color: #fff; }
   </style>
 </head>
 <body>
@@ -158,7 +167,7 @@
         <div class="logo-icon">RP</div>
         <div>
           <div style="font-weight: 900; font-size: 13px; color: #f8fafc; line-height: 1.2;">RPSC, RSSB EXAM PORTAL</div>
-          <div style="font-size: 10px; color: #38bdf8; font-weight: 700;">Multi-Level Hierarchy &amp; Quick Manager</div>
+          <div style="font-size: 10px; color: #38bdf8; font-weight: 700;">Live Rank &amp; Nested Batch Hierarchy</div>
         </div>
       </div>
       <div class="header-actions">
@@ -193,10 +202,10 @@
 
     let allTests = [];
     let allResources = [];
+    let allLeaderboards = {}; // Realtime leaderboard by test id
 
-    // Current navigation path array: e.g. ["1st Grade", "Beniwal Sir", "Class Quiz"]
+    // Current navigation path array: e.g. ["1st Grade", "Beniwal Sir", "Political Science"]
     let currentNavPath = [];
-    let currentContentType = null; // 'mocks', 'notes', 'books'
     let searchQuery = '';
 
     // Selected test IDs for bulk actions in Admin
@@ -221,7 +230,7 @@
       return (s || '').toString().trim().toLowerCase();
     }
 
-    // Helper: Converts item's exam/section/subject/path into clean array of path parts
+    // Helper: Normalizes any test/resource path into a clean array
     function getItemPathArray(item) {
       if (item.path && Array.isArray(item.path) && item.path.length > 0) {
         return item.path.map(p => p.trim()).filter(Boolean);
@@ -236,7 +245,7 @@
       if (sb && sb.toLowerCase() !== 'general' && sb.toLowerCase() !== ex.toLowerCase()) {
         parts.push(sb);
       }
-      return parts.length > 0 ? parts : ['1st Grade'];
+      return parts.length > 0 ? parts : ['1st Grade', 'General'];
     }
 
     function getItemPathString(item) {
@@ -254,7 +263,7 @@
     }
 
     function promptCandidateLogin() {
-      const name = prompt("Enter Name or Roll Number for progress tracking:", currentUser === 'Guest User' ? '' : currentUser);
+      const name = prompt("Enter your Name or Roll Number for Rank & Progress tracking:", currentUser === 'Guest User' ? '' : currentUser);
       if (name !== null) {
         currentUser = name.trim() || 'Guest User';
         localStorage.setItem('ps_user_name', currentUser);
@@ -265,23 +274,25 @@
 
     async function loadCloudData() {
       try {
-        const [testsRes, resRes] = await Promise.all([
+        const [testsRes, resRes, ranksRes] = await Promise.all([
           fetch(`${FIREBASE_DB_URL}/tests.json`),
-          fetch(`${FIREBASE_DB_URL}/resources.json`)
+          fetch(`${FIREBASE_DB_URL}/resources.json`),
+          fetch(`${FIREBASE_DB_URL}/ranks.json`)
         ]);
 
         if (testsRes.ok) {
           const data = await testsRes.json();
-          if (data) {
-            allTests = (Array.isArray(data) ? data : Object.values(data)).filter(Boolean);
-          }
+          if (data) allTests = (Array.isArray(data) ? data : Object.values(data)).filter(Boolean);
         }
 
         if (resRes.ok) {
           const rData = await resRes.json();
-          if (rData) {
-            allResources = (Array.isArray(rData) ? rData : Object.values(rData)).filter(Boolean);
-          }
+          if (rData) allResources = (Array.isArray(rData) ? rData : Object.values(rData)).filter(Boolean);
+        }
+
+        if (ranksRes.ok) {
+          const rankData = await ranksRes.json();
+          if (rankData) allLeaderboards = rankData;
         }
       } catch (err) {
         console.error(err);
@@ -316,6 +327,36 @@
       }
     }
 
+    async function submitScoreToGlobalLeaderboard(testId, score, total, pct, dateStr) {
+      try {
+        const cleanUserId = currentUser.replace(/[.#$[\]]/g, '_');
+        // Fetch current candidate 1st attempt record from cloud
+        const res = await fetch(`${FIREBASE_DB_URL}/ranks/${testId}/${cleanUserId}.json`);
+        const existingRecord = await res.json();
+
+        // 1st Attempt Rule: Only save if never attempted before
+        if (!existingRecord) {
+          await fetch(`${FIREBASE_DB_URL}/ranks/${testId}/${cleanUserId}.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              user: currentUser,
+              score: score,
+              total: total,
+              percentage: pct,
+              date: dateStr,
+              timestamp: Date.now()
+            })
+          });
+        }
+        // Refresh local cache
+        const rankRefresh = await fetch(`${FIREBASE_DB_URL}/ranks.json`);
+        if (rankRefresh.ok) allLeaderboards = await rankRefresh.json() || {};
+      } catch (e) {
+        console.error('Error saving rank:', e);
+      }
+    }
+
     function normalizeQuestions(rawList) {
       if(!Array.isArray(rawList)) return [];
       return rawList.map(item => {
@@ -344,32 +385,28 @@
       }).filter(item => item.q.trim() !== "");
     }
 
-    /* NAVIGATION LOGIC - DYNAMIC UNLIMITED HIERARCHY */
+    /* NAVIGATION LOGIC - PURE CLEAN FOLDER SYSTEM */
     function goHome() {
       if(timer) clearInterval(timer);
       hideGrid();
       isSolutionMode = false;
       currentNavPath = [];
-      currentContentType = null;
       searchQuery = '';
       renderPortalView();
     }
 
     function navigateInto(folderName) {
       currentNavPath.push(folderName);
-      currentContentType = null;
       searchQuery = '';
       renderPortalView();
     }
 
     function navigateUp() {
-      if (currentContentType) {
-        currentContentType = null;
-      } else if (currentNavPath.length > 0) {
+      if (currentNavPath.length > 0) {
         currentNavPath.pop();
       }
       searchQuery = '';
-      renderPortalView();
+   renderPortalView();
     }
 
     function handleSearch(val) {
@@ -380,8 +417,6 @@
     /* RENDER PORTAL VIEW */
     function renderPortalView(isLiveSearch = false) {
       const app = document.getElementById('app');
-
-      // Check items belonging to current path
       const pathDepth = currentNavPath.length;
 
       const matchesCurrentPath = (item) => {
@@ -396,10 +431,9 @@
       const matchedTests = allTests.filter(matchesCurrentPath);
       const matchedResources = allResources.filter(matchesCurrentPath);
 
-      // Find sub-folders directly under this level
+      // Map subfolders directly under this level
       const subFoldersMap = new Map();
-
-      const scanForSubfolders = (list, isResource = false) => {
+      const registerSubfolders = (list, isResource = false) => {
         list.forEach(item => {
           const parts = getItemPathArray(item);
           if (parts.length > pathDepth) {
@@ -408,32 +442,28 @@
             if (!subFoldersMap.has(key)) {
               subFoldersMap.set(key, { name: nextFolder, tests: 0, notes: 0, books: 0 });
             }
-            const record = subFoldersMap.get(key);
+            const rec = subFoldersMap.get(key);
             if (isResource) {
-              if (item.type === 'book') record.books++;
-              else record.notes++;
+              if (item.type === 'book') rec.books++;
+              else rec.notes++;
             } else {
-              record.tests++;
+              rec.tests++;
             }
           }
         });
       };
 
-      scanForSubfolders(matchedTests, false);
-      scanForSubfolders(matchedResources, true);
+      registerSubfolders(matchedTests, false);
+      registerSubfolders(matchedResources, true);
 
       const subFolders = Array.from(subFoldersMap.values());
 
-      // Leaf items that end exactly at this depth
-      const exactTests = matchedTests.filter(t => getItemPathArray(t).length === pathDepth);
-      const exactNotes = matchedResources.filter(r => getItemPathArray(r).length === pathDepth && r.type !== 'book');
-      const exactBooks = matchedResources.filter(b => getItemPathArray(b).length === pathDepth && b.type === 'book');
-
-      // Render View
-      if (currentContentType) {
-        renderLeafContentView(app, exactTests, exactNotes, exactBooks);
+      // If there are subfolders, show only sleek subfolder cards (no mixed buttons)
+      if (subFolders.length > 0) {
+        renderSubFoldersScreen(app, subFolders);
       } else {
-        renderFolderHierarchyView(app, subFolders, exactTests, exactNotes, exactBooks);
+        // We reached the final leaf: render tests, notes, books directly
+        renderFinalContentScreen(app, matchedTests, matchedResources);
       }
 
       if (isLiveSearch) {
@@ -445,8 +475,8 @@
       }
     }
 
-    /* FOLDER VIEW: SUBFOLDERS + HUB OPTIONS */
-    function renderFolderHierarchyView(container, subFolders, exactTests, exactNotes, exactBooks) {
+    /* SCREEN: ONLY CLEAN SUBFOLDERS (NO DOUBLE CARDS) */
+    function renderSubFoldersScreen(container, subFolders) {
       const isHome = currentNavPath.length === 0;
       const breadcrumbHtml = isHome ? '' : `
         <div class="breadcrumb-bar">
@@ -455,11 +485,10 @@
         </div>
       `;
 
-      // Filter subfolders by search
-      const filteredFolders = subFolders.filter(f => !searchQuery || f.name.toLowerCase().includes(searchQuery));
+      const filtered = subFolders.filter(f => !searchQuery || f.name.toLowerCase().includes(searchQuery));
 
       let folderCardsHtml = '';
-      filteredFolders.forEach(sf => {
+      filtered.forEach(sf => {
         const glowClass = isHome ? 'pulse-glow' : '';
         folderCardsHtml += `
           <div class="app-card ${glowClass}" onclick="navigateInto('${sf.name.replace(/'/g, "\\'")}')">
@@ -467,7 +496,7 @@
               <div class="folder-icon-circle">📁</div>
               <div>
                 <div class="app-card-title">${sf.name}</div>
-                <div class="app-card-subtitle">FOLDER · ${sf.tests} Tests · ${sf.notes} Notes · ${sf.books} Books</div>
+                <div class="app-card-subtitle">BATCH · ${sf.tests} Tests · ${sf.notes} PDFs · ${sf.books} Books</div>
               </div>
             </div>
             <div class="app-card-arrow">›</div>
@@ -475,57 +504,11 @@
         `;
       });
 
-      // If at this folder there are direct tests/notes, show modern hub cards (Parmar style)
-      let hubCardsHtml = '';
-      if (!isHome && (exactTests.length > 0 || exactNotes.length > 0 || exactBooks.length > 0)) {
-        hubCardsHtml = `
-          <div style="margin-top: 18px; margin-bottom: 12px; font-size: 13px; font-weight: 800; color: #38bdf8; text-transform: uppercase;">
-            📂 Direct Materials in this section:
-          </div>
-          ${exactTests.length > 0 ? `
-            <div class="app-card" style="border: 2px solid #2563eb;" onclick="currentContentType = 'mocks'; renderPortalView();">
-              <div class="app-card-left">
-                <div class="folder-icon-circle" style="background:#1e3a8a; color:#93c5fd;">⚡</div>
-                <div>
-                  <div class="app-card-title" style="color:#93c5fd;">MOCK TESTS &amp; QUIZZES</div>
-                  <div class="app-card-subtitle" style="color:#60a5fa;">${exactTests.length} Tests in this section</div>
-                </div>
-              </div>
-              <div class="app-card-arrow" style="color:#60a5fa;">›</div>
-            </div>
-          ` : ''}
-          ${exactNotes.length > 0 ? `
-            <div class="app-card" style="border: 2px solid #db2777;" onclick="currentContentType = 'notes'; renderPortalView();">
-              <div class="app-card-left">
-                <div class="folder-icon-circle" style="background:#831843; color:#fbcfe8;">📖</div>
-                <div>
-                  <div class="app-card-title" style="color:#fbcfe8;">FREE NOTES &amp; PDFS</div>
-                  <div class="app-card-subtitle" style="color:#f472b6;">${exactNotes.length} PDF Notes</div>
-                </div>
-              </div>
-              <div class="app-card-arrow" style="color:#f472b6;">›</div>
-            </div>
-          ` : ''}
-          ${exactBooks.length > 0 ? `
-            <div class="app-card" style="border: 2px solid #f59e0b;" onclick="currentContentType = 'books'; renderPortalView();">
-              <div class="app-card-left">
-                <div class="folder-icon-circle" style="background:#78350f; color:#fde68a;">🛒</div>
-                <div>
-                  <div class="app-card-title" style="color:#fde68a;">RECOMMENDED BOOKS</div>
-                  <div class="app-card-subtitle" style="color:#fbbf24;">${exactBooks.length} Reference Books</div>
-                </div>
-              </div>
-              <div class="app-card-arrow" style="color:#fbbf24;">›</div>
-            </div>
-          ` : ''}
-        `;
-      }
-
       container.innerHTML = `
         ${breadcrumbHtml}
         <div class="hero-banner">
           <h1>${isHome ? 'TARGET RPSC &amp; STATE EXAMS' : currentNavPath[currentNavPath.length - 1]}</h1>
-          <p>${isHome ? 'Choose exam / teacher / section to explore content' : 'Select sub-section or content below'}</p>
+          <p>${isHome ? 'Select your Exam / Teacher / Section to proceed' : 'Choose sub-category below'}</p>
         </div>
 
         <div class="search-box-wrapper">
@@ -534,97 +517,92 @@
         </div>
 
         <div>
-          ${folderCardsHtml || (!hubCardsHtml ? '<div class="card" style="text-align:center; color:#94a3b8;">No sections or tests created here yet. You can create one from Admin.</div>' : '')}
-          ${hubCardsHtml}
+          ${folderCardsHtml || '<div class="card" style="text-align:center; color:#94a3b8;">No matching sections found.</div>'}
         </div>
       `;
     }
 
-    /* LEAF CONTENT VIEW (MOCKS, NOTES, BOOKS) */
-    function renderLeafContentView(container, exactTests, exactNotes, exactBooks) {
-      let title = '';
-      let listHtml = '';
+    /* SCREEN: FINAL TESTS / NOTES / BOOKS VIEW */
+    function renderFinalContentScreen(container, tests, resources) {
+      const breadcrumbHtml = `
+        <div class="breadcrumb-bar">
+          <button class="back-btn" onclick="navigateUp()">← Back</button>
+          <span>${currentNavPath.join(' &gt; ')}</span>
+        </div>
+      `;
 
-      if (currentContentType === 'mocks') {
-        title = 'Mock Tests &amp; Quizzes';
-        let filtered = exactTests.filter(t => !searchQuery || (t.title && t.title.toLowerCase().includes(searchQuery)));
-        filtered.sort((a, b) => (parseInt(a.order || 9999, 10)) - (parseInt(b.order || 9999, 10)));
+      let testsFiltered = tests.filter(t => !searchQuery || (t.title && t.title.toLowerCase().includes(searchQuery)));
+      testsFiltered.sort((a, b) => (parseInt(a.order || 9999, 10)) - (parseInt(b.order || 9999, 10)));
 
-        if (filtered.length === 0) {
-          listHtml = `<div class="card" style="text-align:center; padding:30px; color:#94a3b8;">No tests found matching search.</div>`;
-        } else {
-          filtered.forEach((t, i) => {
-            const originalIndex = allTests.findIndex(item => item.id === t.id);
-            const history = userAttempts[t.id] || [];
-            let historyBadge = '';
-            if (history.length > 0) {
-              const lastAttempt = history[history.length - 1];
-              historyBadge = `
-                <div style="font-size:11px; background:#064e3b; color:#6ee7b7; padding:4px 8px; border-radius:4px; margin-top:8px; display:inline-block; font-weight:700;">
-                  ✓ Attempted ${history.length} time(s) · Last Score: ${lastAttempt.score}/${lastAttempt.total} (${lastAttempt.date})
-                </div>
-              `;
-            }
+      let notesFiltered = resources.filter(r => r.type !== 'book' && (!searchQuery || (r.title && r.title.toLowerCase().includes(searchQuery))));
+      let booksFiltered = resources.filter(r => r.type === 'book' && (!searchQuery || (r.title && r.title.toLowerCase().includes(searchQuery))));
 
-            const negMarkText = (typeof t.negativeMark !== 'undefined' && t.negativeMark > 0) 
-              ? ` · Neg: -${t.negativeMark}` 
-              : ' · No Neg Marking';
+      let testListHtml = '';
+      if (testsFiltered.length === 0 && notesFiltered.length === 0 && booksFiltered.length === 0) {
+        testListHtml = `<div class="card" style="text-align:center; padding:30px; color:#94a3b8;">No materials in this section yet.</div>`;
+      } else {
+        testsFiltered.forEach((t, i) => {
+          const originalIndex = allTests.findIndex(item => item.id === t.id);
+          const history = userAttempts[t.id] || [];
+          let historyBadge = '';
+          if (history.length > 0) {
+            const lastAttempt = history[history.length - 1];
+            historyBadge = `
+              <div style="font-size:11px; background:#064e3b; color:#6ee7b7; padding:4px 8px; border-radius:4px; margin-top:8px; display:inline-block; font-weight:700;">
+                ✓ Attempted ${history.length} time(s) · Last Score: ${lastAttempt.score}/${lastAttempt.total} (${lastAttempt.date})
+              </div>
+            `;
+          }
 
-            listHtml += `
-              <div class="test-card">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                  <span class="test-seq-badge">#${t.order || (i + 1)} Test</span>
-                  <span style="font-size:11px; color:#64748b;">⏱️ ${t.time || 15} Mins</span>
-                </div>
-                <h3>${t.title}</h3>
-                <p>${t.desc || 'Mock test with detailed solutions.'}</p>
-                ${historyBadge}
-                <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #1e293b; padding-top:12px; margin-top:12px;">
-                  <span style="font-size:11px; color:#94a3b8;">📝 ${(t.questions || []).length} Qs ${negMarkText}</span>
+          const negMarkText = (typeof t.negativeMark !== 'undefined' && t.negativeMark > 0) 
+            ? ` · Neg: -${t.negativeMark}` 
+            : ' · No Neg Marking';
+
+          testListHtml += `
+            <div class="test-card">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="test-seq-badge">#${t.order || (i + 1)} Test</span>
+                <span style="font-size:11px; color:#64748b;">⏱️ ${t.time || 15} Mins</span>
+              </div>
+              <h3>${t.title}</h3>
+              <p>${t.desc || 'Comprehensive mock test with real exam pattern.'}</p>
+              ${historyBadge}
+              <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #1e293b; padding-top:12px; margin-top:12px; flex-wrap:wrap; gap:8px;">
+                <span style="font-size:11px; color:#94a3b8;">📝 ${(t.questions || []).length} Qs ${negMarkText}</span>
+                <div style="display:flex; gap:6px;">
+                  <button class="btn-outline" style="padding:7px 12px; font-size:11px;" onclick="viewLeaderboardModal('${t.id}')">🏆 Rank List</button>
                   <button class="btn-primary" onclick="startTest(${originalIndex})">
                     ${history.length > 0 ? '🔄 Reattempt' : 'Start Test →'}
                   </button>
                 </div>
               </div>
-            `;
-          });
-        }
-      } else if (currentContentType === 'notes') {
-        title = 'Notes &amp; PDFs';
-        let filtered = exactNotes.filter(n => !searchQuery || (n.title && n.title.toLowerCase().includes(searchQuery)));
-        filtered.sort((a, b) => (parseInt(a.order || 9999, 10)) - (parseInt(b.order || 9999, 10)));
+            </div>
+          `;
+        });
 
-        filtered.forEach((n, idx) => {
-          listHtml += `
+        notesFiltered.forEach((n, idx) => {
+          testListHtml += `
             <div class="test-card">
-              <span class="test-seq-badge">#${n.order || (idx + 1)} PDF Note</span>
+              <span class="test-seq-badge" style="color:#f472b6;">#${n.order || (idx + 1)} PDF Note</span>
               <h3>${n.title}</h3>
-              <p>${n.desc || 'Curated study PDF document.'}</p>
+              <p>${n.desc || 'Curated study PDF file.'}</p>
               <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #1e293b; padding-top:10px;">
                 <span style="font-size:11px; color:#94a3b8;">Format: PDF File</span>
-                <a href="${n.telegram_url || '#'}" target="_blank" class="badge-telegram">
-                  📥 Download from Telegram
-                </a>
+                <a href="${n.telegram_url || '#'}" target="_blank" class="badge-telegram">📥 Download Telegram PDF</a>
               </div>
             </div>
           `;
         });
-      } else {
-        title = 'Recommended Books';
-        let filtered = exactBooks.filter(b => !searchQuery || (b.title && b.title.toLowerCase().includes(searchQuery)));
-        filtered.sort((a, b) => (parseInt(a.order || 9999, 10)) - (parseInt(b.order || 9999, 10)));
 
-        filtered.forEach((b, idx) => {
-          listHtml += `
+        booksFiltered.forEach((b, idx) => {
+          testListHtml += `
             <div class="test-card">
-              <span class="test-seq-badge">#${b.order || (idx + 1)} Book</span>
+              <span class="test-seq-badge" style="color:#fbbf24;">#${b.order || (idx + 1)} Book</span>
               <h3>${b.title}</h3>
-              <p>${b.desc || 'Recommended reference book.'}</p>
+              <p>${b.desc || 'Standard reference book.'}</p>
               <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #1e293b; padding-top:10px;">
                 <span style="font-size:12px; font-weight:800; color:#38bdf8;">${b.price || 'Best Price'}</span>
-                <a href="${b.buy_url || '#'}" target="_blank" class="badge-amazon">
-                  🛒 Buy Online
-                </a>
+                <a href="${b.buy_url || '#'}" target="_blank" class="badge-amazon">🛒 Buy Online</a>
               </div>
             </div>
           `;
@@ -632,21 +610,76 @@
       }
 
       container.innerHTML = `
-        <div class="breadcrumb-bar">
-          <button class="back-btn" onclick="navigateUp()">← Back</button>
-          <span>${currentNavPath.join(' / ')} &gt; ${title}</span>
-        </div>
-
+        ${breadcrumbHtml}
         <div class="search-box-wrapper">
           <span class="search-icon">🔍</span>
-          <input type="text" class="search-input" id="searchBarInput" placeholder="Search in this section..." oninput="handleSearch(this.value)" value="${searchQuery}">
+          <input type="text" class="search-input" id="searchBarInput" placeholder="Search test or book in this section..." oninput="handleSearch(this.value)" value="${searchQuery}">
         </div>
-
-        <div>${listHtml}</div>
+        <div>${testListHtml}</div>
       `;
     }
 
-    /* TEST TAKING & SCORECARD ENGINE */
+    /* LEADERBOARD & RANK MODAL */
+    function viewLeaderboardModal(testId) {
+      const t = allTests.find(item => item.id === testId);
+      const testRanks = allLeaderboards[testId] || {};
+      const list = Object.values(testRanks);
+
+      // Sort by score descending, then timestamp ascending (who achieved first)
+      list.sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return (a.timestamp || 0) - (b.timestamp || 0);
+      });
+
+      let rows = '';
+      list.forEach((item, index) => {
+        let badgeCls = '';
+        if (index === 0) badgeCls = 'rank-1';
+        else if (index === 1) badgeCls = 'rank-2';
+        else if (index === 2) badgeCls = 'rank-3';
+
+        const isMe = cleanStr(item.user) === cleanStr(currentUser);
+
+        rows += `
+          <tr style="${isMe ? 'background:#172554; font-weight:800;' : ''}">
+            <td><span class="rank-badge ${badgeCls}">${index + 1}</span></td>
+            <td>${item.user} ${isMe ? ' (You)' : ''}</td>
+            <td style="color:#38bdf8; font-weight:800;">${item.score}/${item.total}</td>
+            <td>${item.percentage}%</td>
+          </tr>
+        `;
+      });
+
+      const modalHtml = `
+        <div class="modal-backdrop active" id="rankModal">
+          <div class="grid-modal" style="max-height:85vh; padding:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid #334155; padding-bottom:8px;">
+              <div>
+                <h3 style="font-size:15px; font-weight:800; color:#38bdf8;">🏆 Official Rank List (1st Attempt)</h3>
+                <div style="font-size:11px; color:#94a3b8;">${t ? t.title : 'Mock Test'} · Total Candidates: ${list.length}</div>
+              </div>
+              <button class="btn-outline" style="padding:4px 10px;" onclick="document.getElementById('rankModal').remove()">✕</button>
+            </div>
+
+            <div style="overflow-y:auto; flex:1;">
+              ${list.length > 0 ? `
+                <table class="leaderboard-table">
+                  <thead>
+                    <tr><th>Rank</th><th>Candidate</th><th>Marks</th><th>Accuracy</th></tr>
+                  </thead>
+                  <tbody>${rows}</tbody>
+                </table>
+              ` : '<div style="text-align:center; padding:30px; color:#94a3b8;">No one has attempted this mock test yet. Be the first to secure Rank 1!</div>'}
+            </div>
+            
+            <button class="btn-primary" style="margin-top:14px; width:100%;" onclick="document.getElementById('rankModal').remove()">Close</button>
+          </div>
+        </div>
+      `;
+      document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
+
+    /* TEST TAKING SYSTEM */
     function startTest(index) {
       currentQuiz = allTests[index];
       if(!currentQuiz || !currentQuiz.questions || currentQuiz.questions.length === 0) {
@@ -708,7 +741,7 @@
         const clickHandler = isSolutionMode ? '' : `onclick="pick(${i})"`;
 
         optH += `
-          <button class="opt-btn ${optCls}" ${clickHandler} style="${isSolutionMode ? 'cursor:default;' : ''}">
+        <button class="opt-btn ${optCls}" ${clickHandler} style="${isSolutionMode ? 'cursor:default;' : ''}">
             <div style="display:flex; align-items:center;">
               <span class="opt-badge">${String.fromCharCode(65 + i)}</span>
               <span>${o}</span>
@@ -895,7 +928,8 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function finishTest() {
+    /* PERFORMANCE SCORECARD + 1ST ATTEMPT RANK CALCULATION */
+    async function finishTest() {
       if(timer) clearInterval(timer);
       hideGrid();
       isSolutionMode = false;
@@ -932,7 +966,9 @@
       const now = new Date();
       const dateStr = now.toLocaleDateString('en-GB') + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
+      // Save local attempt history
       if(!userAttempts[currentQuiz.id]) userAttempts[currentQuiz.id] = [];
+      const attemptNum = userAttempts[currentQuiz.id].length + 1;
       userAttempts[currentQuiz.id].push({
         candidate: currentUser,
         score: finalScore,
@@ -942,28 +978,45 @@
       });
       localStorage.setItem('ps_user_attempts', JSON.stringify(userAttempts));
 
-      const shareText = `🎯 I scored ${finalScore}/${totalPossibleMarks} (${scorePct}%) in ${currentQuiz.title}! Test link: ${window.location.href}`;
+      // Submit to Leaderboard (Only candidate's 1st Attempt creates rank)
+      await submitScoreToGlobalLeaderboard(currentQuiz.id, finalScore, totalPossibleMarks, scorePct, dateStr);
+
+      // Compute Candidate's Live Rank
+      const testRanks = allLeaderboards[currentQuiz.id] || {};
+      const rankList = Object.values(testRanks).sort((a,b) => b.score - a.score);
+      const myRankIndex = rankList.findIndex(r => cleanStr(r.user) === cleanStr(currentUser));
+      const myRank = myRankIndex !== -1 ? (myRankIndex + 1) : 1;
+      const totalRanked = rankList.length || 1;
+
+      const shareText = `🎯 I scored ${finalScore}/${totalPossibleMarks} (Rank ${myRank}/${totalRanked}) in ${currentQuiz.title}! Beat my rank: ${window.location.href}`;
 
       document.getElementById('app').innerHTML = `
         <div class="card" style="text-align:center; padding:24px 16px;">
-          <h2 style="font-size:20px; margin-bottom:6px; color:#f8fafc;">Performance Scorecard</h2>
-          <div style="font-size:12px; color:#94a3b8; margin-bottom:16px;">Candidate: <b>${currentUser}</b> · ${dateStr}</div>
+          <h2 style="font-size:20px; margin-bottom:4px; color:#f8fafc;">Performance Scorecard</h2>
+          <div style="font-size:12px; color:#94a3b8; margin-bottom:14px;">Candidate: <b>${currentUser}</b> · Attempt #${attemptNum}</div>
 
-          <div style="background:#1e293b; border:1px solid #334155; border-radius:12px; padding:20px; margin-bottom:16px;">
-            <div style="font-size:11px; text-transform:uppercase; color:#94a3b8; font-weight:700;">Final Obtained Marks</div>
-            <div style="font-size:38px; font-weight:900; color:#38bdf8; margin: 4px 0;">${finalScore} <span style="font-size:16px; color:#64748b; font-weight:500;">/ ${totalPossibleMarks}</span></div>
-            <div style="font-size:13px; font-weight:700; color:#60a5fa;">Accuracy: ${scorePct}%</div>
-            ${negRate > 0 ? `<div style="font-size:11px; color:#f87171; margin-top:4px;">Negative deduction: -${(wrong * negRate).toFixed(2)} marks</div>` : ''}
+          <!-- Rank Card -->
+          <div style="background:#172554; border:1.5px solid #3b82f6; border-radius:12px; padding:16px; margin-bottom:14px; display:flex; justify-content:space-around; align-items:center;">
+            <div>
+              <div style="font-size:11px; text-transform:uppercase; color:#93c5fd; font-weight:800;">Your Official Rank</div>
+              <div style="font-size:32px; font-weight:900; color:#fbbf24;">#${myRank} <span style="font-size:14px; color:#94a3b8; font-weight:600;">/ ${totalRanked}</span></div>
+              <div style="font-size:10px; color:#38bdf8;">(Based on 1st Attempt)</div>
+            </div>
+            <div style="border-left:1px solid #334155; padding-left:16px;">
+              <div style="font-size:11px; text-transform:uppercase; color:#94a3b8; font-weight:800;">Final Score</div>
+              <div style="font-size:32px; font-weight:900; color:#38bdf8;">${finalScore} <span style="font-size:14px; color:#64748b;">/ ${totalPossibleMarks}</span></div>
+              <div style="font-size:11px; color:#60a5fa; font-weight:700;">Accuracy: ${scorePct}%</div>
+            </div>
           </div>
 
           <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-bottom:16px;">
             <div style="background:#064e3b; border:1px solid #047857; padding:12px; border-radius:8px;">
               <div style="font-size:18px; font-weight:800; color:#34d399;">${cor}</div>
-              <div style="font-size:11px; font-weight:700; color:#a7f3d0;">Correct</div>
+              <div style="font-size:11px; font-weight:700; color:#a7f3d0;">Correct (+${cor * marksPerQ})</div>
             </div>
             <div style="background:#7f1d1d; border:1px solid #991b1b; padding:12px; border-radius:8px;">
               <div style="font-size:18px; font-weight:800; color:#f87171;">${wrong}</div>
-              <div style="font-size:11px; font-weight:700; color:#fecaca;">Incorrect</div>
+              <div style="font-size:11px; font-weight:700; color:#fecaca;">Incorrect (-${(wrong * negRate).toFixed(2)})</div>
             </div>
             <div style="background:#1e293b; border:1px solid #334155; padding:12px; border-radius:8px;">
               <div style="font-size:18px; font-weight:800; color:#94a3b8;">${unattempted}</div>
@@ -971,9 +1024,14 @@
             </div>
           </div>
 
-          <button class="btn-share" style="width:100%; margin-bottom:10px;" onclick="shareScore('${encodeURIComponent(shareText)}')">
-            📤 Share Result on WhatsApp
-          </button>
+          <div style="display:flex; gap:8px; margin-bottom:12px;">
+            <button class="btn-outline" style="flex:1; border-color:#fbbf24; color:#fbbf24; padding:11px;" onclick="viewLeaderboardModal('${currentQuiz.id}')">
+              🏆 View Full Leaderboard
+            </button>
+            <button class="btn-share" style="flex:1;" onclick="shareScore('${encodeURIComponent(shareText)}')">
+              📤 Share on WhatsApp
+            </button>
+          </div>
 
           <button class="btn-primary" style="width:100%; padding:12px; font-size:14px; margin-bottom:10px;" onclick="openSolutionMode(0)">
             📖 Detailed Solutions &amp; Explanations →
@@ -994,9 +1052,9 @@
       renderQuestionScreen();
     }
 
-    /* ADMIN PANEL - FAST BATCH/HIERARCHY MANAGEMENT & BULK ACTIONS */
+    /* ADMIN PANEL: BULK SELECTION & FAST ORGANIZER */
     function openAdmin() {
-    const pin = prompt('Enter Admin Security PIN:');
+      const pin = prompt('Enter Admin Security PIN:');
       if (pin === '7073') {
         selectedTestIds.clear();
         renderAdminHome();
@@ -1020,10 +1078,10 @@
       renderAdminHome();
     }
 
-    /* BULK OPERATIONS */
+    /* BULK ACTIONS */
     async function bulkMovePrompt() {
       if (selectedTestIds.size === 0) return alert('Select tests first using checkboxes!');
-      const newPath = prompt(`Move ${selectedTestIds.size} selected tests to new path:\n(e.g. "1st Grade / Beniwal Sir / Class Quiz")`);
+      const newPath = prompt(`Move ${selectedTestIds.size} selected tests to new path:\n(Example: "1st Grade / Beniwal Sir / Political Science")`);
       if (!newPath || !newPath.trim()) return;
 
       const pathArr = newPath.split('/').map(p => p.trim()).filter(Boolean);
@@ -1033,7 +1091,28 @@
           t.path = pathArr;
           t.exam = pathArr[0] || '1st Grade';
           t.section = t.exam;
-          t.subject = pathArr[1] || 'General';
+          t.subject = pathArr[pathArr.length - 1] || 'General';
+        }
+      });
+
+      await saveToCloud();
+      alert(`✅ ${selectedTestIds.size} tests moved successfully!`);
+      selectedTestIds.clear();
+      renderAdminHome();
+    }
+
+    async function bulkAutoSequencePrompt() {
+      if (selectedTestIds.size === 0) return alert('Select tests first using checkboxes!');
+      const startNumStr = prompt(`Enter starting sequence number for ${selectedTestIds.size} tests:`, "1");
+      if (startNumStr === null) return;
+      let curNum = parseInt(startNumStr, 10) || 1;
+
+      allTests.forEach(t => {
+        if (selectedTestIds.has(t.id)) {
+          t.path = pathArr;
+          t.exam = pathArr[0] || '1st Grade';
+          t.section = t.exam;
+          t.subject = pathArr[pathArr.length - 1] || 'General';
         }
       });
 
@@ -1072,7 +1151,6 @@
     }
 
     function renderAdminHome() {
-      // Group tests by path for clear tree view
       const sortedTests = [...allTests].sort((a,b) => {
         const pa = getItemPathString(a);
         const pb = getItemPathString(b);
@@ -1114,10 +1192,10 @@
             <button class="btn-outline" onclick="goHome()">✕ Exit Admin</button>
           </div>
 
-          <!-- Quick Action Buttons -->
+          <!-- Add Resource Buttons -->
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
             <button class="btn-primary" style="padding:10px;" onclick="promptAddResource('note')">+ Add PDF Note</button>
-            <button class="btn-outline" style="padding:10px; border-color:#f59e0b; color:#fde68a;" onclick="promptAddResource('book')">+ Add Recommended Book Link</button>
+            <button class="btn-outline" style="padding:10px; border-color:#f59e0b; color:#fde68a;" onclick="promptAddResource('book')">+ Add Recommended Book</button>
           </div>
 
           <!-- BULK CONTROL BAR -->
@@ -1131,7 +1209,7 @@
             <div style="display:flex; gap:6px; flex-wrap:wrap;">
               <button class="btn-primary" style="padding:6px 12px; font-size:11px;" onclick="bulkMovePrompt()">📦 Move to Folder / Path</button>
               <button class="btn-outline" style="padding:6px 12px; font-size:11px; border-color:#38bdf8; color:#38bdf8;" onclick="bulkAutoSequencePrompt()">⚡ Auto-Sequence #</button>
-              <button class="btn-danger" style="padding:6px 12px; font-size:11px;" onclick="bulkDeletePrompt()">🗑️ Delete Selected</button>
+              <button class="btn-danger" style="padding:6px 12px; font-size:11px;" onclick="bulkDeletePrompt()">🗑️ Delete</button>
             </div>
           </div>
 
@@ -1163,12 +1241,11 @@
       `;
     }
 
-    /* FAST EDIT SINGLE TEST */
     async function quickEditTestPrompt(id) {
       const t = allTests.find(item => item.id === id);
       if(!t) return;
       const currentPath = getItemPathString(t);
-      const newPath = prompt(`Set Folder Path (Use '/' for sub-folders):\nExample: "1st Grade / Beniwal Sir / Class Quiz"`, currentPath);
+      const newPath = prompt(`Set Folder Path (Use '/' for sub-folders):\nExample: "1st Grade / Beniwal Sir / Political Science"`, currentPath);
       if(newPath === null) return;
 
       const newTitle = prompt("Edit Test Title:", t.title);
@@ -1181,7 +1258,7 @@
       t.path = pathArr;
       t.exam = pathArr[0] || '1st Grade';
       t.section = t.exam;
-      t.subject = pathArr[1] || 'General';
+      t.subject = pathArr[pathArr.length - 1] || 'General';
       t.title = newTitle.trim() || t.title;
       t.order = parseInt(newOrder, 10) || t.order;
 
@@ -1208,7 +1285,7 @@
         path: pathArr,
         exam: pathArr[0] || '1st Grade',
         section: pathArr[0] || '1st Grade',
-        subject: pathArr[1] || 'General',
+        subject: pathArr[pathArr.length - 1] || 'General',
         order: parseInt(order || 1, 10),
         desc: type === 'note' ? 'Curated PDF material.' : 'Recommended book.',
         price: price || 'Check Online',
@@ -1247,7 +1324,7 @@
           path: pathArr,
           exam: pathArr[0] || '1st Grade',
           section: pathArr[0] || '1st Grade',
-          subject: pathArr[1] || 'General',
+          subject: pathArr[pathArr.length - 1] || 'General',
           order: imported.order || (allTests.length + 1),
           time: imported.time || 15,
           negativeMark: typeof imported.negativeMark !== 'undefined' ? imported.negativeMark : 0.33,
@@ -1280,7 +1357,7 @@
           newT.path = pathArr;
           newT.exam = pathArr[0] || '1st Grade';
           newT.section = newT.exam;
-          newT.subject = pathArr[1] || 'General';
+          newT.subject = pathArr[pathArr.length - 1] || 'General';
           if(typeof newT.order === 'undefined') newT.order = allTests.length + 1;
           if(typeof newT.negativeMark === 'undefined') newT.negativeMark = 0.33;
           if(!newT.id) newT.id = 'test-' + Date.now();
@@ -1299,7 +1376,7 @@
     function startNewTestForm() {
       editingTestId = null;
       draftQuestions = [];
-      renderTestFormUI('Create New Mock Test', '', '1st Grade / General', 1, 15, 0.33, '');
+      renderTestFormUI('Create New Mock Test', '', '1st Grade / Political Science', 1, 15, 0.33, '');
     }
 
     function loadTestForEdit(id) {
@@ -1339,7 +1416,7 @@
           </div>
 
           <div class="form-group">
-            <label>Folder Path (Use '/' for sub-sections. e.g. "1st Grade / Beniwal Sir / Class Quiz")</label>
+            <label>Folder Path (Use '/' for sub-sections. e.g. "1st Grade / Beniwal Sir / Political Science")</label>
             <input type="text" id="t-path" class="form-control" value="${pathVal}">
           </div>
 
@@ -1465,7 +1542,7 @@
             path: pathArr,
             exam: pathArr[0] || '1st Grade', 
             section: pathArr[0] || '1st Grade', 
-            subject: pathArr[1] || 'General', 
+            subject: pathArr[pathArr.length - 1] || 'General', 
             order,
             time, 
             negativeMark: neg,
@@ -1480,7 +1557,7 @@
           path: pathArr,
           exam: pathArr[0] || '1st Grade',
           section: pathArr[0] || '1st Grade',
-          subject: pathArr[1] || 'General',
+          subject: pathArr[pathArr.length - 1] || 'General',
           order,
           time,
           negativeMark: neg,
