@@ -6,8 +6,6 @@
   <title>RPSC, RSSB & State Exams Portal</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    
-    /* Sleek Modern Dark Theme */
     body { background-color: #0b1120; color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; }
     
     header { background: #0f172a; border-bottom: 1px solid #1e293b; padding: 12px 16px; position: sticky; top: 0; z-index: 50; }
@@ -20,23 +18,19 @@
     
     main { max-width: 760px; width: 100%; margin: 0 auto; padding: 16px; flex: 1; }
 
-    /* Navigation Breadcrumbs */
-    .breadcrumb-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; font-size: 13px; font-weight: 700; color: #94a3b8; }
+    .breadcrumb-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; font-size: 13px; font-weight: 700; color: #94a3b8; flex-wrap: wrap; gap: 8px; }
     .back-btn { background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
     .back-btn:hover { background: #334155; }
 
-    /* Hero Banner */
     .hero-banner { background: radial-gradient(circle at top right, #1e3a8a 0%, #0f172a 100%); border: 1px solid #1e3a8a; border-radius: 16px; padding: 18px 20px; margin-bottom: 18px; text-align: center; }
     .hero-banner h1 { font-size: 17px; font-weight: 900; letter-spacing: 0.5px; color: #60a5fa; text-transform: uppercase; margin-bottom: 4px; }
     .hero-banner p { font-size: 12px; color: #94a3b8; }
 
-    /* Search Bar */
     .search-box-wrapper { position: relative; margin-bottom: 16px; }
     .search-input { width: 100%; background: #0f172a; border: 1.5px solid #1e293b; color: #f8fafc; padding: 12px 14px 12px 42px; border-radius: 12px; font-size: 13px; outline: none; transition: 0.2s; }
     .search-input:focus { border-color: #3b82f6; box-shadow: 0 0 14px rgba(59,130,246,0.3); }
     .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 15px; }
 
-    /* Folder Style Cards */
     .app-card {
       background: #0f172a;
       border: 1.5px solid #1e293b;
@@ -72,17 +66,13 @@
     .app-card-subtitle { font-size: 11px; font-weight: 700; color: #38bdf8; margin-top: 2px; }
     .app-card-arrow { font-size: 18px; color: #64748b; font-weight: 900; }
 
-    /* Glowing Exam Cards */
-    .pulse-glow {
-      animation: pulseGlow 1.8s infinite alternate ease-in-out;
-    }
+    .pulse-glow { animation: pulseGlow 1.8s infinite alternate ease-in-out; }
     @keyframes pulseGlow {
       0% { border-color: #1e3a8a; box-shadow: 0 0 4px rgba(37,99,235,0.1); }
       50% { border-color: #3b82f6; box-shadow: 0 0 16px rgba(59,130,246,0.35); }
       100% { border-color: #1e3a8a; box-shadow: 0 0 4px rgba(37,99,235,0.1); }
     }
 
-    /* Content Cards */
     .test-card {
       background: #0f172a;
       border: 1px solid #1e293b;
@@ -96,7 +86,6 @@
     
     .tag { display: inline-block; background: #1e3a8a; color: #93c5fd; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; margin-bottom: 6px; }
 
-    /* Buttons */
     .btn-primary { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; border: none; padding: 9px 18px; font-size: 13px; font-weight: 800; border-radius: 8px; cursor: pointer; }
     .btn-success { background: #059669; color: #fff; border: none; padding: 9px 18px; font-size: 13px; font-weight: 800; border-radius: 8px; cursor: pointer; }
     .btn-outline { background: #1e293b; color: #cbd5e1; border: 1px solid #334155; padding: 8px 14px; font-size: 12px; font-weight: 700; border-radius: 8px; cursor: pointer; }
@@ -106,7 +95,20 @@
     .badge-telegram { background: #0088cc; color: #fff; font-size: 11px; padding: 6px 12px; border-radius: 6px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
     .badge-amazon { background: #ff9900; color: #111; font-size: 11px; padding: 6px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; }
 
-    /* Options and Test Taking */
+    /* Bulk Tool Bar */
+    .bulk-toolbar {
+      background: #172554;
+      border: 1.5px solid #3b82f6;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
     .opt-btn { width: 100%; text-align: left; padding: 12px 14px; border-radius: 10px; border: 1px solid #1e293b; background: #0f172a; margin-bottom: 10px; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: #f8fafc; transition: 0.1s ease; }
     .opt-btn:hover { border-color: #3b82f6; background: #172554; }
     .opt-btn.selected { border-color: #3b82f6; background: #1e3a8a; color: #ffffff; font-weight: 700; }
@@ -121,7 +123,6 @@
     .mock-top-bar { display: flex; justify-content: space-between; align-items: center; background: #0f172a; border: 1px solid #1e293b; padding: 10px 14px; border-radius: 10px; margin-bottom: 12px; }
     .btn-grid-toggle { background: #1e3a8a; color: #ffffff; border: none; padding: 7px 12px; border-radius: 6px; font-size: 12px; font-weight: 800; cursor: pointer; }
 
-    /* Palette Modal */
     .modal-backdrop { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 100; display: none; align-items: center; justify-content: center; padding: 14px; }
     .modal-backdrop.active { display: flex; }
     .grid-modal { width: 100%; max-width: 500px; max-height: 85vh; background: #0f172a; border: 1px solid #334155; border-radius: 14px; display: flex; flex-direction: column; overflow: hidden; }
@@ -139,7 +140,6 @@
     .p-box.sol-wrong { background: #dc2626; color: #fff; }
     .p-box.sol-skipped { background: #334155; color: #94a3b8; }
 
-    /* Admin Card & Controls */
     .card { background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; padding: 16px; margin-bottom: 14px; }
     .form-group { margin-bottom: 12px; text-align: left; }
     .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; color: #94a3b8; }
@@ -158,7 +158,7 @@
         <div class="logo-icon">RP</div>
         <div>
           <div style="font-weight: 900; font-size: 13px; color: #f8fafc; line-height: 1.2;">RPSC, RSSB EXAM PORTAL</div>
-          <div style="font-size: 10px; color: #38bdf8; font-weight: 700;">1st, 2nd, 3rd Grade & State Exams</div>
+          <div style="font-size: 10px; color: #38bdf8; font-weight: 700;">Multi-Level Hierarchy &amp; Quick Manager</div>
         </div>
       </div>
       <div class="header-actions">
@@ -194,12 +194,13 @@
     let allTests = [];
     let allResources = [];
 
-    // Views: 'exams' -> 'subjects' -> 'content_type' -> 'items'
-    let currentView = 'exams';
-    let currentExam = null;
-    let currentSubject = null;
-    let currentContentType = 'mocks';
+    // Current navigation path array: e.g. ["1st Grade", "Beniwal Sir", "Class Quiz"]
+    let currentNavPath = [];
+    let currentContentType = null; // 'mocks', 'notes', 'books'
     let searchQuery = '';
+
+    // Selected test IDs for bulk actions in Admin
+    let selectedTestIds = new Set();
 
     let currentQuiz = null;
     let cur = 0;
@@ -218,6 +219,28 @@
 
     function cleanStr(s) {
       return (s || '').toString().trim().toLowerCase();
+    }
+
+    // Helper: Converts item's exam/section/subject/path into clean array of path parts
+    function getItemPathArray(item) {
+      if (item.path && Array.isArray(item.path) && item.path.length > 0) {
+        return item.path.map(p => p.trim()).filter(Boolean);
+      }
+      if (item.path && typeof item.path === 'string') {
+        return item.path.split('/').map(p => p.trim()).filter(Boolean);
+      }
+      const parts = [];
+      const ex = (item.exam || item.section || '').trim();
+      const sb = (item.subject || item.category || '').trim();
+      if (ex) parts.push(ex);
+      if (sb && sb.toLowerCase() !== 'general' && sb.toLowerCase() !== ex.toLowerCase()) {
+        parts.push(sb);
+      }
+      return parts.length > 0 ? parts : ['1st Grade'];
+    }
+
+    function getItemPathString(item) {
+      return getItemPathArray(item).join(' / ');
     }
 
     window.onload = () => {
@@ -250,14 +273,14 @@
         if (testsRes.ok) {
           const data = await testsRes.json();
           if (data) {
-            allTests = Array.isArray(data) ? data.filter(Boolean) : Object.values(data).filter(Boolean);
+            allTests = (Array.isArray(data) ? data : Object.values(data)).filter(Boolean);
           }
         }
 
         if (resRes.ok) {
           const rData = await resRes.json();
           if (rData) {
-            allResources = Array.isArray(rData) ? rData.filter(Boolean) : Object.values(rData).filter(Boolean);
+            allResources = (Array.isArray(rData) ? rData : Object.values(rData)).filter(Boolean);
           }
         }
       } catch (err) {
@@ -276,7 +299,7 @@
         });
         if (!res.ok) throw new Error("Status " + res.status);
       } catch (e) {
-        alert('Failed to save data. Please check Firebase rules.');
+        alert('Failed to save tests to cloud.');
       }
     }
 
@@ -289,7 +312,7 @@
         });
         if (!res.ok) throw new Error("Status " + res.status);
       } catch (e) {
-        alert('Failed to save resources to cloud.');
+        alert('Failed to save study resources to cloud.');
       }
     }
 
@@ -321,46 +344,29 @@
       }).filter(item => item.q.trim() !== "");
     }
 
-    /* NAVIGATION LOGIC */
+    /* NAVIGATION LOGIC - DYNAMIC UNLIMITED HIERARCHY */
     function goHome() {
       if(timer) clearInterval(timer);
       hideGrid();
       isSolutionMode = false;
-      currentView = 'exams';
-      currentExam = null;
-      currentSubject = null;
+      currentNavPath = [];
+      currentContentType = null;
       searchQuery = '';
       renderPortalView();
     }
 
-    function selectExam(examName) {
-      currentExam = examName;
-      currentView = 'subjects';
+    function navigateInto(folderName) {
+      currentNavPath.push(folderName);
+      currentContentType = null;
       searchQuery = '';
       renderPortalView();
     }
 
-    function selectSubject(subjName) {
-      currentSubject = subjName;
-      currentView = 'content_type';
-      searchQuery = '';
-      renderPortalView();
-    }
-
-    function selectContentType(type) {
-      currentContentType = type;
-      currentView = 'items';
-      searchQuery = '';
-      renderPortalView();
-    }
-
-    function goBack() {
-      if(currentView === 'items') {
-        currentView = 'content_type';
-      } else if(currentView === 'content_type') {
-        currentView = 'subjects';
-      } else if(currentView === 'subjects') {
-        currentView = 'exams';
+    function navigateUp() {
+      if (currentContentType) {
+        currentContentType = null;
+      } else if (currentNavPath.length > 0) {
+        currentNavPath.pop();
       }
       searchQuery = '';
       renderPortalView();
@@ -371,81 +377,97 @@
       renderPortalView(true);
     }
 
-    function getAllExams() {
-      const exams = ['1st Grade', '2nd Grade', '3rd Grade / REET', 'Assistant Professor', 'RSSB Exams'];
-      const addFromList = (list) => {
-        list.forEach(i => {
-          const val = (i.exam || i.section || '').trim();
-          if(val && !exams.some(e => cleanStr(e) === cleanStr(val))) {
-            exams.push(val);
-          }
-        });
-      };
-      addFromList(allTests);
-      addFromList(allResources);
-      return exams;
-    }
-
-    function getSubjectsForExam(examName) {
-      const subjects = [];
-      const matchExam = (item) => cleanStr(item.exam || item.section) === cleanStr(examName);
-
-      allTests.filter(matchExam).forEach(t => {
-        const s = (t.subject || 'General').trim();
-        if(!subjects.some(existing => cleanStr(existing) === cleanStr(s))) subjects.push(s);
-      });
-
-      allResources.filter(matchExam).forEach(r => {
-        const s = (r.subject || r.category || 'General').trim();
-        if(!subjects.some(existing => cleanStr(existing) === cleanStr(s))) subjects.push(s);
-      });
-
-      if(subjects.length === 0) {
-        subjects.push('Political Science', 'History', 'Geography', 'General Studies (GK)');
-      }
-      return subjects;
-    }
-
+    /* RENDER PORTAL VIEW */
     function renderPortalView(isLiveSearch = false) {
       const app = document.getElementById('app');
 
-      if (currentView === 'exams') {
-        renderExamsScreen(app);
-      } else if (currentView === 'subjects') {
-        renderSubjectsScreen(app);
-      } else if (currentView === 'content_type') {
-        renderContentTypeScreen(app);
-      } else if (currentView === 'items') {
-        renderItemsScreen(app);
+      // Check items belonging to current path
+      const pathDepth = currentNavPath.length;
+
+      const matchesCurrentPath = (item) => {
+        const parts = getItemPathArray(item);
+        if (parts.length < pathDepth) return false;
+        for (let i = 0; i < pathDepth; i++) {
+          if (cleanStr(parts[i]) !== cleanStr(currentNavPath[i])) return false;
+        }
+        return true;
+      };
+
+      const matchedTests = allTests.filter(matchesCurrentPath);
+      const matchedResources = allResources.filter(matchesCurrentPath);
+
+      // Find sub-folders directly under this level
+      const subFoldersMap = new Map();
+
+      const scanForSubfolders = (list, isResource = false) => {
+        list.forEach(item => {
+          const parts = getItemPathArray(item);
+          if (parts.length > pathDepth) {
+            const nextFolder = parts[pathDepth].trim();
+            const key = cleanStr(nextFolder);
+            if (!subFoldersMap.has(key)) {
+              subFoldersMap.set(key, { name: nextFolder, tests: 0, notes: 0, books: 0 });
+            }
+            const record = subFoldersMap.get(key);
+            if (isResource) {
+              if (item.type === 'book') record.books++;
+              else record.notes++;
+            } else {
+              record.tests++;
+            }
+          }
+        });
+      };
+
+      scanForSubfolders(matchedTests, false);
+      scanForSubfolders(matchedResources, true);
+
+      const subFolders = Array.from(subFoldersMap.values());
+
+      // Leaf items that end exactly at this depth
+      const exactTests = matchedTests.filter(t => getItemPathArray(t).length === pathDepth);
+      const exactNotes = matchedResources.filter(r => getItemPathArray(r).length === pathDepth && r.type !== 'book');
+      const exactBooks = matchedResources.filter(b => getItemPathArray(b).length === pathDepth && b.type === 'book');
+
+      // Render View
+      if (currentContentType) {
+        renderLeafContentView(app, exactTests, exactNotes, exactBooks);
+      } else {
+        renderFolderHierarchyView(app, subFolders, exactTests, exactNotes, exactBooks);
       }
 
-      if(isLiveSearch) {
+      if (isLiveSearch) {
         const input = document.getElementById('searchBarInput');
-        if(input) {
+        if (input) {
           input.focus();
           input.setSelectionRange(input.value.length, input.value.length);
         }
       }
     }
 
-    /* SCREEN 1: EXAM FOLDERS */
-    function renderExamsScreen(container) {
-      const exams = getAllExams();
-      const filtered = exams.filter(e => !searchQuery || e.toLowerCase().includes(searchQuery));
+    /* FOLDER VIEW: SUBFOLDERS + HUB OPTIONS */
+    function renderFolderHierarchyView(container, subFolders, exactTests, exactNotes, exactBooks) {
+      const isHome = currentNavPath.length === 0;
+      const breadcrumbHtml = isHome ? '' : `
+        <div class="breadcrumb-bar">
+          <button class="back-btn" onclick="navigateUp()">← Back</button>
+          <span>${currentNavPath.join(' &gt; ')}</span>
+        </div>
+      `;
 
-      let cardsHtml = '';
-      filtered.forEach(ex => {
-        const countTests = allTests.filter(t => cleanStr(t.exam || t.section) === cleanStr(ex)).length;
-        const countNotes = allResources.filter(r => cleanStr(r.exam || r.section) === cleanStr(ex) && r.type !== 'book').length;
-        const countBooks = allResources.filter(r => cleanStr(r.exam || r.section) === cleanStr(ex) && r.type === 'book').length;
+      // Filter subfolders by search
+      const filteredFolders = subFolders.filter(f => !searchQuery || f.name.toLowerCase().includes(searchQuery));
 
-        cardsHtml += `
-          <div class="app-card pulse-glow" onclick="selectExam('${ex.replace(/'/g, "\\'")}')">
+      let folderCardsHtml = '';
+      filteredFolders.forEach(sf => {
+        const glowClass = isHome ? 'pulse-glow' : '';
+        folderCardsHtml += `
+          <div class="app-card ${glowClass}" onclick="navigateInto('${sf.name.replace(/'/g, "\\'")}')">
             <div class="app-card-left">
               <div class="folder-icon-circle">📁</div>
               <div>
-                <div class="app-card-title">${ex}</div>
-                <div class="app-card-subtitle">BATCH · ${countTests} Tests · ${countNotes} PDFs · ${countBooks} Books</div>
+                <div class="app-card-title">${sf.name}</div>
+                <div class="app-card-subtitle">FOLDER · ${sf.tests} Tests · ${sf.notes} Notes · ${sf.books} Books</div>
               </div>
             </div>
             <div class="app-card-arrow">›</div>
@@ -453,234 +475,131 @@
         `;
       });
 
-      container.innerHTML = `
-        <div class="hero-banner">
-          <h1>TARGET RPSC &amp; STATE EXAMS</h1>
-          <p>Select your Target Exam / Grade to access curated subjects, tests &amp; books</p>
-        </div>
-
-        <div class="search-box-wrapper">
-          <span class="search-icon">🔍</span>
-          <input type="text" class="search-input" id="searchBarInput" placeholder="Search batch or exam name..." oninput="handleSearch(this.value)" value="${searchQuery}">
-        </div>
-
-        <div>${cardsHtml || '<div class="card" style="text-align:center; color:#94a3b8;">No batches matching your search.</div>'}</div>
-      `;
-    }
-
-    /* SCREEN 2: SUBJECTS LIST */
-    function renderSubjectsScreen(container) {
-      const subjects = getSubjectsForExam(currentExam);
-      const filtered = subjects.filter(s => !searchQuery || s.toLowerCase().includes(searchQuery));
-
-      let cardsHtml = '';
-      filtered.forEach(sub => {
-        const testCount = allTests.filter(t => 
-          cleanStr(t.exam || t.section) === cleanStr(currentExam) && cleanStr(t.subject) === cleanStr(sub)
-        ).length;
-
-        cardsHtml += `
-          <div class="app-card" onclick="selectSubject('${sub.replace(/'/g, "\\'")}')">
-            <div class="app-card-left">
-              <div class="folder-icon-circle" style="background:#172554; color:#60a5fa;">📘</div>
-              <div>
-                <div class="app-card-title">${sub}</div>
-                <div class="app-card-subtitle">${testCount} Tests &amp; Material Available</div>
+      // If at this folder there are direct tests/notes, show modern hub cards (Parmar style)
+      let hubCardsHtml = '';
+      if (!isHome && (exactTests.length > 0 || exactNotes.length > 0 || exactBooks.length > 0)) {
+        hubCardsHtml = `
+          <div style="margin-top: 18px; margin-bottom: 12px; font-size: 13px; font-weight: 800; color: #38bdf8; text-transform: uppercase;">
+            📂 Direct Materials in this section:
+          </div>
+          ${exactTests.length > 0 ? `
+            <div class="app-card" style="border: 2px solid #2563eb;" onclick="currentContentType = 'mocks'; renderPortalView();">
+              <div class="app-card-left">
+                <div class="folder-icon-circle" style="background:#1e3a8a; color:#93c5fd;">⚡</div>
+                <div>
+                  <div class="app-card-title" style="color:#93c5fd;">MOCK TESTS &amp; QUIZZES</div>
+                  <div class="app-card-subtitle" style="color:#60a5fa;">${exactTests.length} Tests in this section</div>
+                </div>
               </div>
+              <div class="app-card-arrow" style="color:#60a5fa;">›</div>
             </div>
-            <div class="app-card-arrow">›</div>
-          </div>
+          ` : ''}
+          ${exactNotes.length > 0 ? `
+            <div class="app-card" style="border: 2px solid #db2777;" onclick="currentContentType = 'notes'; renderPortalView();">
+              <div class="app-card-left">
+                <div class="folder-icon-circle" style="background:#831843; color:#fbcfe8;">📖</div>
+                <div>
+                  <div class="app-card-title" style="color:#fbcfe8;">FREE NOTES &amp; PDFS</div>
+                  <div class="app-card-subtitle" style="color:#f472b6;">${exactNotes.length} PDF Notes</div>
+                </div>
+              </div>
+              <div class="app-card-arrow" style="color:#f472b6;">›</div>
+            </div>
+          ` : ''}
+          ${exactBooks.length > 0 ? `
+            <div class="app-card" style="border: 2px solid #f59e0b;" onclick="currentContentType = 'books'; renderPortalView();">
+              <div class="app-card-left">
+                <div class="folder-icon-circle" style="background:#78350f; color:#fde68a;">🛒</div>
+                <div>
+                  <div class="app-card-title" style="color:#fde68a;">RECOMMENDED BOOKS</div>
+                  <div class="app-card-subtitle" style="color:#fbbf24;">${exactBooks.length} Reference Books</div>
+                </div>
+              </div>
+              <div class="app-card-arrow" style="color:#fbbf24;">›</div>
+            </div>
+          ` : ''}
         `;
-      });
-
-      container.innerHTML = `
-        <div class="breadcrumb-bar">
-          <button class="back-btn" onclick="goBack()">← Back to All Exams</button>
-          <span>${currentExam}</span>
-        </div>
-
-        <div class="hero-banner" style="padding:14px;">
-          <h1 style="font-size:16px;">${currentExam} · SELECT SUBJECT</h1>
-          <p>Choose subject to practice chapter-wise tests, notes or books</p>
-        </div>
-
-        <div class="search-box-wrapper">
-          <span class="search-icon">🔍</span>
-          <input type="text" class="search-input" id="searchBarInput" placeholder="Search subject..." oninput="handleSearch(this.value)" value="${searchQuery}">
-        </div>
-
-        <div>${cardsHtml || '<div class="card" style="text-align:center; color:#94a3b8;">No subjects found for this exam.</div>'}</div>
-      `;
-    }
-
-    /* SCREEN 3: MOCK TESTS / NOTES / BOOKS SELECTION */
-    function renderContentTypeScreen(container) {
-      const testCount = allTests.filter(t => 
-        cleanStr(t.exam || t.section) === cleanStr(currentExam) && cleanStr(t.subject) === cleanStr(currentSubject)
-      ).length;
-
-      const noteCount = allResources.filter(r => 
-        cleanStr(r.exam || r.section) === cleanStr(currentExam) && 
-        cleanStr(r.subject || r.category) === cleanStr(currentSubject) && 
-        r.type !== 'book'
-      ).length;
-
-      const bookCount = allResources.filter(r => 
-        cleanStr(r.exam || r.section) === cleanStr(currentExam) && 
-        cleanStr(r.subject || r.category) === cleanStr(currentSubject) && 
-        r.type === 'book'
-      ).length;
-
-      container.innerHTML = `
-        <div class="breadcrumb-bar">
-          <button class="back-btn" onclick="goBack()">← Back to Subjects</button>
-          <span>${currentSubject}</span>
-        </div>
-
-        <div class="hero-banner" style="padding:16px; margin-bottom:20px;">
-          <h1 style="font-size:16px;">${currentExam} &gt; ${currentSubject}</h1>
-          <p>Select category to view materials:</p>
-        </div>
-
-        <!-- Option 1: Mock Tests -->
-        <div class="app-card" style="border: 2px solid #2563eb;" onclick="selectContentType('mocks')">
-          <div class="app-card-left">
-            <div class="folder-icon-circle" style="background:#1e3a8a; color:#93c5fd; font-size:22px;">⚡</div>
-            <div>
-              <div class="app-card-title" style="color:#93c5fd;">MOCK TESTS &amp; QUIZZES</div>
-              <div class="app-card-subtitle" style="color:#60a5fa;">${testCount} Sequence-Arranged Test Papers</div>
-            </div>
-          </div>
-          <div class="app-card-arrow" style="color:#60a5fa;">›</div>
-        </div>
-
-        <!-- Option 2: Notes & PDFs -->
-        <div class="app-card" style="border: 2px solid #db2777;" onclick="selectContentType('notes')">
-          <div class="app-card-left">
-            <div class="folder-icon-circle" style="background:#831843; color:#fbcfe8; font-size:22px;">📖</div>
-            <div>
-              <div class="app-card-title" style="color:#fbcfe8;">FREE NOTES &amp; PDFS</div>
-              <div class="app-card-subtitle" style="color:#f472b6;">${noteCount} Downloadable Study Files</div>
-            </div>
-          </div>
-          <div class="app-card-arrow" style="color:#f472b6;">›</div>
-        </div>
-
-        <!-- Option 3: Recommended Books -->
-        <div class="app-card" style="border: 2px solid #f59e0b;" onclick="selectContentType('books')">
-          <div class="app-card-left">
-            <div class="folder-icon-circle" style="background:#78350f; color:#fde68a; font-size:22px;">🛒</div>
-            <div>
-              <div class="app-card-title" style="color:#fde68a;">RECOMMENDED BOOKS</div>
-              <div class="app-card-subtitle" style="color:#fbbf24;">${bookCount} Standard Reference Books</div>
-            </div>
-          </div>
-          <div class="app-card-arrow" style="color:#fbbf24;">›</div>
-        </div>
-      `;
-    }
-
-    /* SCREEN 4: CONTENT LISTING */
-    function renderItemsScreen(container) {
-      if (currentContentType === 'mocks') {
-        renderMockTestsList(container);
-      } else if (currentContentType === 'notes') {
-        renderNotesList(container);
-      } else {
-        renderBooksList(container);
       }
+
+      container.innerHTML = `
+        ${breadcrumbHtml}
+        <div class="hero-banner">
+          <h1>${isHome ? 'TARGET RPSC &amp; STATE EXAMS' : currentNavPath[currentNavPath.length - 1]}</h1>
+          <p>${isHome ? 'Choose exam / teacher / section to explore content' : 'Select sub-section or content below'}</p>
+        </div>
+
+        <div class="search-box-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" id="searchBarInput" placeholder="Search section or topic..." oninput="handleSearch(this.value)" value="${searchQuery}">
+        </div>
+
+        <div>
+          ${folderCardsHtml || (!hubCardsHtml ? '<div class="card" style="text-align:center; color:#94a3b8;">No sections or tests created here yet. You can create one from Admin.</div>' : '')}
+          ${hubCardsHtml}
+        </div>
+      `;
     }
 
-    function renderMockTestsList(container) {
-      let filtered = allTests.filter(t => {
-        const matchExam = cleanStr(t.exam || t.section) === cleanStr(currentExam);
-        const matchSubj = cleanStr(t.subject) === cleanStr(currentSubject);
-        const matchSearch = !searchQuery || 
-          (t.title && t.title.toLowerCase().includes(searchQuery)) ||
-          (t.desc && t.desc.toLowerCase().includes(searchQuery));
-        return matchExam && matchSubj && matchSearch;
-      });
-
-      filtered.sort((a, b) => (parseInt(a.order || 9999, 10)) - (parseInt(b.order || 9999, 10)));
-
+    /* LEAF CONTENT VIEW (MOCKS, NOTES, BOOKS) */
+    function renderLeafContentView(container, exactTests, exactNotes, exactBooks) {
+      let title = '';
       let listHtml = '';
-      if(filtered.length === 0) {
-        listHtml = `<div class="card" style="text-align:center; padding:30px; color:#94a3b8; border:1px dashed #334155;">No mock tests found in this subject yet.</div>`;
-      } else {
-        filtered.forEach((t, i) => {
-          const originalIndex = allTests.findIndex(item => item.id === t.id);
-          const history = userAttempts[t.id] || [];
-          let historyBadge = '';
-          if(history.length > 0) {
-            const lastAttempt = history[history.length - 1];
-            historyBadge = `
-              <div style="font-size:11px; background:#064e3b; color:#6ee7b7; padding:4px 8px; border-radius:4px; margin-top:8px; display:inline-block; font-weight:700;">
-                ✓ Attempted ${history.length} time(s) · Last Score: ${lastAttempt.score}/${lastAttempt.total} (${lastAttempt.date})
+
+      if (currentContentType === 'mocks') {
+        title = 'Mock Tests &amp; Quizzes';
+        let filtered = exactTests.filter(t => !searchQuery || (t.title && t.title.toLowerCase().includes(searchQuery)));
+        filtered.sort((a, b) => (parseInt(a.order || 9999, 10)) - (parseInt(b.order || 9999, 10)));
+
+        if (filtered.length === 0) {
+          listHtml = `<div class="card" style="text-align:center; padding:30px; color:#94a3b8;">No tests found matching search.</div>`;
+        } else {
+          filtered.forEach((t, i) => {
+            const originalIndex = allTests.findIndex(item => item.id === t.id);
+            const history = userAttempts[t.id] || [];
+            let historyBadge = '';
+            if (history.length > 0) {
+              const lastAttempt = history[history.length - 1];
+              historyBadge = `
+                <div style="font-size:11px; background:#064e3b; color:#6ee7b7; padding:4px 8px; border-radius:4px; margin-top:8px; display:inline-block; font-weight:700;">
+                  ✓ Attempted ${history.length} time(s) · Last Score: ${lastAttempt.score}/${lastAttempt.total} (${lastAttempt.date})
+                </div>
+              `;
+            }
+
+            const negMarkText = (typeof t.negativeMark !== 'undefined' && t.negativeMark > 0) 
+              ? ` · Neg: -${t.negativeMark}` 
+              : ' · No Neg Marking';
+
+            listHtml += `
+              <div class="test-card">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span class="test-seq-badge">#${t.order || (i + 1)} Test</span>
+                  <span style="font-size:11px; color:#64748b;">⏱️ ${t.time || 15} Mins</span>
+                </div>
+                <h3>${t.title}</h3>
+                <p>${t.desc || 'Mock test with detailed solutions.'}</p>
+                ${historyBadge}
+                <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #1e293b; padding-top:12px; margin-top:12px;">
+                  <span style="font-size:11px; color:#94a3b8;">📝 ${(t.questions || []).length} Qs ${negMarkText}</span>
+                  <button class="btn-primary" onclick="startTest(${originalIndex})">
+                    ${history.length > 0 ? '🔄 Reattempt' : 'Start Test →'}
+                  </button>
+                </div>
               </div>
             `;
-          }
+          });
+        }
+      } else if (currentContentType === 'notes') {
+        title = 'Notes &amp; PDFs';
+        let filtered = exactNotes.filter(n => !searchQuery || (n.title && n.title.toLowerCase().includes(searchQuery)));
+        filtered.sort((a, b) => (parseInt(a.order || 9999, 10)) - (parseInt(b.order || 9999, 10)));
 
-          const negMarkText = (typeof t.negativeMark !== 'undefined' && t.negativeMark > 0) 
-            ? ` · Neg: -${t.negativeMark}` 
-            : ' · No Neg Marking';
-
-          listHtml += `
-            <div class="test-card">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span class="test-seq-badge">#${t.order || (i + 1)} Test Paper</span>
-                <span style="font-size:11px; color:#64748b;">⏱️ ${t.time || 15} Mins</span>
-              </div>
-              <h3>${t.title}</h3>
-              <p>${t.desc || 'Comprehensive exam-pattern test with full solutions.'}</p>
-              ${historyBadge}
-              <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #1e293b; padding-top:12px; margin-top:12px;">
-                <span style="font-size:11px; color:#94a3b8;">📝 ${(t.questions || []).length} Qs ${negMarkText}</span>
-                <button class="btn-primary" onclick="startTest(${originalIndex})">
-                  ${history.length > 0 ? '🔄 Reattempt' : 'Start Test →'}
-                </button>
-              </div>
-            </div>
-          `;
-        });
-      }
-
-      container.innerHTML = `
-        <div class="breadcrumb-bar">
-          <button class="back-btn" onclick="goBack()">← Back</button>
-          <span>${currentSubject} · Mock Tests</span>
-        </div>
-
-        <div class="search-box-wrapper">
-          <span class="search-icon">🔍</span>
-          <input type="text" class="search-input" id="searchBarInput" placeholder="Search tests in this subject..." oninput="handleSearch(this.value)" value="${searchQuery}">
-        </div>
-
-        <div>${listHtml}</div>
-      `;
-    }
-
-    function renderNotesList(container) {
-      let filtered = allResources.filter(r => {
-        const matchExam = cleanStr(r.exam || r.section) === cleanStr(currentExam);
-        const matchSubj = cleanStr(r.subject || r.category) === cleanStr(currentSubject);
-        const matchSearch = !searchQuery || 
-          (r.title && r.title.toLowerCase().includes(searchQuery)) ||
-          (r.desc && r.desc.toLowerCase().includes(searchQuery));
-        return matchExam && matchSubj && matchSearch && r.type !== 'book';
-      });
-
-      filtered.sort((a, b) => (parseInt(a.order || 9999, 10)) - (parseInt(b.order || 9999, 10)));
-
-      let listHtml = '';
-      if(filtered.length === 0) {
-        listHtml = `<div class="card" style="text-align:center; padding:30px; color:#94a3b8; border:1px dashed #334155;">No PDF notes added in this section yet.</div>`;
-      } else {
         filtered.forEach((n, idx) => {
           listHtml += `
             <div class="test-card">
               <span class="test-seq-badge">#${n.order || (idx + 1)} PDF Note</span>
               <h3>${n.title}</h3>
-              <p>${n.desc || 'High quality exam preparation document.'}</p>
+              <p>${n.desc || 'Curated study PDF document.'}</p>
               <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #1e293b; padding-top:10px;">
                 <span style="font-size:11px; color:#94a3b8;">Format: PDF File</span>
                 <a href="${n.telegram_url || '#'}" target="_blank" class="badge-telegram">
@@ -690,49 +609,21 @@
             </div>
           `;
         });
-      }
-
-      container.innerHTML = `
-        <div class="breadcrumb-bar">
-          <button class="back-btn" onclick="goBack()">← Back</button>
-          <span>${currentSubject} · Notes &amp; PDFs</span>
-        </div>
-
-        <div class="search-box-wrapper">
-          <span class="search-icon">🔍</span>
-          <input type="text" class="search-input" id="searchBarInput" placeholder="Search notes..." oninput="handleSearch(this.value)" value="${searchQuery}">
-        </div>
-
-        <div>${listHtml}</div>
-      `;
-    }
-
-    function renderBooksList(container) {
-      let filtered = allResources.filter(b => {
-        const matchExam = cleanStr(b.exam || b.section) === cleanStr(currentExam);
-        const matchSubj = cleanStr(b.subject || b.category) === cleanStr(currentSubject);
-        const matchSearch = !searchQuery || 
-          (b.title && b.title.toLowerCase().includes(searchQuery)) ||
-          (b.desc && b.desc.toLowerCase().includes(searchQuery));
-        return matchExam && matchSubj && matchSearch && b.type === 'book';
-      });
-
-      filtered.sort((a, b) => (parseInt(a.order || 9999, 10)) - (parseInt(b.order || 9999, 10)));
-
-      let listHtml = '';
-    if(filtered.length === 0) {
-        listHtml = `<div class="card" style="text-align:center; padding:30px; color:#94a3b8; border:1px dashed #334155;">No recommended books added in this subject yet.</div>`;
       } else {
+        title = 'Recommended Books';
+        let filtered = exactBooks.filter(b => !searchQuery || (b.title && b.title.toLowerCase().includes(searchQuery)));
+        filtered.sort((a, b) => (parseInt(a.order || 9999, 10)) - (parseInt(b.order || 9999, 10)));
+
         filtered.forEach((b, idx) => {
           listHtml += `
             <div class="test-card">
               <span class="test-seq-badge">#${b.order || (idx + 1)} Book</span>
               <h3>${b.title}</h3>
-              <p>${b.desc || 'Standard reference material for comprehensive preparation.'}</p>
+              <p>${b.desc || 'Recommended reference book.'}</p>
               <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #1e293b; padding-top:10px;">
-                <span style="font-size:12px; font-weight:800; color:#38bdf8;">${b.price || 'Best Price Online'}</span>
+                <span style="font-size:12px; font-weight:800; color:#38bdf8;">${b.price || 'Best Price'}</span>
                 <a href="${b.buy_url || '#'}" target="_blank" class="badge-amazon">
-                  🛒 Buy on Amazon / Flipkart
+                  🛒 Buy Online
                 </a>
               </div>
             </div>
@@ -742,20 +633,20 @@
 
       container.innerHTML = `
         <div class="breadcrumb-bar">
-          <button class="back-btn" onclick="goBack()">← Back</button>
-          <span>${currentSubject} · Recommended Books</span>
+          <button class="back-btn" onclick="navigateUp()">← Back</button>
+          <span>${currentNavPath.join(' / ')} &gt; ${title}</span>
         </div>
 
         <div class="search-box-wrapper">
           <span class="search-icon">🔍</span>
-          <input type="text" class="search-input" id="searchBarInput" placeholder="Search books..." oninput="handleSearch(this.value)" value="${searchQuery}">
+          <input type="text" class="search-input" id="searchBarInput" placeholder="Search in this section..." oninput="handleSearch(this.value)" value="${searchQuery}">
         </div>
 
         <div>${listHtml}</div>
       `;
     }
 
-    /* TEST TAKING SYSTEM */
+    /* TEST TAKING & SCORECARD ENGINE */
     function startTest(index) {
       currentQuiz = allTests[index];
       if(!currentQuiz || !currentQuiz.questions || currentQuiz.questions.length === 0) {
@@ -835,7 +726,7 @@
         topControls = `
           <div class="mock-top-bar" style="border-color:#059669;">
             <button class="btn-grid-toggle" style="background:#059669;" onclick="showGrid()">
-              ☰ Question Palette (${cur + 1}/${total})
+              ☰ Palette (${cur + 1}/${total})
             </button>
             <div style="display:flex; align-items:center; gap:8px;">
               <span style="font-weight:800; font-size:12px; color:#34d399;">📖 Solutions</span>
@@ -863,7 +754,6 @@
           <div style="background:#172554; border-left:4px solid #3b82f6; padding:12px; border-radius:6px; margin-top:14px; font-size:13px; color:#cbd5e1; line-height:1.5;">
             <div style="font-weight:800; color:#93c5fd; margin-bottom:4px;">💡 Detailed Solution &amp; Explanation:</div>
             <div>${q.exp || 'No detailed explanation provided for this question.'}</div>
-            <div style="font-size:11px; color:#94a3b8; margin-top:6px;">Tag: <b>${q.subject || 'Subject'}</b> &gt; ${q.topic || 'General'}</div>
           </div>
         `;
       }
@@ -999,13 +889,12 @@
     }
 
     function jumpToQ(index) {
-    cur = index;
+      cur = index;
       hideGrid();
       renderQuestionScreen();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    /* PERFORMANCE SCORECARD */
     function finishTest() {
       if(timer) clearInterval(timer);
       hideGrid();
@@ -1053,28 +942,7 @@
       });
       localStorage.setItem('ps_user_attempts', JSON.stringify(userAttempts));
 
-      const history = userAttempts[currentQuiz.id];
-      let comparisonHtml = '';
-      if(history.length > 1) {
-        const prev = history[history.length - 2];
-        const diff = (finalScore - prev.score).toFixed(2);
-        const diffText = diff >= 0 ? `+${diff} marks improvement! 📈` : `${diff} marks change.`;
-        comparisonHtml = `
-          <div style="background:#064e3b; border:1px solid #059669; border-radius:8px; padding:12px; margin-bottom:16px; font-size:12px; color:#a7f3d0;">
-            <b>Performance Comparison:</b> Previous Score: <b>${prev.score}/${prev.total}</b> on ${prev.date}. (${diffText})
-          </div>
-        `;
-      }
-
-      let strongList = [];
-      let weakList = [];
-      Object.keys(topicStats).forEach(t => {
-        const p = (topicStats[t].correct / topicStats[t].total) * 100;
-        if(p >= 60) strongList.push(`${t} (${Math.round(p)}%)`);
-        else weakList.push(`${t} (${Math.round(p)}%)`);
-      });
-
-      const shareText = `🎯 I scored ${finalScore}/${totalPossibleMarks} (${scorePct}%) in ${currentQuiz.title}! Beat my score: ${window.location.href}`;
+      const shareText = `🎯 I scored ${finalScore}/${totalPossibleMarks} (${scorePct}%) in ${currentQuiz.title}! Test link: ${window.location.href}`;
 
       document.getElementById('app').innerHTML = `
         <div class="card" style="text-align:center; padding:24px 16px;">
@@ -1085,33 +953,21 @@
             <div style="font-size:11px; text-transform:uppercase; color:#94a3b8; font-weight:700;">Final Obtained Marks</div>
             <div style="font-size:38px; font-weight:900; color:#38bdf8; margin: 4px 0;">${finalScore} <span style="font-size:16px; color:#64748b; font-weight:500;">/ ${totalPossibleMarks}</span></div>
             <div style="font-size:13px; font-weight:700; color:#60a5fa;">Accuracy: ${scorePct}%</div>
-            ${negRate > 0 ? `<div style="font-size:11px; color:#f87171; margin-top:4px;">Negative deduction applied (-${(wrong * negRate).toFixed(2)} marks)</div>` : ''}
+            ${negRate > 0 ? `<div style="font-size:11px; color:#f87171; margin-top:4px;">Negative deduction: -${(wrong * negRate).toFixed(2)} marks</div>` : ''}
           </div>
-          ${comparisonHtml}
 
           <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-bottom:16px;">
             <div style="background:#064e3b; border:1px solid #047857; padding:12px; border-radius:8px;">
               <div style="font-size:18px; font-weight:800; color:#34d399;">${cor}</div>
-              <div style="font-size:11px; font-weight:700; color:#a7f3d0;">Correct (+${cor * marksPerQ})</div>
+              <div style="font-size:11px; font-weight:700; color:#a7f3d0;">Correct</div>
             </div>
             <div style="background:#7f1d1d; border:1px solid #991b1b; padding:12px; border-radius:8px;">
               <div style="font-size:18px; font-weight:800; color:#f87171;">${wrong}</div>
-              <div style="font-size:11px; font-weight:700; color:#fecaca;">Incorrect (-${(wrong * negRate).toFixed(2)})</div>
+              <div style="font-size:11px; font-weight:700; color:#fecaca;">Incorrect</div>
             </div>
             <div style="background:#1e293b; border:1px solid #334155; padding:12px; border-radius:8px;">
               <div style="font-size:18px; font-weight:800; color:#94a3b8;">${unattempted}</div>
               <div style="font-size:11px; font-weight:700; color:#cbd5e1;">Skipped</div>
-            </div>
-          </div>
-
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:left; margin-bottom:16px;">
-            <div style="background:#064e3b; border:1px solid #047857; border-radius:8px; padding:10px;">
-              <div style="font-weight:700; font-size:12px; color:#6ee7b7; margin-bottom:4px;">💪 Strong Topics:</div>
-              <div style="font-size:11px; color:#a7f3d0;">${strongList.join(', ') || 'Keep practicing.'}</div>
-            </div>
-            <div style="background:#7f1d1d; border:1px solid #991b1b; border-radius:8px; padding:10px;">
-              <div style="font-weight:700; font-size:12px; color:#fca5a5; margin-bottom:4px;">⚠️ Weak Topics:</div>
-              <div style="font-size:11px; color:#fecaca;">${weakList.join(', ') || 'Great! None detected.'}</div>
             </div>
           </div>
 
@@ -1138,56 +994,114 @@
       renderQuestionScreen();
     }
 
-    /* COMPLETE ADMIN PANEL */
+    /* ADMIN PANEL - FAST BATCH/HIERARCHY MANAGEMENT & BULK ACTIONS */
     function openAdmin() {
-      const pin = prompt('Enter Admin Security PIN:');
+    const pin = prompt('Enter Admin Security PIN:');
       if (pin === '7073') {
+        selectedTestIds.clear();
         renderAdminHome();
       } else if (pin !== null) {
         alert('Invalid PIN!');
       }
     }
 
-    function renderAdminHome() {
-      let resListHtml = '';
-      allResources.forEach((r, idx) => {
-        const isNote = (r.type === 'note' || !r.type);
-        resListHtml += `
-          <div style="background:#1e293b; border:1px solid #334155; border-radius:8px; padding:10px 12px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-            <div>
-              <span class="tag" style="background:${isNote ? '#1e3a8a' : '#78350f'}; color:${isNote ? '#93c5fd' : '#fde68a'};">
-                ${isNote ? '📄 PDF Note' : '🛒 Book'} · ${r.exam || '1st Grade'} · ${r.subject || r.category || 'General'} · Seq #${r.order || 1}
-              </span>
-              <div style="font-weight:700; font-size:13px; color:#f8fafc; margin-top:2px;">${r.title}</div>
-              <div style="font-size:11px; color:#94a3b8; word-break:break-all;">${r.telegram_url || r.buy_url || 'No URL'}</div>
-            </div>
-            <button class="btn-danger" onclick="deleteResource(${idx})">🗑️ Delete</button>
-          </div>
-        `;
+    function toggleSelectTest(id) {
+      if (selectedTestIds.has(id)) selectedTestIds.delete(id);
+      else selectedTestIds.add(id);
+      renderAdminHome();
+    }
+
+    function toggleSelectAll(selectAll) {
+      if (selectAll) {
+        allTests.forEach(t => selectedTestIds.add(t.id));
+      } else {
+        selectedTestIds.clear();
+      }
+      renderAdminHome();
+    }
+
+    /* BULK OPERATIONS */
+    async function bulkMovePrompt() {
+      if (selectedTestIds.size === 0) return alert('Select tests first using checkboxes!');
+      const newPath = prompt(`Move ${selectedTestIds.size} selected tests to new path:\n(e.g. "1st Grade / Beniwal Sir / Class Quiz")`);
+      if (!newPath || !newPath.trim()) return;
+
+      const pathArr = newPath.split('/').map(p => p.trim()).filter(Boolean);
+
+      allTests.forEach(t => {
+        if (selectedTestIds.has(t.id)) {
+          t.path = pathArr;
+          t.exam = pathArr[0] || '1st Grade';
+          t.section = t.exam;
+          t.subject = pathArr[1] || 'General';
+        }
       });
 
+      await saveToCloud();
+      alert(`✅ ${selectedTestIds.size} tests moved successfully!`);
+      selectedTestIds.clear();
+      renderAdminHome();
+    }
+
+    async function bulkAutoSequencePrompt() {
+      if (selectedTestIds.size === 0) return alert('Select tests first using checkboxes!');
+      const startNumStr = prompt(`Enter starting sequence number for ${selectedTestIds.size} tests:`, "1");
+      if (startNumStr === null) return;
+      let curNum = parseInt(startNumStr, 10) || 1;
+
+      allTests.forEach(t => {
+        if (selectedTestIds.has(t.id)) {
+          t.order = curNum++;
+        }
+      });
+
+      await saveToCloud();
+      alert(`✅ Sequences updated for ${selectedTestIds.size} tests!`);
+      renderAdminHome();
+    }
+
+    async function bulkDeletePrompt() {
+      if (selectedTestIds.size === 0) return alert('Select tests first using checkboxes!');
+      if (!confirm(`Are you sure you want to permanently delete ${selectedTestIds.size} selected tests?`)) return;
+
+      allTests = allTests.filter(t => !selectedTestIds.has(t.id));
+      await saveToCloud();
+      selectedTestIds.clear();
+      alert('🗑️ Selected tests deleted!');
+      renderAdminHome();
+    }
+
+    function renderAdminHome() {
+      // Group tests by path for clear tree view
       const sortedTests = [...allTests].sort((a,b) => {
-        if((a.exam || '') !== (b.exam || '')) return (a.exam || '').localeCompare(b.exam || '');
+        const pa = getItemPathString(a);
+        const pb = getItemPathString(b);
+        if (pa !== pb) return pa.localeCompare(pb);
         return (parseInt(a.order || 9999, 10)) - (parseInt(b.order || 9999, 10));
       });
 
       let testListHtml = '';
       sortedTests.forEach((t) => {
+        const isChecked = selectedTestIds.has(t.id);
+        const pathStr = getItemPathString(t);
+
         testListHtml += `
-          <div style="background:#1e293b; border:1px solid #334155; border-radius:8px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-            <div>
-              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+          <div style="background:#1e293b; border:1px solid ${isChecked ? '#3b82f6' : '#334155'}; border-radius:8px; padding:12px; margin-bottom:10px; display:flex; align-items:flex-start; gap:12px;">
+            <input type="checkbox" style="width:18px; height:18px; margin-top:4px; cursor:pointer;" ${isChecked ? 'checked' : ''} onchange="toggleSelectTest('${t.id}')">
+            
+            <div style="flex:1;">
+              <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:4px;">
+                <span class="tag" style="background:#0284c7; color:#fff;">📂 ${pathStr}</span>
                 <span class="tag">Seq: #${t.order || 1}</span>
-                <span class="tag" style="background:#374151; color:#9ca3af;">${t.exam || '1st Grade'}</span>
-                <span class="tag" style="background:#1e1b4b; color:#a5b4fc;">${t.subject || 'General'}</span>
               </div>
-              <div style="font-weight:800; font-size:14px; color:#f8fafc; margin-top:4px;">${t.title}</div>
+              <div style="font-weight:800; font-size:14px; color:#f8fafc;">${t.title}</div>
               <div style="font-size:11px; color:#94a3b8;">${(t.questions || []).length} Qs · ${t.time || 15} Mins · Neg: -${t.negativeMark || 0}</div>
             </div>
-            <div style="display:flex; gap:6px; flex-wrap:wrap;">
-              <button class="btn-outline" style="border-color:#38bdf8; color:#38bdf8;" onclick="quickEditTestPrompt('${t.id}')">⚡ Quick Rename / Order</button>
-              <button class="btn-outline" style="border-color:#3b82f6; color:#60a5fa;" onclick="loadTestForEdit('${t.id}')">✏️ Edit All</button>
-              <button class="btn-danger" onclick="deleteTest('${t.id}')">🗑️</button>
+
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              <button class="btn-outline" style="border-color:#38bdf8; color:#38bdf8; padding:5px 10px; font-size:11px;" onclick="quickEditTestPrompt('${t.id}')">⚡ Fast Move</button>
+              <button class="btn-outline" style="border-color:#3b82f6; color:#60a5fa; padding:5px 10px; font-size:11px;" onclick="loadTestForEdit('${t.id}')">✏️ Edit</button>
+              <button class="btn-danger" style="padding:5px 10px; font-size:11px;" onclick="deleteTest('${t.id}')">🗑️</button>
             </div>
           </div>
         `;
@@ -1196,20 +1110,34 @@
       document.getElementById('app').innerHTML = `
         <div class="card">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid #334155; padding-bottom:8px;">
-            <h2 style="font-size:18px; font-weight:800; color:#f8fafc;">⚙️ Cloud Admin Dashboard</h2>
+            <h2 style="font-size:18px; font-weight:800; color:#f8fafc;">⚙️ Multi-Level Admin Dashboard</h2>
             <button class="btn-outline" onclick="goHome()">✕ Exit Admin</button>
           </div>
 
-          <!-- Add Resource Buttons -->
+          <!-- Quick Action Buttons -->
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
-            <button class="btn-primary" style="padding:10px;" onclick="promptAddResource('note')">+ Add PDF / Telegram Note</button>
+            <button class="btn-primary" style="padding:10px;" onclick="promptAddResource('note')">+ Add PDF Note</button>
             <button class="btn-outline" style="padding:10px; border-color:#f59e0b; color:#fde68a;" onclick="promptAddResource('book')">+ Add Recommended Book Link</button>
+          </div>
+
+          <!-- BULK CONTROL BAR -->
+          <div class="bulk-toolbar">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <input type="checkbox" id="selectAllCheckbox" style="width:18px; height:18px; cursor:pointer;" ${allTests.length > 0 && selectedTestIds.size === allTests.length ? 'checked' : ''} onchange="toggleSelectAll(this.checked)">
+              <label for="selectAllCheckbox" style="font-size:12px; font-weight:800; color:#93c5fd; cursor:pointer;">
+                Select All (${selectedTestIds.size}/${allTests.length})
+              </label>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button class="btn-primary" style="padding:6px 12px; font-size:11px;" onclick="bulkMovePrompt()">📦 Move to Folder / Path</button>
+              <button class="btn-outline" style="padding:6px 12px; font-size:11px; border-color:#38bdf8; color:#38bdf8;" onclick="bulkAutoSequencePrompt()">⚡ Auto-Sequence #</button>
+              <button class="btn-danger" style="padding:6px 12px; font-size:11px;" onclick="bulkDeletePrompt()">🗑️ Delete Selected</button>
+            </div>
           </div>
 
           <!-- Upload JSON Files -->
           <div style="background:#1e293b; border:2px dashed #3b82f6; padding:16px; border-radius:10px; margin-bottom:16px; text-align:center;">
             <div style="font-weight:800; font-size:14px; color:#60a5fa; margin-bottom:6px;">🚀 Quick Upload JSON Questions File</div>
-            <div style="font-size:12px; color:#94a3b8; margin-bottom:10px;">Select JSON file containing tests to upload to cloud:</div>
             <input type="file" id="json-file-input" accept=".json,.txt" style="display:none;" onchange="uploadJsonFile(event)">
             <button class="btn-primary" style="padding:8px 18px;" onclick="document.getElementById('json-file-input').click()">
               📁 Choose File &amp; Upload
@@ -1219,44 +1147,42 @@
           <!-- Raw JSON Paste Box -->
           <div style="background:#1e293b; border:1px dashed #475569; padding:12px; border-radius:8px; margin-bottom:16px;">
             <div style="font-weight:700; font-size:13px; color:#cbd5e1; margin-bottom:6px;">📋 Or Paste Raw JSON Code Directly:</div>
-            <textarea id="raw-json-paste" class="form-control" style="min-height:75px; font-family:monospace; font-size:12px;" placeholder="Paste questions JSON array or full test object here..."></textarea>
+            <textarea id="raw-json-paste" class="form-control" style="min-height:70px; font-family:monospace; font-size:12px;" placeholder="Paste JSON questions array or test object here..."></textarea>
             <button class="btn-outline" style="margin-top:8px; width:100%; border-color:#3b82f6; color:#60a5fa;" onclick="importFromPasteBox()">Save to Firebase Cloud</button>
           </div>
 
-          <!-- Manual Form Button -->
+          <!-- Manual Create -->
           <button class="btn-success" style="width:100%; padding:11px; font-size:13px; margin-bottom:16px;" onclick="startNewTestForm()">
             + Create New Test Manually (Form)
           </button>
 
-          <!-- Uploaded Notes & Books Section -->
-          <div style="background:#1e293b; border:1px solid #334155; border-radius:10px; padding:14px; margin-bottom:16px;">
-            <h3 style="font-size:14px; font-weight:800; margin-bottom:10px; color:#f8fafc;">📚 Uploaded PDFs &amp; Books (${allResources.length}):</h3>
-            ${resListHtml || '<div style="color:#64748b; font-size:12px;">No PDFs or books added yet.</div>'}
-          </div>
-
-          <!-- Active Mock Tests -->
+          <!-- Active Tests List -->
           <h3 style="font-size:14px; font-weight:800; margin-bottom:10px; color:#f8fafc;">Active Mock Tests (${allTests.length}):</h3>
           ${testListHtml || '<div style="color:#64748b; font-size:13px;">No tests found.</div>'}
         </div>
       `;
     }
 
+    /* FAST EDIT SINGLE TEST */
     async function quickEditTestPrompt(id) {
       const t = allTests.find(item => item.id === id);
       if(!t) return;
+      const currentPath = getItemPathString(t);
+      const newPath = prompt(`Set Folder Path (Use '/' for sub-folders):\nExample: "1st Grade / Beniwal Sir / Class Quiz"`, currentPath);
+      if(newPath === null) return;
+
       const newTitle = prompt("Edit Test Title:", t.title);
       if(newTitle === null) return;
-      const newExam = prompt("Edit Exam Category (e.g. 1st Grade, 2nd Grade, 3rd Grade / REET):", t.exam || t.section || "1st Grade");
-      if(newExam === null) return;
-      const newSubj = prompt("Edit Subject (e.g. Political Science, History, GK):", t.subject || "Political Science");
-      if(newSubj === null) return;
+
       const newOrder = prompt("Edit Sequence / Order #:", t.order || 1);
       if(newOrder === null) return;
 
-      t.title = newTitle.trim() || t.title;
-      t.exam = newExam.trim() || t.exam;
+      const pathArr = newPath.split('/').map(p => p.trim()).filter(Boolean);
+      t.path = pathArr;
+      t.exam = pathArr[0] || '1st Grade';
       t.section = t.exam;
-      t.subject = newSubj.trim() || t.subject;
+      t.subject = pathArr[1] || 'General';
+      t.title = newTitle.trim() || t.title;
       t.order = parseInt(newOrder, 10) || t.order;
 
       await saveToCloud();
@@ -1264,38 +1190,27 @@
       renderAdminHome();
     }
 
-    async function deleteResource(index) {
-      const item = allResources[index];
-      if (!item) return;
-
-      if (confirm(`Delete "${item.title || 'this item'}" permanently?`)) {
-        allResources.splice(index, 1);
-        await saveResourcesToCloud();
-        alert("✅ Item deleted successfully!");
-        renderAdminHome();
-      }
-    }
-
     async function promptAddResource(type) {
       const title = prompt(`Enter ${type === 'note' ? 'PDF/Note' : 'Book'} Title:`);
       if(!title) return;
-      const exam = prompt("Target Exam (e.g. 1st Grade, 2nd Grade, 3rd Grade / REET, Assistant Professor):", "1st Grade");
-      const subj = prompt("Subject (e.g. Political Science, History, GK):", "Political Science");
+      const pathStr = prompt("Folder Path (e.g. 1st Grade / Beniwal Sir / Notes):", "1st Grade / Notes");
       const order = prompt("Display Sequence Number (e.g. 1, 2, 3):", "1");
-      const url = prompt(type === 'note' ? "Enter Telegram File URL or Direct Link:" : "Enter Store/Amazon Affiliate Link:");
+      const url = prompt(type === 'note' ? "Enter Telegram File URL or Link:" : "Enter Store/Amazon Affiliate Link:");
       if(!url) return;
 
-      const price = type === 'book' ? prompt("Enter Book Price / Note (optional):", "Check Online") : "";
+      const price = type === 'book' ? prompt("Enter Book Price (optional):", "Check Online") : "";
+      const pathArr = (pathStr || "1st Grade").split('/').map(p => p.trim()).filter(Boolean);
 
       allResources.push({
         id: 'res-' + Date.now(),
         type: type,
         title: title.trim(),
-        exam: exam ? exam.trim() : '1st Grade',
-        section: exam ? exam.trim() : '1st Grade',
-        subject: subj ? subj.trim() : 'General',
+        path: pathArr,
+        exam: pathArr[0] || '1st Grade',
+        section: pathArr[0] || '1st Grade',
+        subject: pathArr[1] || 'General',
         order: parseInt(order || 1, 10),
-        desc: type === 'note' ? 'Curated PDF material for exam revision.' : 'Recommended standard book.',
+        desc: type === 'note' ? 'Curated PDF material.' : 'Recommended book.',
         price: price || 'Check Online',
         telegram_url: url.trim(),
         buy_url: url.trim()
@@ -1313,65 +1228,37 @@
       try {
         const text = await file.text();
         const imported = JSON.parse(text);
-
         const rawQs = imported.questions || (Array.isArray(imported) ? imported : []);
         const newQs = normalizeQuestions(rawQs);
 
         if (!newQs || newQs.length === 0) {
-          alert("No valid questions found in this JSON file.");
+          alert("No valid questions found.");
           return;
         }
 
-        const suggestedId = imported.id || 'test-' + Date.now();
-        let targetTest = allTests.find(t => t.id === suggestedId);
+        const suggestedPath = imported.path ? (Array.isArray(imported.path) ? imported.path.join(' / ') : imported.path) : (imported.exam || "1st Grade");
+        const pathInput = prompt("Target Folder Path (Use '/' for sub-folders):", suggestedPath);
+        const pathArr = (pathInput || "1st Grade").split('/').map(p => p.trim()).filter(Boolean);
 
-        const chosenExam = imported.exam || imported.section || "1st Grade";
-        const chosenSubj = imported.subject || "Political Science";
-
-        if (targetTest) {
-          const choice = confirm(`'${targetTest.title}' already exists!\n\n[OK] = Merge questions into existing test\n[Cancel] = Create as a new test`);
-          if (choice) {
-            targetTest.questions = (targetTest.questions || []).concat(newQs);
-            targetTest.time = imported.time || targetTest.time || 15;
-            targetTest.negativeMark = typeof imported.negativeMark !== 'undefined' ? imported.negativeMark : (targetTest.negativeMark || 0.33);
-            targetTest.order = imported.order || targetTest.order || 1;
-          } else {
-            const newId = 'test-' + Date.now();
-            allTests.push({
-              id: newId,
-              title: (imported.title || targetTest.title) + " (New)",
-              exam: chosenExam,
-              section: chosenExam,
-              subject: chosenSubj,
-              order: imported.order || (allTests.length + 1),
-              time: imported.time || 15,
-              negativeMark: typeof imported.negativeMark !== 'undefined' ? imported.negativeMark : 0.33,
-              desc: imported.desc || "",
-              questions: newQs
-            });
-            targetTest = allTests[allTests.length - 1];
-          }
-        } else {
-          allTests.push({
-            id: suggestedId,
-            title: imported.title || file.name.replace(/\.[^/.]+$/, ""),
-            exam: chosenExam,
-            section: chosenExam,
-            subject: chosenSubj,
-            order: imported.order || (allTests.length + 1),
-            time: imported.time || 15,
-            negativeMark: typeof imported.negativeMark !== 'undefined' ? imported.negativeMark : 0.33,
-            desc: imported.desc || "",
-            questions: newQs
-          });
-          targetTest = allTests[allTests.length - 1];
-        }
+        const newId = imported.id || ('test-' + Date.now());
+        allTests.push({
+          id: newId,
+          title: imported.title || file.name.replace(/\.[^/.]+$/, ""),
+          path: pathArr,
+          exam: pathArr[0] || '1st Grade',
+          section: pathArr[0] || '1st Grade',
+          subject: pathArr[1] || 'General',
+          order: imported.order || (allTests.length + 1),
+          time: imported.time || 15,
+          negativeMark: typeof imported.negativeMark !== 'undefined' ? imported.negativeMark : 0.33,
+          desc: imported.desc || "",
+          questions: newQs
+        });
 
         await saveToCloud();
         renderAdminHome();
-        alert(`🎉 Test '${targetTest.title}' updated successfully with ${targetTest.questions.length} total questions.`);
+        alert(`🎉 Test '${allTests[allTests.length - 1].title}' uploaded to '${pathArr.join(' / ')}'!`);
       } catch (err) {
-        console.error(err);
         alert("Invalid JSON format.");
       } finally {
         event.target.value = '';
@@ -1385,21 +1272,20 @@
         const imported = JSON.parse(txt);
         let listToAdd = Array.isArray(imported) ? imported : [imported];
         
+        const pathInput = prompt("Target Folder Path for these tests (e.g. '1st Grade / Beniwal Sir / Class Quiz'):", "1st Grade");
+        const pathArr = (pathInput || "1st Grade").split('/').map(p => p.trim()).filter(Boolean);
+
         listToAdd.forEach(newT => {
           newT.questions = normalizeQuestions(newT.questions || []);
-          if(!newT.exam) newT.exam = newT.section || '1st Grade';
-          if(!newT.section) newT.section = newT.exam;
-          if(!newT.subject) newT.subject = 'Political Science';
+          newT.path = pathArr;
+          newT.exam = pathArr[0] || '1st Grade';
+          newT.section = newT.exam;
+          newT.subject = pathArr[1] || 'General';
           if(typeof newT.order === 'undefined') newT.order = allTests.length + 1;
           if(typeof newT.negativeMark === 'undefined') newT.negativeMark = 0.33;
           if(!newT.id) newT.id = 'test-' + Date.now();
           
-          const existingIdx = allTests.findIndex(x => x.id === newT.id);
-          if(existingIdx !== -1) {
-            allTests[existingIdx].questions = (allTests[existingIdx].questions || []).concat(newT.questions);
-          } else {
-            allTests.push(newT);
-          }
+          allTests.push(newT);
         });
 
         await saveToCloud();
@@ -1413,7 +1299,7 @@
     function startNewTestForm() {
       editingTestId = null;
       draftQuestions = [];
-      renderTestFormUI('Create New Mock Test', '', '1st Grade', 'Political Science', 1, 15, 0.33, '');
+      renderTestFormUI('Create New Mock Test', '', '1st Grade / General', 1, 15, 0.33, '');
     }
 
     function loadTestForEdit(id) {
@@ -1421,10 +1307,10 @@
       if(!t) return;
       editingTestId = id;
       draftQuestions = JSON.parse(JSON.stringify(t.questions || []));
-      renderTestFormUI('Edit Mock Test', t.title, t.exam || '1st Grade', t.subject || 'Political Science', t.order || 1, t.time || 15, typeof t.negativeMark !== 'undefined' ? t.negativeMark : 0.33, t.desc || '');
+      renderTestFormUI('Edit Mock Test', t.title, getItemPathString(t), t.order || 1, t.time || 15, typeof t.negativeMark !== 'undefined' ? t.negativeMark : 0.33, t.desc || '');
     }
 
-    function renderTestFormUI(heading, titleVal, examVal, subjVal, orderVal, timeVal, negVal, descVal) {
+    function renderTestFormUI(heading, titleVal, pathVal, orderVal, timeVal, negVal, descVal) {
       let qListHtml = '';
       draftQuestions.forEach((dq, index) => {
         qListHtml += `
@@ -1439,7 +1325,6 @@
 
       document.getElementById('app').innerHTML = `
         <div class="card" style="padding-bottom: 70px;">
-          <!-- TOP HEADER WITH IMMEDIATE SAVE BUTTON -->
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid #334155; padding-bottom:10px; gap:8px;">
             <h3 style="font-size:16px; font-weight:800; color:#f8fafc;">${heading}</h3>
             <div style="display:flex; gap:6px;">
@@ -1453,15 +1338,9 @@
             <input type="text" id="t-title" class="form-control" value="${titleVal}">
           </div>
 
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <div class="form-group">
-              <label>Target Exam (e.g. 1st Grade, 2nd Grade, 3rd Grade / REET)</label>
-              <input type="text" id="t-exam" class="form-control" value="${examVal}">
-            </div>
-            <div class="form-group">
-              <label>Subject (e.g. Political Science, History, GK)</label>
-              <input type="text" id="t-subject" class="form-control" value="${subjVal}">
-            </div>
+          <div class="form-group">
+            <label>Folder Path (Use '/' for sub-sections. e.g. "1st Grade / Beniwal Sir / Class Quiz")</label>
+            <input type="text" id="t-path" class="form-control" value="${pathVal}">
           </div>
 
           <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
@@ -1509,7 +1388,7 @@
               </div>
               <div class="form-group">
                 <label>Subject / Topic Tag</label>
-                <input type="text" id="q-topic" class="form-control" placeholder="e.g. Fundamental Rights">
+                <input type="text" id="q-topic" class="form-control" placeholder="e.g. Political Theory">
               </div>
               <div class="form-group">
                 <label>Explanation</label>
@@ -1538,8 +1417,7 @@
       renderTestFormUI(
         heading,
         document.getElementById('t-title').value,
-        document.getElementById('t-exam').value,
-        document.getElementById('t-subject').value,
+        document.getElementById('t-path').value,
         document.getElementById('t-order').value,
         document.getElementById('t-time').value,
         document.getElementById('t-neg').value,
@@ -1567,8 +1445,7 @@
 
     async function saveDraftTest() {
       const title = document.getElementById('t-title').value.trim();
-      const exam = document.getElementById('t-exam').value.trim();
-      const subject = document.getElementById('t-subject').value.trim();
+      const pathStr = document.getElementById('t-path').value.trim();
       const order = parseInt(document.getElementById('t-order').value, 10) || 1;
       const time = parseInt(document.getElementById('t-time').value, 10) || 15;
       const neg = parseFloat(document.getElementById('t-neg').value) || 0;
@@ -1577,8 +1454,7 @@
       if(!title) return alert('Test title is required!');
       if(draftQuestions.length === 0) return alert('Add at least one question!');
 
-      const finalExam = exam || '1st Grade';
-      const finalSubj = subject || 'Political Science';
+      const pathArr = (pathStr || '1st Grade').split('/').map(p => p.trim()).filter(Boolean);
 
       if(editingTestId) {
         const idx = allTests.findIndex(t => t.id === editingTestId);
@@ -1586,9 +1462,10 @@
           allTests[idx] = { 
             ...allTests[idx], 
             title, 
-            exam: finalExam, 
-            section: finalExam, 
-            subject: finalSubj, 
+            path: pathArr,
+            exam: pathArr[0] || '1st Grade', 
+            section: pathArr[0] || '1st Grade', 
+            subject: pathArr[1] || 'General', 
             order,
             time, 
             negativeMark: neg,
@@ -1600,9 +1477,10 @@
         allTests.push({
           id: 'test-' + Date.now(),
           title,
-          exam: finalExam,
-          section: finalExam,
-          subject: finalSubj,
+          path: pathArr,
+          exam: pathArr[0] || '1st Grade',
+          section: pathArr[0] || '1st Grade',
+          subject: pathArr[1] || 'General',
           order,
           time,
           negativeMark: neg,
