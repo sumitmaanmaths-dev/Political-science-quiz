@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RPSC, RSSB & Competitive Exam Portal</title>
+  <title>RPSC, RSSB & State Exams Portal</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: #0b1120; color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; }
@@ -95,7 +95,6 @@
     .badge-telegram { background: #0088cc; color: #fff; font-size: 11px; padding: 6px 12px; border-radius: 6px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
     .badge-amazon { background: #ff9900; color: #111; font-size: 11px; padding: 6px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; }
 
-    /* Bulk Tool Bar */
     .bulk-toolbar {
       background: #172554;
       border: 1.5px solid #3b82f6;
@@ -149,7 +148,6 @@
 
     .q-draft-item { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 
-    /* Leaderboard Table */
     .leaderboard-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; text-align: left; }
     .leaderboard-table th { background: #1e293b; color: #38bdf8; padding: 8px 10px; border-bottom: 1px solid #334155; }
     .leaderboard-table td { padding: 8px 10px; border-bottom: 1px solid #1e293b; color: #cbd5e1; }
@@ -202,13 +200,12 @@
 
     let allTests = [];
     let allResources = [];
-    let allLeaderboards = {}; // Realtime leaderboard by test id
+    let allLeaderboards = {};
 
-    // Current navigation path array: e.g. ["1st Grade", "Beniwal Sir", "Political Science"]
     let currentNavPath = [];
+    let currentContentType = null; // null, 'mocks', 'notes', 'books'
     let searchQuery = '';
 
-    // Selected test IDs for bulk actions in Admin
     let selectedTestIds = new Set();
 
     let currentQuiz = null;
@@ -230,7 +227,6 @@
       return (s || '').toString().trim().toLowerCase();
     }
 
-    // Helper: Normalizes any test/resource path into a clean array
     function getItemPathArray(item) {
       if (item.path && Array.isArray(item.path) && item.path.length > 0) {
         return item.path.map(p => p.trim()).filter(Boolean);
@@ -330,11 +326,9 @@
     async function submitScoreToGlobalLeaderboard(testId, score, total, pct, dateStr) {
       try {
         const cleanUserId = currentUser.replace(/[.#$[\]]/g, '_');
-        // Fetch current candidate 1st attempt record from cloud
         const res = await fetch(`${FIREBASE_DB_URL}/ranks/${testId}/${cleanUserId}.json`);
         const existingRecord = await res.json();
 
-        // 1st Attempt Rule: Only save if never attempted before
         if (!existingRecord) {
           await fetch(`${FIREBASE_DB_URL}/ranks/${testId}/${cleanUserId}.json`, {
             method: 'PUT',
@@ -349,7 +343,6 @@
             })
           });
         }
-        // Refresh local cache
         const rankRefresh = await fetch(`${FIREBASE_DB_URL}/ranks.json`);
         if (rankRefresh.ok) allLeaderboards = await rankRefresh.json() || {};
       } catch (e) {
@@ -385,28 +378,31 @@
       }).filter(item => item.q.trim() !== "");
     }
 
-    /* NAVIGATION LOGIC - PURE CLEAN FOLDER SYSTEM */
     function goHome() {
       if(timer) clearInterval(timer);
       hideGrid();
       isSolutionMode = false;
       currentNavPath = [];
+      currentContentType = null;
       searchQuery = '';
       renderPortalView();
     }
 
     function navigateInto(folderName) {
       currentNavPath.push(folderName);
+      currentContentType = null;
       searchQuery = '';
       renderPortalView();
     }
 
     function navigateUp() {
-      if (currentNavPath.length > 0) {
+      if (currentContentType) {
+        currentContentType = null;
+      } else if (currentNavPath.length > 0) {
         currentNavPath.pop();
       }
       searchQuery = '';
-   renderPortalView();
+      renderPortalView();
     }
 
     function handleSearch(val) {
@@ -414,7 +410,6 @@
       renderPortalView(true);
     }
 
-    /* RENDER PORTAL VIEW */
     function renderPortalView(isLiveSearch = false) {
       const app = document.getElementById('app');
       const pathDepth = currentNavPath.length;
@@ -431,7 +426,7 @@
       const matchedTests = allTests.filter(matchesCurrentPath);
       const matchedResources = allResources.filter(matchesCurrentPath);
 
-      // Map subfolders directly under this level
+      // Check subfolders
       const subFoldersMap = new Map();
       const registerSubfolders = (list, isResource = false) => {
         list.forEach(item => {
@@ -458,12 +453,15 @@
 
       const subFolders = Array.from(subFoldersMap.values());
 
-      // If there are subfolders, show only sleek subfolder cards (no mixed buttons)
       if (subFolders.length > 0) {
         renderSubFoldersScreen(app, subFolders);
       } else {
-        // We reached the final leaf: render tests, notes, books directly
-        renderFinalContentScreen(app, matchedTests, matchedResources);
+        // When at leaf level: Show separate categories first (Mock tests vs Notes vs Books)
+        if (!currentContentType) {
+          renderCategoryChooserScreen(app, matchedTests, matchedResources);
+        } else {
+          renderContentListScreen(app, matchedTests, matchedResources);
+        }
       }
 
       if (isLiveSearch) {
@@ -475,7 +473,6 @@
       }
     }
 
-    /* SCREEN: ONLY CLEAN SUBFOLDERS (NO DOUBLE CARDS) */
     function renderSubFoldersScreen(container, subFolders) {
       const isHome = currentNavPath.length === 0;
       const breadcrumbHtml = isHome ? '' : `
@@ -522,8 +519,8 @@
       `;
     }
 
-    /* SCREEN: FINAL TESTS / NOTES / BOOKS VIEW */
-    function renderFinalContentScreen(container, tests, resources) {
+    /* SCREEN: SEPARATE FOLDERS FOR MOCKS, NOTES & BOOKS (PARMAR SIR STYLE) */
+    function renderCategoryChooserScreen(container, tests, resources) {
       const breadcrumbHtml = `
         <div class="breadcrumb-bar">
           <button class="back-btn" onclick="navigateUp()">← Back</button>
@@ -531,101 +528,173 @@
         </div>
       `;
 
-      let testsFiltered = tests.filter(t => !searchQuery || (t.title && t.title.toLowerCase().includes(searchQuery)));
-      testsFiltered.sort((a, b) => (parseInt(a.order || 9999, 10)) - (parseInt(b.order || 9999, 10)));
-
-      let notesFiltered = resources.filter(r => r.type !== 'book' && (!searchQuery || (r.title && r.title.toLowerCase().includes(searchQuery))));
-      let booksFiltered = resources.filter(r => r.type === 'book' && (!searchQuery || (r.title && r.title.toLowerCase().includes(searchQuery))));
-
-      let testListHtml = '';
-      if (testsFiltered.length === 0 && notesFiltered.length === 0 && booksFiltered.length === 0) {
-        testListHtml = `<div class="card" style="text-align:center; padding:30px; color:#94a3b8;">No materials in this section yet.</div>`;
-      } else {
-        testsFiltered.forEach((t, i) => {
-          const originalIndex = allTests.findIndex(item => item.id === t.id);
-          const history = userAttempts[t.id] || [];
-          let historyBadge = '';
-          if (history.length > 0) {
-            const lastAttempt = history[history.length - 1];
-            historyBadge = `
-              <div style="font-size:11px; background:#064e3b; color:#6ee7b7; padding:4px 8px; border-radius:4px; margin-top:8px; display:inline-block; font-weight:700;">
-                ✓ Attempted ${history.length} time(s) · Last Score: ${lastAttempt.score}/${lastAttempt.total} (${lastAttempt.date})
-              </div>
-            `;
-          }
-
-          const negMarkText = (typeof t.negativeMark !== 'undefined' && t.negativeMark > 0) 
-            ? ` · Neg: -${t.negativeMark}` 
-            : ' · No Neg Marking';
-
-          testListHtml += `
-            <div class="test-card">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span class="test-seq-badge">#${t.order || (i + 1)} Test</span>
-                <span style="font-size:11px; color:#64748b;">⏱️ ${t.time || 15} Mins</span>
-              </div>
-              <h3>${t.title}</h3>
-              <p>${t.desc || 'Comprehensive mock test with real exam pattern.'}</p>
-              ${historyBadge}
-              <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #1e293b; padding-top:12px; margin-top:12px; flex-wrap:wrap; gap:8px;">
-                <span style="font-size:11px; color:#94a3b8;">📝 ${(t.questions || []).length} Qs ${negMarkText}</span>
-                <div style="display:flex; gap:6px;">
-                  <button class="btn-outline" style="padding:7px 12px; font-size:11px;" onclick="viewLeaderboardModal('${t.id}')">🏆 Rank List</button>
-                  <button class="btn-primary" onclick="startTest(${originalIndex})">
-                    ${history.length > 0 ? '🔄 Reattempt' : 'Start Test →'}
-                  </button>
-                </div>
-              </div>
-            </div>
-          `;
-        });
-
-        notesFiltered.forEach((n, idx) => {
-          testListHtml += `
-            <div class="test-card">
-              <span class="test-seq-badge" style="color:#f472b6;">#${n.order || (idx + 1)} PDF Note</span>
-              <h3>${n.title}</h3>
-              <p>${n.desc || 'Curated study PDF file.'}</p>
-              <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #1e293b; padding-top:10px;">
-                <span style="font-size:11px; color:#94a3b8;">Format: PDF File</span>
-                <a href="${n.telegram_url || '#'}" target="_blank" class="badge-telegram">📥 Download Telegram PDF</a>
-              </div>
-            </div>
-          `;
-        });
-
-        booksFiltered.forEach((b, idx) => {
-          testListHtml += `
-            <div class="test-card">
-              <span class="test-seq-badge" style="color:#fbbf24;">#${b.order || (idx + 1)} Book</span>
-              <h3>${b.title}</h3>
-              <p>${b.desc || 'Standard reference book.'}</p>
-              <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #1e293b; padding-top:10px;">
-                <span style="font-size:12px; font-weight:800; color:#38bdf8;">${b.price || 'Best Price'}</span>
-                <a href="${b.buy_url || '#'}" target="_blank" class="badge-amazon">🛒 Buy Online</a>
-              </div>
-            </div>
-          `;
-        });
-      }
+      const testsCount = tests.length;
+      const notesCount = resources.filter(r => r.type !== 'book').length;
+      const booksCount = resources.filter(r => r.type === 'book').length;
 
       container.innerHTML = `
         ${breadcrumbHtml}
-        <div class="search-box-wrapper">
-          <span class="search-icon">🔍</span>
-          <input type="text" class="search-input" id="searchBarInput" placeholder="Search test or book in this section..." oninput="handleSearch(this.value)" value="${searchQuery}">
+        <div class="hero-banner">
+          <h1>${currentNavPath[currentNavPath.length - 1]}</h1>
+          <p>Select category to view materials</p>
         </div>
-        <div>${testListHtml}</div>
+
+        <!-- MOCK TESTS FOLDER -->
+        <div class="app-card" style="border: 2px solid #2563eb;" onclick="currentContentType = 'mocks'; renderPortalView();">
+          <div class="app-card-left">
+            <div class="folder-icon-circle" style="background:#1e3a8a; color:#93c5fd; font-size:22px;">⚡</div>
+            <div>
+              <div class="app-card-title" style="color:#93c5fd;">MOCK TESTS &amp; QUIZZES</div>
+              <div class="app-card-subtitle" style="color:#60a5fa;">${testsCount} Online Mock Tests</div>
+            </div>
+          </div>
+          <div class="app-card-arrow" style="color:#60a5fa;">›</div>
+        </div>
+
+        <!-- FREE NOTES & PDFS FOLDER -->
+        <div class="app-card" style="border: 2px solid #db2777;" onclick="currentContentType = 'notes'; renderPortalView();">
+          <div class="app-card-left">
+            <div class="folder-icon-circle" style="background:#831843; color:#fbcfe8; font-size:22px;">📖</div>
+            <div>
+              <div class="app-card-title" style="color:#fbcfe8;">FREE NOTES &amp; PDFS</div>
+              <div class="app-card-subtitle" style="color:#f472b6;">${notesCount} Downloadable Study Files</div>
+            </div>
+          </div>
+          <div class="app-card-arrow" style="color:#f472b6;">›</div>
+        </div>
+
+        <!-- RECOMMENDED BOOKS FOLDER -->
+        <div class="app-card" style="border: 2px solid #f59e0b;" onclick="currentContentType = 'books'; renderPortalView();">
+          <div class="app-card-left">
+            <div class="folder-icon-circle" style="background:#78350f; color:#fde68a; font-size:22px;">🛒</div>
+            <div>
+              <div class="app-card-title" style="color:#fde68a;">RECOMMENDED BOOKS</div>
+              <div class="app-card-subtitle" style="color:#fbbf24;">${booksCount} Standard Books</div>
+            </div>
+          </div>
+          <div class="app-card-arrow" style="color:#fbbf24;">›</div>
+        </div>
       `;
     }
 
-    /* LEADERBOARD & RANK MODAL */
+    /* SCREEN: ACTUAL CONTENT LIST (NEVER MIXED) */
+    function renderContentListScreen(container, tests, resources) {
+      let title = '';
+      let listHtml = '';
+
+      if (currentContentType === 'mocks') {
+        title = 'Mock Tests & Quizzes';
+        let filtered = tests.filter(t => !searchQuery || (t.title && t.title.toLowerCase().includes(searchQuery)));
+        filtered.sort((a, b) => (parseInt(a.order || 9999, 10)) - (parseInt(b.order || 9999, 10)));
+
+        if (filtered.length === 0) {
+          listHtml = `<div class="card" style="text-align:center; padding:30px; color:#94a3b8;">No mock tests in this folder.</div>`;
+        } else {
+          filtered.forEach((t, i) => {
+            const originalIndex = allTests.findIndex(item => item.id === t.id);
+            const history = userAttempts[t.id] || [];
+            let historyBadge = '';
+            if (history.length > 0) {
+              const lastAttempt = history[history.length - 1];
+              historyBadge = `
+                <div style="font-size:11px; background:#064e3b; color:#6ee7b7; padding:4px 8px; border-radius:4px; margin-top:8px; display:inline-block; font-weight:700;">
+                  ✓ Attempted ${history.length} time(s) · Last Score: ${lastAttempt.score}/${lastAttempt.total} (${lastAttempt.date})
+                </div>
+              `;
+            }
+
+            const negMarkText = (typeof t.negativeMark !== 'undefined' && t.negativeMark > 0) 
+              ? ` · Neg: -${t.negativeMark}` 
+              : ' · No Neg Marking';
+
+            listHtml += `
+              <div class="test-card">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span class="test-seq-badge">#${t.order || (i + 1)} Test</span>
+                  <span style="font-size:11px; color:#64748b;">⏱️ ${t.time || 15} Mins</span>
+                </div>
+                <h3>${t.title}</h3>
+                <p>${t.desc || 'Comprehensive mock test with real exam pattern.'}</p>
+                ${historyBadge}
+                <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #1e293b; padding-top:12px; margin-top:12px; flex-wrap:wrap; gap:8px;">
+                  <span style="font-size:11px; color:#94a3b8;">📝 ${(t.questions || []).length} Qs ${negMarkText}</span>
+                  <div style="display:flex; gap:6px;">
+                    <button class="btn-outline" style="padding:7px 12px; font-size:11px;" onclick="viewLeaderboardModal('${t.id}')">🏆 Rank List</button>
+                    <button class="btn-primary" onclick="startTest(${originalIndex})">
+                      ${history.length > 0 ? '🔄 Reattempt' : 'Start Test →'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+        }
+      } else if (currentContentType === 'notes') {
+        title = 'Notes & PDFs';
+        let filtered = resources.filter(r => r.type !== 'book' && (!searchQuery || (r.title && r.title.toLowerCase().includes(searchQuery))));
+        filtered.sort((a, b) => (parseInt(a.order || 9999, 10)) - (parseInt(b.order || 9999, 10)));
+
+        if (filtered.length === 0) {
+          listHtml = `<div class="card" style="text-align:center; padding:30px; color:#94a3b8;">No PDF notes in this folder.</div>`;
+        } else {
+          filtered.forEach((n, idx) => {
+            listHtml += `
+              <div class="test-card">
+                <span class="test-seq-badge" style="color:#f472b6;">#${n.order || (idx + 1)} PDF Note</span>
+                <h3>${n.title}</h3>
+                <p>${n.desc || 'Curated study PDF file.'}</p>
+                <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #1e293b; padding-top:10px;">
+                  <span style="font-size:11px; color:#94a3b8;">Format: PDF File</span>
+                  <a href="${n.telegram_url || '#'}" target="_blank" class="badge-telegram">📥 Download Telegram PDF</a>
+                </div>
+              </div>
+            `;
+          });
+        }
+      } else {
+        title = 'Recommended Books';
+        let filtered = resources.filter(r => r.type === 'book' && (!searchQuery || (r.title && r.title.toLowerCase().includes(searchQuery))));
+        filtered.sort((a, b) => (parseInt(a.order || 9999, 10)) - (parseInt(b.order || 9999, 10)));
+
+        if (filtered.length === 0) {
+          listHtml = `<div class="card" style="text-align:center; padding:30px; color:#94a3b8;">No books listed in this folder.</div>`;
+        } else {
+          filtered.forEach((b, idx) => {
+            listHtml += `
+              <div class="test-card">
+                <span class="test-seq-badge" style="color:#fbbf24;">#${b.order || (idx + 1)} Book</span>
+                <h3>${b.title}</h3>
+                <p>${b.desc || 'Standard reference book.'}</p>
+                <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #1e293b; padding-top:10px;">
+                  <span style="font-size:12px; font-weight:800; color:#38bdf8;">${b.price || 'Best Price'}</span>
+                  <a href="${b.buy_url || '#'}" target="_blank" class="badge-amazon">🛒 Buy Online</a>
+                </div>
+              </div>
+            `;
+          });
+        }
+      }
+
+      container.innerHTML = `
+        <div class="breadcrumb-bar">
+          <button class="back-btn" onclick="navigateUp()">← Back</button>
+          <span>${currentNavPath.join(' / ')} &gt; ${title}</span>
+        </div>
+
+        <div class="search-box-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" id="searchBarInput" placeholder="Search in ${title}..." oninput="handleSearch(this.value)" value="${searchQuery}">
+        </div>
+
+        <div>${listHtml}</div>
+      `;
+    }
+
     function viewLeaderboardModal(testId) {
       const t = allTests.find(item => item.id === testId);
       const testRanks = allLeaderboards[testId] || {};
       const list = Object.values(testRanks);
 
-      // Sort by score descending, then timestamp ascending (who achieved first)
       list.sort((a, b) => {
         if (b.score !== a.score) return b.score - a.score;
         return (a.timestamp || 0) - (b.timestamp || 0);
@@ -679,7 +748,6 @@
       document.body.insertAdjacentHTML('beforeend', modalHtml);
     }
 
-    /* TEST TAKING SYSTEM */
     function startTest(index) {
       currentQuiz = allTests[index];
       if(!currentQuiz || !currentQuiz.questions || currentQuiz.questions.length === 0) {
@@ -741,7 +809,7 @@
         const clickHandler = isSolutionMode ? '' : `onclick="pick(${i})"`;
 
         optH += `
-        <button class="opt-btn ${optCls}" ${clickHandler} style="${isSolutionMode ? 'cursor:default;' : ''}">
+          <button class="opt-btn ${optCls}" ${clickHandler} style="${isSolutionMode ? 'cursor:default;' : ''}">
             <div style="display:flex; align-items:center;">
               <span class="opt-badge">${String.fromCharCode(65 + i)}</span>
               <span>${o}</span>
@@ -928,7 +996,6 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    /* PERFORMANCE SCORECARD + 1ST ATTEMPT RANK CALCULATION */
     async function finishTest() {
       if(timer) clearInterval(timer);
       hideGrid();
@@ -940,18 +1007,12 @@
 
       const negRate = parseFloat(currentQuiz.negativeMark || 0);
       const marksPerQ = parseFloat(currentQuiz.marksPerQuestion || 1);
-      const topicStats = {};
 
       currentQuiz.questions.forEach((q, i) => {
-        const topic = q.topic || 'General Topics';
-        if(!topicStats[topic]) topicStats[topic] = { correct: 0, total: 0 };
-        topicStats[topic].total++;
-
         if(answers[i] === undefined) {
           unattempted++;
         } else if(answers[i] === q.ans) {
           cor++;
-          topicStats[topic].correct++;
         } else {
           wrong++;
         }
@@ -966,7 +1027,6 @@
       const now = new Date();
       const dateStr = now.toLocaleDateString('en-GB') + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-      // Save local attempt history
       if(!userAttempts[currentQuiz.id]) userAttempts[currentQuiz.id] = [];
       const attemptNum = userAttempts[currentQuiz.id].length + 1;
       userAttempts[currentQuiz.id].push({
@@ -978,10 +1038,8 @@
       });
       localStorage.setItem('ps_user_attempts', JSON.stringify(userAttempts));
 
-      // Submit to Leaderboard (Only candidate's 1st Attempt creates rank)
       await submitScoreToGlobalLeaderboard(currentQuiz.id, finalScore, totalPossibleMarks, scorePct, dateStr);
 
-      // Compute Candidate's Live Rank
       const testRanks = allLeaderboards[currentQuiz.id] || {};
       const rankList = Object.values(testRanks).sort((a,b) => b.score - a.score);
       const myRankIndex = rankList.findIndex(r => cleanStr(r.user) === cleanStr(currentUser));
@@ -995,7 +1053,6 @@
           <h2 style="font-size:20px; margin-bottom:4px; color:#f8fafc;">Performance Scorecard</h2>
           <div style="font-size:12px; color:#94a3b8; margin-bottom:14px;">Candidate: <b>${currentUser}</b> · Attempt #${attemptNum}</div>
 
-          <!-- Rank Card -->
           <div style="background:#172554; border:1.5px solid #3b82f6; border-radius:12px; padding:16px; margin-bottom:14px; display:flex; justify-content:space-around; align-items:center;">
             <div>
               <div style="font-size:11px; text-transform:uppercase; color:#93c5fd; font-weight:800;">Your Official Rank</div>
@@ -1028,7 +1085,7 @@
             <button class="btn-outline" style="flex:1; border-color:#fbbf24; color:#fbbf24; padding:11px;" onclick="viewLeaderboardModal('${currentQuiz.id}')">
               🏆 View Full Leaderboard
             </button>
-            <button class="btn-share" style="flex:1;" onclick="shareScore('${encodeURIComponent(shareText)}')">
+     <button class="btn-share" style="flex:1;" onclick="shareScore('${encodeURIComponent(shareText)}')">
               📤 Share on WhatsApp
             </button>
           </div>
@@ -1052,7 +1109,7 @@
       renderQuestionScreen();
     }
 
-    /* ADMIN PANEL: BULK SELECTION & FAST ORGANIZER */
+    /* ADMIN PANEL: MERGE TEST ENGINE + BULK MANAGER */
     function openAdmin() {
       const pin = prompt('Enter Admin Security PIN:');
       if (pin === '7073') {
@@ -1078,34 +1135,12 @@
       renderAdminHome();
     }
 
-    /* BULK ACTIONS */
     async function bulkMovePrompt() {
       if (selectedTestIds.size === 0) return alert('Select tests first using checkboxes!');
       const newPath = prompt(`Move ${selectedTestIds.size} selected tests to new path:\n(Example: "1st Grade / Beniwal Sir / Political Science")`);
       if (!newPath || !newPath.trim()) return;
 
       const pathArr = newPath.split('/').map(p => p.trim()).filter(Boolean);
-
-      allTests.forEach(t => {
-        if (selectedTestIds.has(t.id)) {
-          t.path = pathArr;
-          t.exam = pathArr[0] || '1st Grade';
-          t.section = t.exam;
-          t.subject = pathArr[pathArr.length - 1] || 'General';
-        }
-      });
-
-      await saveToCloud();
-      alert(`✅ ${selectedTestIds.size} tests moved successfully!`);
-      selectedTestIds.clear();
-      renderAdminHome();
-    }
-
-    async function bulkAutoSequencePrompt() {
-      if (selectedTestIds.size === 0) return alert('Select tests first using checkboxes!');
-      const startNumStr = prompt(`Enter starting sequence number for ${selectedTestIds.size} tests:`, "1");
-      if (startNumStr === null) return;
-      let curNum = parseInt(startNumStr, 10) || 1;
 
       allTests.forEach(t => {
         if (selectedTestIds.has(t.id)) {
@@ -1171,6 +1206,7 @@
               <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:4px;">
                 <span class="tag" style="background:#0284c7; color:#fff;">📂 ${pathStr}</span>
                 <span class="tag">Seq: #${t.order || 1}</span>
+                <span class="tag" style="background:#334155; color:#94a3b8;">ID: ${t.id}</span>
               </div>
               <div style="font-weight:800; font-size:14px; color:#f8fafc;">${t.title}</div>
               <div style="font-size:11px; color:#94a3b8;">${(t.questions || []).length} Qs · ${t.time || 15} Mins · Neg: -${t.negativeMark || 0}</div>
@@ -1192,7 +1228,6 @@
             <button class="btn-outline" onclick="goHome()">✕ Exit Admin</button>
           </div>
 
-          <!-- Add Resource Buttons -->
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
             <button class="btn-primary" style="padding:10px;" onclick="promptAddResource('note')">+ Add PDF Note</button>
             <button class="btn-outline" style="padding:10px; border-color:#f59e0b; color:#fde68a;" onclick="promptAddResource('book')">+ Add Recommended Book</button>
@@ -1222,19 +1257,17 @@
             </button>
           </div>
 
-          <!-- Raw JSON Paste Box -->
+          <!-- Raw JSON Paste Box (RESTORED ACCURATE MERGE SYSTEM) -->
           <div style="background:#1e293b; border:1px dashed #475569; padding:12px; border-radius:8px; margin-bottom:16px;">
-            <div style="font-weight:700; font-size:13px; color:#cbd5e1; margin-bottom:6px;">📋 Or Paste Raw JSON Code Directly:</div>
-            <textarea id="raw-json-paste" class="form-control" style="min-height:70px; font-family:monospace; font-size:12px;" placeholder="Paste JSON questions array or test object here..."></textarea>
-            <button class="btn-outline" style="margin-top:8px; width:100%; border-color:#3b82f6; color:#60a5fa;" onclick="importFromPasteBox()">Save to Firebase Cloud</button>
+            <div style="font-weight:700; font-size:13px; color:#cbd5e1; margin-bottom:6px;">📋 Paste Raw JSON Code (Auto Merges by ID):</div>
+            <textarea id="raw-json-paste" class="form-control" style="min-height:75px; font-family:monospace; font-size:12px;" placeholder='{"id": "spartan-test-01", "title": "Spartan Test Series", "questions": [...]}'></textarea>
+            <button class="btn-outline" style="margin-top:8px; width:100%; border-color:#3b82f6; color:#60a5fa;" onclick="importFromPasteBox()">Save / Append Questions to Firebase Cloud</button>
           </div>
 
-          <!-- Manual Create -->
           <button class="btn-success" style="width:100%; padding:11px; font-size:13px; margin-bottom:16px;" onclick="startNewTestForm()">
             + Create New Test Manually (Form)
           </button>
 
-          <!-- Active Tests List -->
           <h3 style="font-size:14px; font-weight:800; margin-bottom:10px; color:#f8fafc;">Active Mock Tests (${allTests.length}):</h3>
           ${testListHtml || '<div style="color:#64748b; font-size:13px;">No tests found.</div>'}
         </div>
@@ -1298,6 +1331,7 @@
       renderAdminHome();
     }
 
+    /* RESTORED EXACT MERGE LOGIC FOR JSON UPLOAD & PASTE */
     async function uploadJsonFile(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1313,11 +1347,27 @@
           return;
         }
 
-        const suggestedPath = imported.path ? (Array.isArray(imported.path) ? imported.path.join(' / ') : imported.path) : (imported.exam || "1st Grade");
-        const pathInput = prompt("Target Folder Path (Use '/' for sub-folders):", suggestedPath);
-        const pathArr = (pathInput || "1st Grade").split('/').map(p => p.trim()).filter(Boolean);
+        const suggestedId = imported.id || file.name.replace(/\.[^/.]+$/, "");
+        let targetTest = allTests.find(t => t.id === suggestedId);
 
-        const newId = imported.id || ('test-' + Date.now());
+        if (targetTest) {
+          const choice = confirm(`Test with ID '${suggestedId}' already exists!\n\n[OK] = MERGE & APPEND these ${newQs.length} questions into existing test\n[Cancel] = Create as a brand new test`);
+          if (choice) {
+            targetTest.questions = (targetTest.questions || []).concat(newQs);
+            targetTest.time = imported.time || targetTest.time || 15;
+            targetTest.negativeMark = typeof imported.negativeMark !== 'undefined' ? imported.negativeMark : (targetTest.negativeMark || 0.33);
+            await saveToCloud();
+            alert(`🎉 Successfully merged! Test '${targetTest.title}' now has ${targetTest.questions.length} total questions.`);
+            renderAdminHome();
+            return;
+          }
+        }
+
+        const suggestedPath = imported.path ? (Array.isArray(imported.path) ? imported.path.join(' / ') : imported.path) : (imported.exam || "1st Grade / General");
+        const pathInput = prompt("Target Folder Path (Use '/' for sub-folders):", suggestedPath);
+        const pathArr = (pathInput || "1st Grade / General").split('/').map(p => p.trim()).filter(Boolean);
+
+        const newId = suggestedId || ('test-' + Date.now());
         allTests.push({
           id: newId,
           title: imported.title || file.name.replace(/\.[^/.]+$/, ""),
@@ -1334,7 +1384,7 @@
 
         await saveToCloud();
         renderAdminHome();
-        alert(`🎉 Test '${allTests[allTests.length - 1].title}' uploaded to '${pathArr.join(' / ')}'!`);
+        alert(`🎉 Test '${allTests[allTests.length - 1].title}' saved to '${pathArr.join(' / ')}'!`);
       } catch (err) {
         alert("Invalid JSON format.");
       } finally {
@@ -1348,26 +1398,41 @@
       try {
         const imported = JSON.parse(txt);
         let listToAdd = Array.isArray(imported) ? imported : [imported];
-        
-        const pathInput = prompt("Target Folder Path for these tests (e.g. '1st Grade / Beniwal Sir / Class Quiz'):", "1st Grade");
-        const pathArr = (pathInput || "1st Grade").split('/').map(p => p.trim()).filter(Boolean);
 
         listToAdd.forEach(newT => {
-          newT.questions = normalizeQuestions(newT.questions || []);
-          newT.path = pathArr;
-          newT.exam = pathArr[0] || '1st Grade';
-          newT.section = newT.exam;
-          newT.subject = pathArr[pathArr.length - 1] || 'General';
-          if(typeof newT.order === 'undefined') newT.order = allTests.length + 1;
-          if(typeof newT.negativeMark === 'undefined') newT.negativeMark = 0.33;
-          if(!newT.id) newT.id = 'test-' + Date.now();
-          
-          allTests.push(newT);
+          const newQs = normalizeQuestions(newT.questions || (Array.isArray(newT) ? newT : []));
+          const targetId = newT.id;
+
+          // Check if test ID already exists in system
+          let existingTest = targetId ? allTests.find(x => x.id === targetId) : null;
+
+          if (existingTest) {
+            // MERGE QUESTIONS INSTEAD OF CREATING PART 2
+            existingTest.questions = (existingTest.questions || []).concat(newQs);
+            if (newT.title) existingTest.title = newT.title;
+            if (newT.time) existingTest.time = newT.time;
+            if (typeof newT.negativeMark !== 'undefined') existingTest.negativeMark = newT.negativeMark;
+          } else {
+            const pathArr = newT.path ? (Array.isArray(newT.path) ? newT.path : newT.path.split('/')) : ['1st Grade', 'General'];
+            allTests.push({
+              id: targetId || ('test-' + Date.now()),
+              title: newT.title || "New Mock Test",
+              path: pathArr.map(p => p.trim()).filter(Boolean),
+              exam: pathArr[0] || '1st Grade',
+              section: pathArr[0] || '1st Grade',
+              subject: pathArr[pathArr.length - 1] || 'General',
+              order: newT.order || (allTests.length + 1),
+              time: newT.time || 15,
+              negativeMark: typeof newT.negativeMark !== 'undefined' ? newT.negativeMark : 0.33,
+              desc: newT.desc || "",
+              questions: newQs
+            });
+          }
         });
 
         await saveToCloud();
         renderAdminHome();
-        alert('🎉 Tests saved to cloud successfully!');
+        alert('🎉 Saved & Merged into Cloud successfully without creating duplicate parts!');
       } catch(e) {
         alert('Invalid JSON structure.');
       }
@@ -1376,7 +1441,7 @@
     function startNewTestForm() {
       editingTestId = null;
       draftQuestions = [];
-      renderTestFormUI('Create New Mock Test', '', '1st Grade / Political Science', 1, 15, 0.33, '');
+      renderTestFormUI('Create New Mock Test', 'test-' + Date.now(), '', '1st Grade / Political Science', 1, 15, 0.33, '');
     }
 
     function loadTestForEdit(id) {
@@ -1384,10 +1449,10 @@
       if(!t) return;
       editingTestId = id;
       draftQuestions = JSON.parse(JSON.stringify(t.questions || []));
-      renderTestFormUI('Edit Mock Test', t.title, getItemPathString(t), t.order || 1, t.time || 15, typeof t.negativeMark !== 'undefined' ? t.negativeMark : 0.33, t.desc || '');
+      renderTestFormUI('Edit Mock Test', t.id, t.title, getItemPathString(t), t.order || 1, t.time || 15, typeof t.negativeMark !== 'undefined' ? t.negativeMark : 0.33, t.desc || '');
     }
 
-    function renderTestFormUI(heading, titleVal, pathVal, orderVal, timeVal, negVal, descVal) {
+    function renderTestFormUI(heading, idVal, titleVal, pathVal, orderVal, timeVal, negVal, descVal) {
       let qListHtml = '';
       draftQuestions.forEach((dq, index) => {
         qListHtml += `
@@ -1395,7 +1460,7 @@
             <div style="font-size:12px; color:#cbd5e1; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
               <b>#${index + 1}</b> ${dq.q}
             </div>
-            <button class="btn-danger" style="padding:4px 8px; font-size:11px;" onclick="draftQuestions.splice(${index}, 1); reRenderForm();">Delete</button>
+     <button class="btn-danger" style="padding:4px 8px; font-size:11px;" onclick="draftQuestions.splice(${index}, 1); reRenderForm();">Delete</button>
           </div>
         `;
       });
@@ -1410,9 +1475,15 @@
             </div>
           </div>
 
-          <div class="form-group">
-            <label>Test Title</label>
-            <input type="text" id="t-title" class="form-control" value="${titleVal}">
+          <div style="display:grid; grid-template-columns:1fr 2fr; gap:10px;">
+            <div class="form-group">
+              <label>Unique Test ID</label>
+              <input type="text" id="t-id" class="form-control" value="${idVal}">
+            </div>
+            <div class="form-group">
+              <label>Test Title</label>
+              <input type="text" id="t-title" class="form-control" value="${titleVal}">
+            </div>
           </div>
 
           <div class="form-group">
@@ -1440,7 +1511,6 @@
             <input type="text" id="t-desc" class="form-control" value="${descVal}">
           </div>
 
-          <!-- Question Creator -->
           <div style="border:1.5px dashed #3b82f6; background:#172554; padding:12px; border-radius:10px; margin-bottom:14px;">
             <div style="font-weight:800; font-size:13px; margin-bottom:8px; color:#93c5fd;">+ Add New Question:</div>
             <div class="form-group">
@@ -1493,6 +1563,7 @@
       const heading = editingTestId ? 'Edit Mock Test' : 'Create New Mock Test';
       renderTestFormUI(
         heading,
+        document.getElementById('t-id').value,
         document.getElementById('t-title').value,
         document.getElementById('t-path').value,
         document.getElementById('t-order').value,
@@ -1521,6 +1592,7 @@
     }
 
     async function saveDraftTest() {
+      const testId = document.getElementById('t-id').value.trim();
       const title = document.getElementById('t-title').value.trim();
       const pathStr = document.getElementById('t-path').value.trim();
       const order = parseInt(document.getElementById('t-order').value, 10) || 1;
@@ -1531,28 +1603,29 @@
       if(!title) return alert('Test title is required!');
       if(draftQuestions.length === 0) return alert('Add at least one question!');
 
-      const pathArr = (pathStr || '1st Grade').split('/').map(p => p.trim()).filter(Boolean);
+      const pathArr = (pathStr || '1st Grade / General').split('/').map(p => p.trim()).filter(Boolean);
 
-      if(editingTestId) {
-        const idx = allTests.findIndex(t => t.id === editingTestId);
-        if(idx !== -1) {
-          allTests[idx] = { 
-            ...allTests[idx], 
-            title, 
-            path: pathArr,
-            exam: pathArr[0] || '1st Grade', 
-            section: pathArr[0] || '1st Grade', 
-            subject: pathArr[pathArr.length - 1] || 'General', 
-            order,
-            time, 
-            negativeMark: neg,
-            desc, 
-            questions: draftQuestions 
-          };
-        }
+      const targetId = editingTestId || testId || ('test-' + Date.now());
+      const idx = allTests.findIndex(t => t.id === targetId);
+
+      if(idx !== -1) {
+        allTests[idx] = { 
+          ...allTests[idx], 
+          id: targetId,
+          title, 
+          path: pathArr,
+          exam: pathArr[0] || '1st Grade', 
+          section: pathArr[0] || '1st Grade', 
+          subject: pathArr[pathArr.length - 1] || 'General', 
+          order,
+          time, 
+          negativeMark: neg,
+          desc, 
+          questions: draftQuestions 
+        };
       } else {
         allTests.push({
-          id: 'test-' + Date.now(),
+          id: targetId,
           title,
           path: pathArr,
           exam: pathArr[0] || '1st Grade',
