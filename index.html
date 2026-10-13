@@ -169,7 +169,7 @@
         </div>
       </div>
       <div class="header-actions">
-        <div class="user-pill" id="userPill" onclick="promptCandidateLogin()">👤 Guest User</div>
+        <div class="user-pill" id="userPill" onclick="promptCandidateLogin(true)">👤 Guest User</div>
         <button class="btn-admin" onclick="openAdmin()">⚙️ Admin</button>
       </div>
     </div>
@@ -203,7 +203,7 @@
     let allLeaderboards = {};
 
     let currentNavPath = [];
-    let currentContentType = null; // null, 'mocks', 'notes', 'books'
+    let currentContentType = null;
     let searchQuery = '';
 
     let selectedTestIds = new Set();
@@ -220,14 +220,19 @@
     let editingTestId = null;
     let draftQuestions = [];
 
-    let currentUser = localStorage.getItem('ps_user_name') || 'Guest User';
+    // Unique user tracking to avoid Guest User collisions
+    let currentUser = localStorage.getItem('ps_user_name') || '';
+    let userUniqueKey = localStorage.getItem('ps_user_uid') || '';
+    if (!userUniqueKey) {
+      userUniqueKey = 'u_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now().toString(36);
+      localStorage.setItem('ps_user_uid', userUniqueKey);
+    }
     let userAttempts = JSON.parse(localStorage.getItem('ps_user_attempts') || '{}');
 
     function cleanStr(s) {
       return (s || '').toString().trim().toLowerCase();
     }
 
-    // Base ID cleaner: Removes accidental '-part-1', '-part-2' extensions so it matches the parent test!
     function cleanBaseId(idStr) {
       if(!idStr) return '';
       return idStr.toString().trim().toLowerCase().replace(/-part-\d+$/i, '');
@@ -261,16 +266,20 @@
 
     function updateUserBadge() {
       const el = document.getElementById('userPill');
-      if (el) el.innerText = `👤 ${currentUser}`;
+      if (el) el.innerText = `👤 ${currentUser || 'Enter Name'}`;
     }
 
-    function promptCandidateLogin() {
-      const name = prompt("Enter Name or Roll Number for Rank & Progress tracking:", currentUser === 'Guest User' ? '' : currentUser);
-      if (name !== null) {
-        currentUser = name.trim() || 'Guest User';
-        localStorage.setItem('ps_user_name', currentUser);
+    function promptCandidateLogin(force = false) {
+      if (!currentUser || force) {
+        const name = prompt("Enter your Name for Rank List & Leaderboard tracking:", currentUser);
+        if (name !== null && name.trim()) {
+          currentUser = name.trim();
+          localStorage.setItem('ps_user_name', currentUser);
+        } else if (!currentUser) {
+          currentUser = 'Guest_' + Math.floor(1000 + Math.random() * 9000);
+          localStorage.setItem('ps_user_name', currentUser);
+        }
         updateUserBadge();
-        renderPortalView();
       }
     }
 
@@ -329,17 +338,22 @@
       }
     }
 
+    // MULTI-USER LEADERBOARD SUBMIT ENGINE (1ST ATTEMPT RULE WITH UNIQUE KEY)
     async function submitScoreToGlobalLeaderboard(testId, score, total, pct, dateStr) {
       try {
-        const cleanUserId = currentUser.replace(/[.#$[\]]/g, '_');
-        const res = await fetch(`${FIREBASE_DB_URL}/ranks/${testId}/${cleanUserId}.json`);
+        if (!currentUser) promptCandidateLogin();
+        const candidateKey = userUniqueKey; // Guaranteed unique per device/student
+
+        // Check if candidate already has a 1st attempt record in cloud
+        const res = await fetch(`${FIREBASE_DB_URL}/ranks/${testId}/${candidateKey}.json`);
         const existingRecord = await res.json();
 
         if (!existingRecord) {
-          await fetch(`${FIREBASE_DB_URL}/ranks/${testId}/${cleanUserId}.json`, {
+          await fetch(`${FIREBASE_DB_URL}/ranks/${testId}/${candidateKey}.json`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
+              uid: candidateKey,
               user: currentUser,
               score: score,
               total: total,
@@ -349,6 +363,8 @@
             })
           });
         }
+
+        // Live refresh leaderboard after submission
         const rankRefresh = await fetch(`${FIREBASE_DB_URL}/ranks.json`);
         if (rankRefresh.ok) allLeaderboards = await rankRefresh.json() || {};
       } catch (e) {
@@ -689,8 +705,19 @@
       `;
     }
 
-    function viewLeaderboardModal(testId) {
+    // LIVE LEADERBOARD WITH REALTIME CLOUD SYNC
+    async function viewLeaderboardModal(testId) {
       const t = allTests.find(item => item.id === testId);
+
+      // Instantly fetch live updated ranks from cloud
+      try {
+        const res = await fetch(`${FIREBASE_DB_URL}/ranks/${testId}.json`);
+        const liveData = await res.json();
+        if (liveData) allLeaderboards[testId] = liveData;
+      } catch (err) {
+        console.warn('Rank fetch error:', err);
+      }
+
       const testRanks = allLeaderboards[testId] || {};
       const list = Object.values(testRanks);
 
@@ -706,7 +733,7 @@
         else if (index === 1) badgeCls = 'rank-2';
         else if (index === 2) badgeCls = 'rank-3';
 
-        const isMe = cleanStr(item.user) === cleanStr(currentUser);
+        const isMe = item.uid === userUniqueKey || (currentUser && cleanStr(item.user) === cleanStr(currentUser));
 
         rows += `
           <tr style="${isMe ? 'background:#172554; font-weight:800;' : ''}">
@@ -748,6 +775,7 @@
     }
 
     function startTest(index) {
+      if (!currentUser) promptCandidateLogin();
       currentQuiz = allTests[index];
       if(!currentQuiz || !currentQuiz.questions || currentQuiz.questions.length === 0) {
         return alert('This test has no questions yet!');
@@ -1029,7 +1057,7 @@
       if(!userAttempts[currentQuiz.id]) userAttempts[currentQuiz.id] = [];
       const attemptNum = userAttempts[currentQuiz.id].length + 1;
       userAttempts[currentQuiz.id].push({
-        candidate: currentUser,
+        candidate: currentUser || 'Guest User',
         score: finalScore,
         total: totalPossibleMarks,
         percentage: scorePct,
@@ -1041,7 +1069,7 @@
 
       const testRanks = allLeaderboards[currentQuiz.id] || {};
       const rankList = Object.values(testRanks).sort((a,b) => b.score - a.score);
-      const myRankIndex = rankList.findIndex(r => cleanStr(r.user) === cleanStr(currentUser));
+      const myRankIndex = rankList.findIndex(r => r.uid === userUniqueKey || (currentUser && cleanStr(r.user) === cleanStr(currentUser)));
       const myRank = myRankIndex !== -1 ? (myRankIndex + 1) : 1;
       const totalRanked = rankList.length || 1;
 
@@ -1050,7 +1078,7 @@
       document.getElementById('app').innerHTML = `
         <div class="card" style="text-align:center; padding:24px 16px;">
           <h2 style="font-size:20px; margin-bottom:4px; color:#f8fafc;">Performance Scorecard</h2>
-          <div style="font-size:12px; color:#94a3b8; margin-bottom:14px;">Candidate: <b>${currentUser}</b> · Attempt #${attemptNum}</div>
+          <div style="font-size:12px; color:#94a3b8; margin-bottom:14px;">Candidate: <b>${currentUser || 'Guest User'}</b> · Attempt #${attemptNum}</div>
 
           <div style="background:#172554; border:1.5px solid #3b82f6; border-radius:12px; padding:16px; margin-bottom:14px; display:flex; justify-content:space-around; align-items:center;">
             <div>
@@ -1185,7 +1213,7 @@
     }
 
     function renderAdminHome() {
-      const sortedTests = [...allTests].sort((a,b) => {
+    const sortedTests = [...allTests].sort((a,b) => {
         const pa = getItemPathString(a);
         const pb = getItemPathString(b);
         if (pa !== pb) return pa.localeCompare(pb);
@@ -1232,7 +1260,6 @@
             <button class="btn-outline" style="padding:10px; border-color:#f59e0b; color:#fde68a;" onclick="promptAddResource('book')">+ Add Recommended Book</button>
           </div>
 
-          <!-- BULK CONTROL BAR -->
           <div class="bulk-toolbar">
             <div style="display:flex; align-items:center; gap:8px;">
               <input type="checkbox" id="selectAllCheckbox" style="width:18px; height:18px; cursor:pointer;" ${allTests.length > 0 && selectedTestIds.size === allTests.length ? 'checked' : ''} onchange="toggleSelectAll(this.checked)">
@@ -1247,7 +1274,6 @@
             </div>
           </div>
 
-          <!-- Upload JSON Files -->
           <div style="background:#1e293b; border:2px dashed #3b82f6; padding:16px; border-radius:10px; margin-bottom:16px; text-align:center;">
             <div style="font-weight:800; font-size:14px; color:#60a5fa; margin-bottom:6px;">🚀 Quick Upload JSON Questions File</div>
             <input type="file" id="json-file-input" accept=".json,.txt" style="display:none;" onchange="uploadJsonFile(event)">
@@ -1256,7 +1282,6 @@
             </button>
           </div>
 
-          <!-- Raw JSON Paste Box (SMART AUTO-MERGE) -->
           <div style="background:#1e293b; border:1px dashed #475569; padding:12px; border-radius:8px; margin-bottom:16px;">
             <div style="font-weight:700; font-size:13px; color:#cbd5e1; margin-bottom:6px;">📋 Paste Raw JSON Code:</div>
             <textarea id="raw-json-paste" class="form-control" style="min-height:75px; font-family:monospace; font-size:12px;" placeholder='{"id": "spartan-test-01", "title": "SPARTAN TEST SERIES", "questions": [...]}'></textarea>
@@ -1330,7 +1355,6 @@
       renderAdminHome();
     }
 
-    /* BULLETPROOF AUTO-MERGE ENGINE */
     async function uploadJsonFile(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1349,7 +1373,6 @@
         const rawTargetId = imported.id || file.name.replace(/\.[^/.]+$/, "");
         const targetCleanId = cleanBaseId(rawTargetId);
 
-        // Find match by exact id OR by cleaned base id OR by exact title
         let targetTest = allTests.find(t => 
           cleanStr(t.id) === cleanStr(rawTargetId) || 
           cleanBaseId(t.id) === targetCleanId ||
@@ -1411,7 +1434,6 @@
           const rawId = newT.id ? newT.id.trim() : '';
           const targetCleanId = cleanBaseId(rawId);
 
-          // Find existing test by raw id, or base id, or matching clean title
           let existingTest = null;
           if (rawId) {
             existingTest = allTests.find(x => cleanStr(x.id) === cleanStr(rawId) || cleanBaseId(x.id) === targetCleanId);
@@ -1421,7 +1443,6 @@
           }
 
           if (existingTest) {
-            // MERGE INTO EXISTING TEST (NO PART 2)
             existingTest.questions = (existingTest.questions || []).concat(newQs);
             if (newT.time) existingTest.time = newT.time;
             if (typeof newT.negativeMark !== 'undefined') existingTest.negativeMark = newT.negativeMark;
@@ -1654,7 +1675,7 @@
       }
 
       await saveToCloud();
-renderAdminHome();
+      renderAdminHome();
       alert('🎉 Test saved to Cloud successfully!');
     }
 
