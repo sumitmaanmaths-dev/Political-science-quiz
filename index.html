@@ -91,6 +91,7 @@
     .btn-outline { background: #1e293b; color: #cbd5e1; border: 1px solid #334155; padding: 8px 14px; font-size: 12px; font-weight: 700; border-radius: 8px; cursor: pointer; }
     .btn-danger { background: #dc2626; color: #fff; border: none; padding: 6px 10px; font-size: 11px; font-weight: 700; border-radius: 6px; cursor: pointer; }
     .btn-share { background: #25d366; color: #ffffff; border: none; padding: 10px 18px; font-size: 13px; font-weight: 800; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn-lang-toggle { background: #1e3a8a; color: #38bdf8; border: 1px solid #3b82f6; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
 
     .badge-telegram { background: #0088cc; color: #fff; font-size: 11px; padding: 6px 12px; border-radius: 6px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
     .badge-amazon { background: #ff9900; color: #111; font-size: 11px; padding: 6px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; }
@@ -165,7 +166,7 @@
         <div class="logo-icon">RP</div>
         <div>
           <div style="font-weight: 900; font-size: 13px; color: #f8fafc; line-height: 1.2;">RPSC, RSSB EXAM PORTAL</div>
-          <div style="font-size: 10px; color: #38bdf8; font-weight: 700;">Live Rank &amp; Nested Batch Hierarchy</div>
+          <div style="font-size: 10px; color: #38bdf8; font-weight: 700;">Bilingual (HI / EN) &amp; Live Rank</div>
         </div>
       </div>
       <div class="header-actions">
@@ -216,11 +217,12 @@
     let timer = null;
     let sec = 0;
     let isSolutionMode = false;
+    let currentLang = 'hi'; // 'hi' or 'en' (Bilingual state)
 
     let editingTestId = null;
     let draftQuestions = [];
 
-    // Unique user tracking to avoid Guest User collisions
+    // Unique student key for accurate rank list
     let currentUser = localStorage.getItem('ps_user_name') || '';
     let userUniqueKey = localStorage.getItem('ps_user_uid') || '';
     if (!userUniqueKey) {
@@ -271,7 +273,7 @@
 
     function promptCandidateLogin(force = false) {
       if (!currentUser || force) {
-        const name = prompt("Enter your Name for Rank List & Leaderboard tracking:", currentUser);
+        const name = prompt("Enter your Name for Rank List & Progress tracking:", currentUser);
         if (name !== null && name.trim()) {
           currentUser = name.trim();
           localStorage.setItem('ps_user_name', currentUser);
@@ -338,13 +340,12 @@
       }
     }
 
-    // MULTI-USER LEADERBOARD SUBMIT ENGINE (1ST ATTEMPT RULE WITH UNIQUE KEY)
+    // MULTI-USER LEADERBOARD SUBMIT ENGINE (1ST ATTEMPT RULE)
     async function submitScoreToGlobalLeaderboard(testId, score, total, pct, dateStr) {
       try {
         if (!currentUser) promptCandidateLogin();
-        const candidateKey = userUniqueKey; // Guaranteed unique per device/student
+        const candidateKey = userUniqueKey;
 
-        // Check if candidate already has a 1st attempt record in cloud
         const res = await fetch(`${FIREBASE_DB_URL}/ranks/${testId}/${candidateKey}.json`);
         const existingRecord = await res.json();
 
@@ -364,7 +365,6 @@
           });
         }
 
-        // Live refresh leaderboard after submission
         const rankRefresh = await fetch(`${FIREBASE_DB_URL}/ranks.json`);
         if (rankRefresh.ok) allLeaderboards = await rankRefresh.json() || {};
       } catch (e) {
@@ -375,29 +375,40 @@
     function normalizeQuestions(rawList) {
       if(!Array.isArray(rawList)) return [];
       return rawList.map(item => {
-        let questionText = item.q || item.question || item.title || "";
-        let options = item.opt || item.options || item.choices || [];
-        let ansIndex = 0;
+        let questionHi = item.q_hi || item.question_hi || item.q || item.question || item.title || "";
+        let questionEn = item.q_en || item.question_en || item.q || item.question || "";
 
+        let optHi = item.opt_hi || item.options_hi || item.opt || item.options || item.choices || [];
+        let optEn = item.opt_en || item.options_en || item.opt || item.options || optHi;
+
+        let ansIndex = 0;
         if (typeof item.ans !== 'undefined') ansIndex = parseInt(item.ans, 10);
         else if (typeof item.answer !== 'undefined') ansIndex = parseInt(item.answer, 10);
         else if (typeof item.correct !== 'undefined') ansIndex = parseInt(item.correct, 10);
 
         if(isNaN(ansIndex)) ansIndex = 0;
 
-        let explanation = item.exp || item.explanation || item.desc || "No explanation available.";
+        let expHi = item.exp_hi || item.explanation_hi || item.exp || item.explanation || item.desc || "No explanation available.";
+        let expEn = item.exp_en || item.explanation_en || item.exp || item.explanation || expHi;
+
         let subject = item.subject || item.sec || "General";
         let topic = item.topic || "Core Topic";
 
         return {
-          q: questionText,
-          opt: options,
+          q: questionHi,
+          q_hi: questionHi,
+          q_en: questionEn,
+          opt: optHi,
+          opt_hi: optHi,
+          opt_en: optEn,
           ans: ansIndex,
-          exp: explanation,
+          exp: expHi,
+          exp_hi: expHi,
+          exp_en: expEn,
           subject: subject,
           topic: topic
         };
-      }).filter(item => item.q.trim() !== "");
+      }).filter(item => (item.q_hi && item.q_hi.trim() !== "") || (item.q_en && item.q_en.trim() !== ""));
     }
 
     function goHome() {
@@ -635,7 +646,7 @@
                   <span style="font-size:11px; color:#94a3b8;">📝 ${(t.questions || []).length} Qs ${negMarkText}</span>
                   <div style="display:flex; gap:6px;">
                     <button class="btn-outline" style="padding:7px 12px; font-size:11px;" onclick="viewLeaderboardModal('${t.id}')">🏆 Rank List</button>
-                    <button class="btn-primary" onclick="startTest(${originalIndex})">
+                    <button class="btn-primary" onclick="promptStartTestLanguage(${originalIndex})">
                       ${history.length > 0 ? '🔄 Reattempt' : 'Start Test →'}
                     </button>
                   </div>
@@ -709,7 +720,6 @@
     async function viewLeaderboardModal(testId) {
       const t = allTests.find(item => item.id === testId);
 
-      // Instantly fetch live updated ranks from cloud
       try {
         const res = await fetch(`${FIREBASE_DB_URL}/ranks/${testId}.json`);
         const liveData = await res.json();
@@ -774,8 +784,44 @@
       document.body.insertAdjacentHTML('beforeend', modalHtml);
     }
 
-    function startTest(index) {
+    /* LANGUAGE PROMPT BEFORE TEST START */
+    function promptStartTestLanguage(index) {
       if (!currentUser) promptCandidateLogin();
+
+      const modalHtml = `
+        <div class="modal-backdrop active" id="langChoiceModal">
+          <div class="grid-modal" style="padding:20px; text-align:center; max-width:380px;">
+            <div style="font-size:24px; margin-bottom:8px;">🌐</div>
+            <h3 style="font-size:16px; font-weight:800; color:#f8fafc; margin-bottom:6px;">Choose Test Language</h3>
+            <p style="font-size:12px; color:#94a3b8; margin-bottom:16px;">Select your default language. You can also switch language anytime during the test.</p>
+            
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
+              <button class="btn-primary" style="padding:12px; font-size:14px;" onclick="document.getElementById('langChoiceModal').remove(); startTestWithLang(${index}, 'hi');">
+                🇮🇳 हिन्दी (Hindi)
+              </button>
+              <button class="btn-outline" style="padding:12px; font-size:14px; border-color:#38bdf8; color:#38bdf8;" onclick="document.getElementById('langChoiceModal').remove(); startTestWithLang(${index}, 'en');">
+                🇬🇧 English
+              </button>
+     </div>
+
+            <button class="btn-outline" style="width:100%; font-size:12px;" onclick="document.getElementById('langChoiceModal').remove();">Cancel</button>
+          </div>
+        </div>
+      `;
+      document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
+
+    function startTestWithLang(index, chosenLang) {
+      currentLang = chosenLang;
+      startTest(index);
+    }
+
+    function toggleQuestionLanguage() {
+      currentLang = (currentLang === 'hi') ? 'en' : 'hi';
+      renderQuestionScreen();
+    }
+
+    function startTest(index) {
       currentQuiz = allTests[index];
       if(!currentQuiz || !currentQuiz.questions || currentQuiz.questions.length === 0) {
         return alert('This test has no questions yet!');
@@ -813,8 +859,13 @@
       const q = currentQuiz.questions[cur];
       const total = currentQuiz.questions.length;
 
+      // Dual-language text extraction with fallback
+      const qText = (currentLang === 'en' && q.q_en) ? q.q_en : (q.q_hi || q.q || 'Question Text');
+      const optList = (currentLang === 'en' && q.opt_en && q.opt_en.length > 0) ? q.opt_en : (q.opt_hi || q.opt || []);
+      const expText = (currentLang === 'en' && q.exp_en) ? q.exp_en : (q.exp_hi || q.exp || 'No detailed explanation available.');
+
       let optH = '';
-      (q.opt || []).forEach((o, i) => {
+      optList.forEach((o, i) => {
         let optCls = '';
         let badgeIcon = '';
 
@@ -857,7 +908,9 @@
               ☰ Palette (${cur + 1}/${total})
             </button>
             <div style="display:flex; align-items:center; gap:8px;">
-              <span style="font-weight:800; font-size:12px; color:#34d399;">📖 Solutions</span>
+              <button class="btn-lang-toggle" onclick="toggleQuestionLanguage()">
+                🌐 ${currentLang === 'hi' ? 'Switch to EN' : 'Switch to हिन्दी'}
+              </button>
               <button class="btn-outline" style="padding:5px 10px;" onclick="finishTest()">Scorecard</button>
             </div>
           </div>
@@ -869,6 +922,9 @@
               ☰ Q 1-${total} (Palette)
             </button>
             <div style="display:flex; align-items:center; gap:8px;">
+              <button class="btn-lang-toggle" onclick="toggleQuestionLanguage()" title="Click to switch language">
+                🌐 ${currentLang === 'hi' ? 'EN' : 'हिन्दी'}
+              </button>
               <span id="tm" style="font-weight:800; font-size:13px; background:#1e293b; color:#38bdf8; padding:5px 10px; border-radius:6px;">⏳ ${m}:${s < 10 ? '0' : ''}${s}</span>
               <button onclick="if(confirm('Exit the test?')) renderPortalView()" style="background:none; border:none; color:#ef4444; font-size:12px; font-weight:700; cursor:pointer;">✕ Exit</button>
             </div>
@@ -880,8 +936,10 @@
       if(isSolutionMode) {
         explanationBox = `
           <div style="background:#172554; border-left:4px solid #3b82f6; padding:12px; border-radius:6px; margin-top:14px; font-size:13px; color:#cbd5e1; line-height:1.5;">
-            <div style="font-weight:800; color:#93c5fd; margin-bottom:4px;">💡 Detailed Solution &amp; Explanation:</div>
-            <div>${q.exp || 'No detailed explanation provided for this question.'}</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <span style="font-weight:800; color:#93c5fd;">💡 Detailed Solution &amp; Explanation (${currentLang === 'hi' ? 'हिन्दी' : 'English'}):</span>
+            </div>
+            <div>${expText}</div>
           </div>
         `;
       }
@@ -911,8 +969,11 @@
       document.getElementById('app').innerHTML = `
         ${topControls}
         <div class="card">
-          <div style="font-size:12px; color:#94a3b8; font-weight:700; margin-bottom:6px;">Question ${cur + 1} of ${total}</div>
-          <h2 style="font-size:16px; font-weight:800; line-height:1.5; margin-bottom:16px; color:#f8fafc;">${q.q}</h2>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span style="font-size:12px; color:#94a3b8; font-weight:700;">Question ${cur + 1} of ${total}</span>
+            <span style="font-size:10px; color:#38bdf8; font-weight:800; background:#172554; padding:2px 8px; border-radius:10px;">${currentLang === 'hi' ? 'हिन्दी' : 'English'}</span>
+          </div>
+          <h2 style="font-size:16px; font-weight:800; line-height:1.5; margin-bottom:16px; color:#f8fafc;">${qText}</h2>
           ${optH}
           ${explanationBox}
           ${footerActions}
@@ -1157,7 +1218,7 @@
       if (selectAll) {
         allTests.forEach(t => selectedTestIds.add(t.id));
       } else {
-        selectedTestIds.clear();
+    selectedTestIds.clear();
       }
       renderAdminHome();
     }
@@ -1213,7 +1274,7 @@
     }
 
     function renderAdminHome() {
-    const sortedTests = [...allTests].sort((a,b) => {
+      const sortedTests = [...allTests].sort((a,b) => {
         const pa = getItemPathString(a);
         const pb = getItemPathString(b);
         if (pa !== pb) return pa.localeCompare(pb);
@@ -1494,7 +1555,7 @@
         qListHtml += `
           <div class="q-draft-item">
             <div style="font-size:12px; color:#cbd5e1; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-              <b>#${index + 1}</b> ${dq.q}
+              <b>#${index + 1}</b> ${dq.q_hi || dq.q}
             </div>
             <button class="btn-danger" style="padding:4px 8px; font-size:11px;" onclick="draftQuestions.splice(${index}, 1); reRenderForm();">Delete</button>
           </div>
@@ -1549,15 +1610,21 @@
 
           <div style="border:1.5px dashed #3b82f6; background:#172554; padding:12px; border-radius:10px; margin-bottom:14px;">
             <div style="font-weight:800; font-size:13px; margin-bottom:8px; color:#93c5fd;">+ Add New Question:</div>
+            
             <div class="form-group">
-              <label>Question Text</label>
-              <textarea id="q-txt" class="form-control"></textarea>
+              <label>Question Text (हिन्दी)</label>
+              <textarea id="q-txt-hi" class="form-control" placeholder="हिन्दी में प्रश्न लिखें..."></textarea>
             </div>
+            <div class="form-group">
+              <label>Question Text (English)</label>
+              <textarea id="q-txt-en" class="form-control" placeholder="Enter Question in English..."></textarea>
+            </div>
+
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-              <div class="form-group"><label>Option A</label><input type="text" id="op-a" class="form-control"></div>
-              <div class="form-group"><label>Option B</label><input type="text" id="op-b" class="form-control"></div>
-              <div class="form-group"><label>Option C</label><input type="text" id="op-c" class="form-control"></div>
-              <div class="form-group"><label>Option D</label><input type="text" id="op-d" class="form-control"></div>
+              <div class="form-group"><label>Option A (HI / EN)</label><input type="text" id="op-a" class="form-control"></div>
+              <div class="form-group"><label>Option B (HI / EN)</label><input type="text" id="op-b" class="form-control"></div>
+              <div class="form-group"><label>Option C (HI / EN)</label><input type="text" id="op-c" class="form-control"></div>
+              <div class="form-group"><label>Option D (HI / EN)</label><input type="text" id="op-d" class="form-control"></div>
             </div>
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
               <div class="form-group">
@@ -1610,7 +1677,8 @@
     }
 
     function addQuestionToDraft() {
-      const q = document.getElementById('q-txt').value.trim();
+      const q_hi = document.getElementById('q-txt-hi').value.trim();
+      const q_en = document.getElementById('q-txt-en').value.trim() || q_hi;
       const a = document.getElementById('op-a').value.trim();
       const b = document.getElementById('op-b').value.trim();
       const c = document.getElementById('op-c').value.trim();
@@ -1619,11 +1687,26 @@
       const topic = document.getElementById('q-topic').value.trim() || 'General';
       const exp = document.getElementById('q-exp').value.trim();
 
-      if(!q || !a || !b || !c || !d) {
-        return alert('Question and all 4 options are mandatory!');
+      if(!q_hi && !q_en) {
+        return alert('Question text is mandatory!');
+      }
+      if(!a || !b || !c || !d) {
+        return alert('All 4 options are mandatory!');
       }
 
-      draftQuestions.push({ q, opt: [a, b, c, d], ans, topic, exp });
+      draftQuestions.push({
+        q: q_hi || q_en,
+        q_hi: q_hi || q_en,
+        q_en: q_en || q_hi,
+        opt: [a, b, c, d],
+        opt_hi: [a, b, c, d],
+        opt_en: [a, b, c, d],
+        ans,
+        topic,
+        exp,
+        exp_hi: exp,
+        exp_en: exp
+      });
       reRenderForm();
     }
 
